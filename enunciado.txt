@@ -1,0 +1,21 @@
+# App trakeo de mascotas
+
+## Descripcion
+Se trata de una aplicacion web para hacer seguimiento de la posicion de
+animales o mascotas. Para lograr esto necesitamos desarrollar un collar con
+conectividad GPS y LoRa, que se comunica con una estacion que escucha a los
+distintos dispositivos y a su vez, esta se comunica con ellos de ser necesario.
+La estacion va a tener una conexion a internet para comunicarse con el servidor
+que hostee la aplicacion.
+La aplicacion se puede acceder desde un buscador, en la misma, el usuario va a
+poder:
+	- Crear un usuario nuevo.
+	- Loguearse.
+	- Borrar cuenta.
+	- Hacer seguimiento de la/s mascota/s.
+	- Comprar collares y accesorios.
+	- Añadir nuevas mascotas.
+	- Eliminar mascotas existentes.
+	- Cargar datos de pago.
+	- Cambiar la configuracion del collar de cada moscota.
+
