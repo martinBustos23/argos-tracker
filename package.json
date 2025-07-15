@@ -1,0 +1,20 @@
+{
+  "name": "argos-tracker",
+  "version": "0.0.0",
+  "description": "Argos tracker permite hacer seguimiento de la posicion de tus mascotas desde tu celular o computadora. La solucion consiste en una aplicacion frontend para los usuarios y de una logica de backend que permita hacer tanto seguimiento de las mascotas como respuestas de las peticiones de los usuarios.",
+  "homepage": "https://github.com/martinBustos23/argos-tracker#readme",
+  "bugs": {
+    "url": "https://github.com/martinBustos23/argos-tracker/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinBustos23/argos-tracker.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
