@@ -30,4 +30,21 @@ class ModeloUsuarios {
 			return callback(null, user);
 		});
 	}
+
+	/*
+	* Metodo para agregar un usuario nuevo
+	*/
+	agregarUsuario(nombreUsuario, contrasenia, callback) {
+		// verificar que el usuario no exista
+		this.buscarPorNombreUsuario(nombreUsuario, (err, usuario) => {
+			if (err) return callback(err);
+			if (usuario) return callback(new Error('usuario ya existente'));
+		});
+		// agregar usuario a la base de datos
+		db.query('INSERT INTO users (username, password) VALUES (?, ?)',
+		[nombreUsuario, contrasenia],
+		(err) => {
+			if (err) return callback(err);
+		});
+	}
 }
