@@ -37,6 +37,16 @@ class ModeloUsuarios {
 		[nombreUsuario, contrasenia]);
 		return true;
 	}
+
+	/*
+	* Metodo para dar de baja un usuario
+	*/
+	async darUsuarioDeBaja(id) {
+		// verificar que el usuario exista
+		if (!this.buscarPorId(id)) throw new Error('usuario no existente');
+		// deshabilitar usuario
+		await this.db.query('UPDATE users SET enabled = false WHERE id = ?', id);
+	}
 }
 
 //const conectar = require('../config/db');
@@ -45,7 +55,8 @@ class ModeloUsuarios {
 //	try {
 //		const db = await conectar();
 //		const model = new ModeloUsuarios(db);
-//		const user = await model.buscarPorId(1);
+//		const user = await model.buscarPorId(7);
+//		await model.darUsuarioDeBaja(user.id);
 //		console.log(user);
 //	} catch (err) {
 //		console.error('Error: ', err);
