@@ -47,6 +47,16 @@ class ModeloUsuarios {
 		// deshabilitar usuario
 		await this.db.query('UPDATE users SET enabled = false WHERE id = ?', id);
 	}
+
+	/*
+	* Metodo para eliminar un usuario
+	*/
+	async eliminarUsuario(id) {
+		// verificar que el usuario exista
+		if (!this.buscarPorId(id)) throw new Error('usuario no existente');
+		// eliminar usuario
+		await this.db.query('DELETE FROM users WHERE id = ?', id);
+	}
 }
 
 //const conectar = require('../config/db');
@@ -57,7 +67,7 @@ class ModeloUsuarios {
 //		const model = new ModeloUsuarios(db);
 //		const user = await model.buscarPorId(7);
 //		await model.darUsuarioDeBaja(user.id);
-//		console.log(user);
+//		await model.eliminarUsuario(user.id);
 //	} catch (err) {
 //		console.error('Error: ', err);
 //	}
