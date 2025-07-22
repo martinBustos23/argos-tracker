@@ -43,7 +43,7 @@ class ModeloUsuarios {
 	*/
 	async darUsuarioDeBaja(id) {
 		// verificar que el usuario exista
-		if (!this.buscarPorId(id)) throw new Error('usuario no existente');
+		if (await !this.buscarPorId(id)) throw new Error('usuario no existente');
 		// deshabilitar usuario
 		await this.db.query('UPDATE usuarios SET habilitado = false WHERE id = ?', id);
 	}
@@ -53,7 +53,7 @@ class ModeloUsuarios {
 	*/
 	async eliminarUsuario(id) {
 		// verificar que el usuario exista
-		if (!this.buscarPorId(id)) throw new Error('usuario no existente');
+		if (await !this.buscarPorId(id)) throw new Error('usuario no existente');
 		// eliminar usuario
 		await this.db.query('DELETE FROM usuarios WHERE id = ?', id);
 	}
@@ -81,4 +81,4 @@ class ModeloUsuarios {
 //	}
 //}
 
-test();
+//test();
