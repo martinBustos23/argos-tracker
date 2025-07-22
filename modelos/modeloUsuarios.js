@@ -59,6 +59,8 @@ class ModeloUsuarios {
 	}
 }
 
+module.exports = ModeloUsuarios;
+
 //const conectar = require('../config/db');
 
 //async function test() {
