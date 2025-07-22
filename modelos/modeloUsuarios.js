@@ -31,7 +31,7 @@ class ModeloUsuarios {
 	*/
 	async agregarUsuario(nombreUsuario, contrasenia) {
 		// verificar que el usuario no exista
-		if (this.buscarPorNombreUsuario(nombreUsuario)) throw new Error('usuario existente');
+		if (await this.buscarPorNombreUsuario(nombreUsuario)) throw new Error('usuario existente');
 		// agregar usuario a la base de datos
 		await this.db.query('INSERT INTO usuarios (nombre_usuario, contrasenia) VALUES (?, ?)',
 		[nombreUsuario, contrasenia]);
@@ -65,12 +65,20 @@ class ModeloUsuarios {
 //	try {
 //		const db = await conectar();
 //		const model = new ModeloUsuarios(db);
-//		const user = await model.buscarPorId(7);
+		
+		//await model.agregarUsuario('john_doe', '1234');
+
+//		let user = await model.buscarPorId(1);
+//		console.log(user);
+
 //		await model.darUsuarioDeBaja(user.id);
-//		await model.eliminarUsuario(user.id);
+//		user = await model.buscarPorId(1);
+//		console.log(user);
+
+		//await model.eliminarUsuario(user.id);
 //	} catch (err) {
 //		console.error('Error: ', err);
 //	}
 //}
 
-//test();
+test();
