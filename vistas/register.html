@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Registrarse</title>
+	</head>
+	<body>
+		<div class="contenedor">
+			<h1>Registrarse</h1>
+			<form action="/registrarse" method="post" class="form-registro">
+				<label for="nombre_usuario">Nombre de usuario: </label>
+				<input type="text" name="nombre_usuario" id="nombre_usuario" required>
+				<label for="contrasenia">Contraseña: </label>
+				<input type="password" name="contrasenia" id="contrasenia" required>
+				<label for="repetir_contrasenia">Repetir contraseña: </label>
+				<input type="password" name="repetir_contrasenia" id="repetir_contrasenia" required>
+				<input type="submit" value="Registrarse">
+			</form>
+			<p>Ya estas registrado? <a href="/iniciar-sesion">Inicia sesion</a></p>
+		</div>
+	</body>
+</html>
