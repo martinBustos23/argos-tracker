@@ -10,7 +10,7 @@ class ModeloUsuarios {
 	async buscarPorId(id) {
 		if (id === undefined) throw new Error('id no especificada');
 		if (typeof id !== 'number') throw new Error('tipo de dato invalido');
-		const [result] = await this.db.query('SELECT id, username FROM users WHERE id = ?', id);
+		const [result] = await this.db.query('SELECT id, nombre_usuario FROM usuarios WHERE id = ?', id);
 		if (result[0] === undefined) return null;
 		return result[0]; // si usuario existe retorna su id y su nombre de usuario
 	}
@@ -21,7 +21,7 @@ class ModeloUsuarios {
 	async buscarPorNombreUsuario(nombreUsuario) {
 		if (nombreUsuario === undefined) throw new Error('nombre de usuario no especificado');
 		if (typeof nombreUsuario !== 'string') throw new Error('tipo de dato de nombreUsuario invalido');
-		const [result] = await this.db.query('SELECT id, username FROM users WHERE username = ?', nombreUsuario);
+		const [result] = await this.db.query('SELECT id, nombre_usuario FROM usuarios WHERE nombre_usuario = ?', nombreUsuario);
 		if (result[0] === undefined) return null;
 		return result[0]; // si usuario existe retorna su id y su nombre de usuario
 	}
@@ -33,7 +33,7 @@ class ModeloUsuarios {
 		// verificar que el usuario no exista
 		if (this.buscarPorNombreUsuario(nombreUsuario)) throw new Error('usuario existente');
 		// agregar usuario a la base de datos
-		await this.db.query('INSERT INTO users (username, password) VALUES (?, ?)',
+		await this.db.query('INSERT INTO usuarios (nombre_usuario, contrasenia) VALUES (?, ?)',
 		[nombreUsuario, contrasenia]);
 		return true;
 	}
@@ -45,7 +45,7 @@ class ModeloUsuarios {
 		// verificar que el usuario exista
 		if (!this.buscarPorId(id)) throw new Error('usuario no existente');
 		// deshabilitar usuario
-		await this.db.query('UPDATE users SET enabled = false WHERE id = ?', id);
+		await this.db.query('UPDATE usuarios SET habilitado = false WHERE id = ?', id);
 	}
 
 	/*
@@ -55,7 +55,7 @@ class ModeloUsuarios {
 		// verificar que el usuario exista
 		if (!this.buscarPorId(id)) throw new Error('usuario no existente');
 		// eliminar usuario
-		await this.db.query('DELETE FROM users WHERE id = ?', id);
+		await this.db.query('DELETE FROM usuarios WHERE id = ?', id);
 	}
 }
 
