@@ -53,7 +53,7 @@ class ModeloUsuarios {
 	*/
 	async eliminarUsuario(id) {
 		// verificar que el usuario exista
-		if (await !this.buscarPorId(id)) throw new Error('usuario no existente');
+		if (!await this.buscarPorId(id)) throw new Error('usuario no existente');
 		// eliminar usuario
 		await this.db.query('DELETE FROM usuarios WHERE id = ?', id);
 	}
