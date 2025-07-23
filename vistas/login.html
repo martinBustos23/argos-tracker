@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Iniciar sesion</title>
-	</head>
-	<body>
-		<div class="contenedor">
-			<h1>Iniciar sesion</h1>
-			<form action="/iniciar-sesion" method="post" class="form-inicio_sesion">
-				<label for="nombre_usuario">Nombre de usuario: </label>
-				<input type="text" name="nombre_usuario" id="nombre_usuario" required>
-				<label for="contrasenia">Contraseña: </label>
-				<input type="password" name="contrasenia" id="contrasenia" required>
-				<input type="submit" value="Iniciar sesion">
-			</form>
-			<p>No estas registrado? <a href="/registrarse">Registrate</a></p>
-		</div>
-	</body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesion</title>
+</head>
+
+<body>
+  <div class="contenedor">
+    <h1>Iniciar sesion</h1>
+    <form action="/iniciar-sesion" method="post" class="form-inicio_sesion">
+      <label for="nombre_usuario">Nombre de usuario: </label>
+      <input type="text" name="nombre_usuario" id="nombre_usuario" required>
+      <label for="contrasenia">Contraseña: </label>
+      <input type="password" name="contrasenia" id="contrasenia" required>
+      <input type="submit" value="Iniciar sesion">
+    </form>
+    <p>No estas registrado? <a href="/registrarse">Registrate</a></p>
+  </div>
+</body>
+
 </html>

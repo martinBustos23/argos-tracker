@@ -1,5 +1,5 @@
 .header {
-		display: flex;
+  display: flex;
   flex-flow: row;
   justify-content: space-between;
 }
@@ -9,16 +9,16 @@
   flex-flow: row;
 }
 
-.content > section {
+.content>section {
   width: 100%;
 }
 
 .side-nav {
-		display: flex;
-		flex-flow: column;
-		width: 20%;
+  display: flex;
+  flex-flow: column;
+  width: 20%;
 }
 
 .user-menu {
-		display: none;
+  display: none;
 }
