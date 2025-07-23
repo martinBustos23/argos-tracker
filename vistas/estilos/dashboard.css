@@ -1,0 +1,24 @@
+.header {
+		display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+.content {
+  display: flex;
+  flex-flow: row;
+}
+
+.content > section {
+  width: 100%;
+}
+
+.side-nav {
+		display: flex;
+		flex-flow: column;
+		width: 20%;
+}
+
+.user-menu {
+		display: none;
+}
