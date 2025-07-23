@@ -58,8 +58,9 @@ class ModeloUsuarios {
 		await this.db.query('DELETE FROM usuarios WHERE id = ?', id);
 	}
 }
+const modeloUsuarios = new ModeloUsuarios();
 
-module.exports = ModeloUsuarios;
+module.exports = modeloUsuarios;
 
 //const conectar = require('../config/db');
 
