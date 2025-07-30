@@ -14,6 +14,24 @@ class ModeloCollares {
 		if (result[0] === undefined) return null;
 		return result[0];
 	}
+
+	/*
+	* Metodo para agregar collares
+	*/
+	async agregarCollar(collar) {
+		if (id === undefined) throw new Error('collar no especificado');
+		if (!(collar instanceof Collar)) throw new Error('tipo de dato invalido');
+		const mensaje = `INSERT INTO dispositivos (id, nombre_mascota, intervalo_act, umbral_bat_baja, hogar_lat, hogar_lon, radio_zonaseg) VALUES (?, ?, ?, ?, ?, ?)`;
+		await this.db.query(mensaje, [
+			collar.id,
+			collar.nombreMascota,
+			collar.config.intervaloActualizacion,
+			collar.config.umbralBateriaBaja,
+			collar.config.ubicacionZonaSegura.latitud,
+			collar.config.ubicacionZonaSegura.longitud,
+			collar.config.radioZonaSegura
+		]);
+	}
 }
 
 class Posicion {
