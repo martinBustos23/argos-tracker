@@ -9,7 +9,7 @@ class ModeloCollares {
 	*/
 	async buscarPorId(id) {
 		if (id === undefined) throw new Error('id no especificada');
-		if (typeof id !== 'number') throw new Error('tipo de dato invalido');
+		if (typeof id !== 'string') throw new Error('tipo de dato invalido');
 		const [result] = await this.db.query('SELECT * FROM dispositivos WHERE id = ?', id);
 		if (result[0] === undefined) return null;
 		return result[0];
@@ -31,6 +31,16 @@ class ModeloCollares {
 			collar.config.ubicacionZonaSegura.longitud,
 			collar.config.radioZonaSegura
 		]);
+	}
+
+	/*
+	* Metodo para deshabilitar un collar
+	*/
+	async darCollarDeBaja(idCollar) {
+		if (idCollar === undefined) throw new Error('collar no especificado');
+		if (typeof idCollar !== 'string') throw new Error('tipo de dato invalido');
+		if (!this.buscarPorId(idCollar)) throw new Error('collar no existente');
+		await this.db.query("UPDATE dispositivos SET habilitado = false WHERE id = ?", idCollar);
 	}
 }
 
@@ -73,7 +83,8 @@ class Collar {
 // 	try {
 // 		const db = await conectar();
 // 		const model = new ModeloCollares(db);
-// 		await model.agregarCollar(new Collar('A12dAs0', new Configuracion(1,20, new Posicion('-32.770475', '-60.786078'), 200.4)));
+// 		// await model.agregarCollar(new Collar('A12dAs0', new Configuracion(1,20, new Posicion('-32.770475', '-60.786078'), 200.4)));
+// 		await model.darCollarDeBaja('A12dAs0');
 // 	} catch (err) {
 // 		console.error('Error: ', err);
 // 	}
