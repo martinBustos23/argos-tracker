@@ -57,6 +57,27 @@ class ModeloUsuarios {
 		// eliminar usuario
 		await this.db.query('DELETE FROM usuarios WHERE id = ?', id);
 	}
+
+	/*
+	* Metodo para modificar un usuario
+	*/
+	async modificarUsuario(idUsuario, modificaciones) {
+		if (idUsuario === undefined) throw new Error('usuario no especificado');
+		if (modificaciones === undefined) throw new Error('modificaciones no especificadas');
+		if (typeof idUsuario !== 'number' || typeof modificaciones !== 'object') throw new Error('tipo de dato invalido');
+		
+		let mensaje = "UPDATE usuarios SET";
+		const paresLlaveValor = Object.entries(modificaciones);
+		for (let i = 0; i < paresLlaveValor.length; i++) {
+			if (i === 0) {
+				mensaje += ` ${paresLlaveValor[i][0]} = ${paresLlaveValor[i][1]}`;
+				continue;
+			}
+			mensaje += `, ${paresLlaveValor[i][0]} = ${paresLlaveValor[i][1]}`;
+		}
+		mensaje += ' WHERE ID = ?';
+		this.db.query(mensaje, idUsuario);
+	}
 }
 const modeloUsuarios = new ModeloUsuarios();
 
