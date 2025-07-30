@@ -42,6 +42,27 @@ class ModeloCollares {
 		if (!this.buscarPorId(idCollar)) throw new Error('collar no existente');
 		await this.db.query("UPDATE dispositivos SET habilitado = false WHERE id = ?", idCollar);
 	}
+
+	/*
+	* Metodo para modificar un campo
+	*/
+	async modificarCollar(idCollar, modificaciones) {
+		if (idCollar === undefined) throw new Error('collar no especificado');
+		if (modificaciones === undefined) throw new Error('modificaciones no especificadas');
+		if (typeof idCollar !== 'string' || typeof modificaciones !== 'object') throw new Error('tipo de dato invalido');
+		
+		let mensaje = "UPDATE dispositivos SET";
+		const paresLlaveValor = Object.entries(modificaciones);
+		for (let i = 0; i < paresLlaveValor.length; i++) {
+			if (i === 0) {
+				mensaje += ` ${paresLlaveValor[i][0]} = ${paresLlaveValor[i][1]}`;
+				continue;
+			}
+			mensaje += `, ${paresLlaveValor[i][0]} = ${paresLlaveValor[i][1]}`;
+		}
+		mensaje += ' WHERE ID = ?';
+		this.db.query(mensaje, idCollar);
+	}
 }
 
 class Posicion {
@@ -84,7 +105,8 @@ class Collar {
 // 		const db = await conectar();
 // 		const model = new ModeloCollares(db);
 // 		// await model.agregarCollar(new Collar('A12dAs0', new Configuracion(1,20, new Posicion('-32.770475', '-60.786078'), 200.4)));
-// 		await model.darCollarDeBaja('A12dAs0');
+// 		// await model.darCollarDeBaja('A12dAs0');
+// 		await model.modificarCollar('A12dAs0', {umbral_bat_baja: 420, intervalo_act: 2});
 // 	} catch (err) {
 // 		console.error('Error: ', err);
 // 	}
