@@ -19,9 +19,9 @@ class ModeloCollares {
 	* Metodo para agregar collares
 	*/
 	async agregarCollar(collar) {
-		if (id === undefined) throw new Error('collar no especificado');
+		if (collar === undefined) throw new Error('collar no especificado');
 		if (!(collar instanceof Collar)) throw new Error('tipo de dato invalido');
-		const mensaje = `INSERT INTO dispositivos (id, nombre_mascota, intervalo_act, umbral_bat_baja, hogar_lat, hogar_lon, radio_zonaseg) VALUES (?, ?, ?, ?, ?, ?)`;
+		const mensaje = `INSERT INTO dispositivos (id, nombre_mascota, intervalo_act, umbral_bat_baja, hogar_lat, hogar_lon, radio_zonaseg) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 		await this.db.query(mensaje, [
 			collar.id,
 			collar.nombreMascota,
@@ -35,34 +35,48 @@ class ModeloCollares {
 }
 
 class Posicion {
-	#latitud;
-	#longitud;
+	latitud;
+	longitud;
 	constructor(latitud, longitud) {
-		this.#latitud = latitud;
-		this.#longitud = longitud;
+		this.latitud = latitud;
+		this.longitud = longitud;
 	}
 }
 
 class Configuracion {
-	#intervaloActualizacion;
-	#umbralBateriaBaja;
-	#ubicacionZonaSegura;
-	#radioZonaSegura;
+	intervaloActualizacion;
+	umbralBateriaBaja;
+	ubicacionZonaSegura;
+	radioZonaSegura;
 	constructor(intervaloActualizacion, umbralBateriaBaja, ubicacionZonaSegura = null, radioZonaSegura = null) {
-		this.#intervaloActualizacion = intervaloActualizacion;
-		this.#umbralBateriaBaja = umbralBateriaBaja;
-		this.#ubicacionZonaSegura = ubicacionZonaSegura;
-		this.#radioZonaSegura = radioZonaSegura;
+		this.intervaloActualizacion = intervaloActualizacion;
+		this.umbralBateriaBaja = umbralBateriaBaja;
+		this.ubicacionZonaSegura = ubicacionZonaSegura;
+		this.radioZonaSegura = radioZonaSegura;
 	}
 }
 
 class Collar {
-	#id;
-	#nombreMascota;
-	#config;
+	id;
+	nombreMascota;
+	config;
 	constructor(id, config, nombreMascota = null) {
-		this.#id = id;
-		this.#nombreMascota = nombreMascota;
-		this.#config = config;
+		this.id = id;
+		this.nombreMascota = nombreMascota;
+		this.config = config;
 	}
 }
+
+// const conectar = require('../config/db');
+
+// async function test() {
+// 	try {
+// 		const db = await conectar();
+// 		const model = new ModeloCollares(db);
+// 		await model.agregarCollar(new Collar('A12dAs0', new Configuracion(1,20, new Posicion('-32.770475', '-60.786078'), 200.4)));
+// 	} catch (err) {
+// 		console.error('Error: ', err);
+// 	}
+// }
+
+// test();
