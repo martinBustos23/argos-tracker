@@ -42,12 +42,7 @@ class Posicion extends Evento {
 	latitud;
 	longitud;
 	constructor(id, latitud, longitud, timestamp) {
-        if (typeof id !== 'number' ||
-			typeof latitud !== 'number' ||
-			typeof longitud !== 'number' ||
-			!(timestamp instanceof Date))
-				throw new Error("tipo de datos invalidos");
-        this.id = id;
+        super(id, 0, timestamp, null);
 		this.latitud = latitud;
 		this.longitud = longitud;
         this.descripcion = null;
