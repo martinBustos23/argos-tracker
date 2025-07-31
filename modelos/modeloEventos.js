@@ -4,6 +4,14 @@ class ModeloEventos {
         this.db = db;
     }
 
+    async buscarPorId(idEvento) {
+        if (id === undefined) throw new Error('id no especificada');
+		if (typeof id !== 'number') throw new Error('tipo de dato invalido');
+		const [result] = await this.db.query('SELECT * FROM eventos WHERE id = ?', idEvento);
+		if (result[0] === undefined) return null;
+		return result[0];
+    }
+
 }
 
 class Evento {
