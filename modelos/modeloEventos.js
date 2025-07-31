@@ -12,23 +12,29 @@ class ModeloEventos {
 		return result[0];
     }
 
+    async agregarEvento(evento) {
+        if (evento === undefined) throw new Error("evento no especificado");
+        if (!(evento instanceof Evento)) throw new Error("tipo de dato invalido");
+        await this.db.query("INSERT INTO eventos (tipo, contenido, timestamp) VALUES (?, ?, ?)",
+            [evento.tipo, evento.contenido, evento.timestamp]);
+    }
 }
 
 class Evento {
     id;
     tipo;
     timestamp;
-    descripcion;
-    constructor(id, tipo, timestamp, descripcion) {
+    contenido;
+    constructor(id, tipo, timestamp, contenido) {
         if (typeof id !== 'number' ||
 			typeof tipo !== 'number' ||
-			typeof descripcion !== 'string' ||
+			typeof contenido !== 'string' ||
 			!(timestamp instanceof Date))
 				throw new Error("tipo de datos invalidos");
         this.id = id;
         this.tipo = tipo;
         this.timestamp = timestamp;
-        this.descricion = descripcion;
+        this.contenido = contenido;
     }
 }
 
