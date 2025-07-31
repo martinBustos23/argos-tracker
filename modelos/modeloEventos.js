@@ -28,7 +28,7 @@ class Evento {
     constructor(id, tipo, timestamp, contenido) {
         if (typeof id !== 'number' ||
 			typeof tipo !== 'number' ||
-			typeof contenido !== 'string' ||
+			(typeof contenido !== 'string' && contenido !== null ) ||
 			!(timestamp instanceof Date))
 				throw new Error("tipo de datos invalidos");
         this.id = id;
