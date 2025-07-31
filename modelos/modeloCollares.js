@@ -100,7 +100,7 @@ class Collar {
 	}
 }
 
-module.exports = { Collar, Configuracion, Posicion, ModeloCollares };
+module.exports = { Collar, Configuracion, ModeloCollares };
 // const conectar = require('../config/db');
 
 // async function test() {
