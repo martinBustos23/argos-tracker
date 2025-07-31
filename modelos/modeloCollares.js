@@ -1,4 +1,4 @@
-const { configDotenv } = require("dotenv");
+const { Posicion } = require("./modeloEventos");
 
 class ModeloCollares {
 	#db;
@@ -67,21 +67,17 @@ class ModeloCollares {
 	}
 }
 
-class Posicion {
-	latitud;
-	longitud;
-	constructor(latitud, longitud) {
-		this.latitud = latitud;
-		this.longitud = longitud;
-	}
-}
-
 class Configuracion {
 	intervaloActualizacion;
 	umbralBateriaBaja;
 	ubicacionZonaSegura;
 	radioZonaSegura;
 	constructor(intervaloActualizacion, umbralBateriaBaja, ubicacionZonaSegura = null, radioZonaSegura = null) {
+		if (typeof intervaloActualizacion !== 'number' ||
+			typeof umbralBateriaBaja !== 'number' ||
+			typeof radioZonaSegura !== 'number' ||
+			!(ubicacionZonaSegura instanceof Posicion))
+				throw new Error("tipo de datos invalidos");
 		this.intervaloActualizacion = intervaloActualizacion;
 		this.umbralBateriaBaja = umbralBateriaBaja;
 		this.ubicacionZonaSegura = ubicacionZonaSegura;
@@ -94,6 +90,10 @@ class Collar {
 	nombreMascota;
 	config;
 	constructor(id, config, nombreMascota = null) {
+		if (typeof id !== 'string' ||
+			typeof nombreMascota !== 'string' ||
+			!(config instanceof Configuracion))
+				throw new Error("tipo de datos invalidos");
 		this.id = id;
 		this.nombreMascota = nombreMascota;
 		this.config = config;
