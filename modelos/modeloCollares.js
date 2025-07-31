@@ -1,3 +1,5 @@
+const { configDotenv } = require("dotenv");
+
 class ModeloCollares {
 	#db;
 	constructor(db) {
@@ -98,6 +100,7 @@ class Collar {
 	}
 }
 
+module.exports = { Collar, Configuracion, Posicion, ModeloCollares };
 // const conectar = require('../config/db');
 
 // async function test() {
