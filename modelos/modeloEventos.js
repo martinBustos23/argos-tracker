@@ -45,10 +45,16 @@ class Posicion extends Evento {
         super(id, 0, timestamp, null);
 		this.latitud = latitud;
 		this.longitud = longitud;
-        this.descripcion = null;
-        this.tipo = 0;
-        this.timestamp = timestamp;
 	}
+
+    static aPartirDeEvento(evento) {
+        return new Posicion(
+            evento.id,
+            Number.parseFloat(evento.contenido.split('#')[0]),
+            Number.parseFloat(evento.contenido.split('#')[1]),
+            evento.timestamp
+        );
+    }
 }
 
 module.exports = { Posicion, Evento, ModeloEventos }
