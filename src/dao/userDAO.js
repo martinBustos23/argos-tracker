@@ -12,14 +12,11 @@ export default class UserDAO {
   }
 
   async create(user) {
-    let { username, password, admin, active } = user;
-
-    admin = admin ?? 0;
-    active = active ?? 1;
+    let { username, password } = user;
 
     await this.#db.execute(
-      'INSERT INTO users (username, password, admin, active) VALUES (?, ?, ?, ?)',
-      [username, password, admin, active]
+      'INSERT INTO users (username, password) VALUES (?, ?)',
+      [username, password]
     );
     return this.findByID(username);
   }
@@ -31,7 +28,7 @@ export default class UserDAO {
 
   async findByID(username) {
     const [result] = await this.#db.query(
-      'SELECT username, password, admin, active FROM users WHERE username = ?',
+      'SELECT * FROM users WHERE username = ?',
       [[username]]
     );
     if (result.length === 0) return null;
