@@ -22,7 +22,8 @@ async function initDB() {
   }
 }
 
-function getConnection() {  //probablemente quitarlo
+function getConnection() {
+  //probablemente quitarlo
   if (!db) {
     throw new Error('Conexión a la base de datos no inicicalizada');
   }

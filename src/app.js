@@ -27,8 +27,8 @@ async function createApp(db) {
   //   res.json({ message: 'Bienvenido ArgosTracker App' });
   // });
 
-  app.use('/', authRouter);          
-  app.use('/dashboard', dashboardRouter); 
+  app.use('/', authRouter);
+  app.use('/dashboard', dashboardRouter);
 
   app.use('/api', userRouter);
 
