@@ -12,36 +12,43 @@ export default class UserDAO {
   }
 
   async create(user) {
-    const { username, password, admin, active } = user;
-    const [result] = await this.#db.execute(
-      'INSERT INTO user (username, password, admin, active) VALUES (?, ?, ?, ?)',
+    let { username, password, admin, active } = user;
+
+    admin = admin ?? 0;
+    active = active ?? 1;
+
+    await this.#db.execute(
+      'INSERT INTO users (username, password, admin, active) VALUES (?, ?, ?, ?)',
       [username, password, admin, active]
     );
-    return { id: result.insertId, ...user };
+    return this.findByID(username);
   }
 
   async getAll() {
-    const [rows] = await this.#db.execute('SELECT * FROM user');
+    const [rows] = await this.#db.execute('SELECT * FROM users');
     return rows.map((row) => new UserDTO(row));
   }
 
-  async findByID(id) {
-    const [result] = await this.#db.query('SELECT id, username FROM user WHERE id = ?', [id]);
+  async findByID(username) {
+    const [result] = await this.#db.query(
+      'SELECT username, password, admin, active FROM users WHERE username = ?',
+      [[username]]
+    );
     if (result.length === 0) return null;
     return new UserDTO(result[0]);
   }
 
-  async update(id, user) {
+  async update(user) {
     const { username, password, admin, active } = user;
     await this.#db.execute(
-      'UPDATE user SET username = ?, password = ?, admin = ?, active = ? WHERE id = ?',
-      [username, password, admin, active, id]
+      'UPDATE users SET password = ?, admin = ?, active = ? WHERE username = ?',
+      [password, admin, active, username]
     );
-    return { id, ...user };
+    return { username, ...user };
   }
 
-  async delete(id) {
-    await this.#db.execute('DELETE FROM user WHERE id = ?', [id]);
-    return { message: `Usuario ${id} eliminado` };
+  async delete(username) {
+    await this.#db.execute('DELETE FROM users WHERE username = ?', [username]);
+    return { message: `Usuario ${username} eliminado` };
   }
 }

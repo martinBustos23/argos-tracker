@@ -1,22 +1,19 @@
 import express from 'express';
-const router = express.Router();
 
-router.get('/login', (req, res) => {
-  res.render('login');
-});
+export default (userController) => {
+  const router = express.Router();
 
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
+  router.get('/login', (req, res) => {
+    res.render('login');
+  });
 
-  if (username === 'admin' && password === '1234') {
-    return res.redirect('dashboard');
-  }
+  router.post('/login', userController.login);
 
-  res.render('login');
-});
+  router.get('/register', (req, res) => {
+    res.render('register');
+  });
 
-router.get('/register', (req, res) => {
-  res.render('register');
-});
+  router.post('/register', userController.register);
 
-export default router;
+  return router;
+};

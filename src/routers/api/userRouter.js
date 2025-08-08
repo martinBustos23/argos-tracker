@@ -10,4 +10,4 @@ export default function createUserRouter(UserController) {
   router.delete('/users/:uid', UserController.delete);
 
   return router;
-};
+}

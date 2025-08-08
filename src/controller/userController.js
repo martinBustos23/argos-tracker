@@ -54,4 +54,34 @@ export default class UserController {
       res.status(500).json({ error: error.message });
     }
   };
+
+  login = async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const exist = await this.userDao.findByID(username);
+      if (!exist || password !== exist.password)
+        return res.status(400).json({ message: 'El usuario o la contraseña es incorrecta' });
+      res.redirect('/dashboard');
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  register = async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const exist = await this.userDao.findByID(username);
+      if (exist) return res.status(400).json({ message: 'El usuario ya existe' });
+      const newUser = await this.userDao.create({
+        username,
+        password,
+        admin: false,
+        active: true,
+      });
+      console.table(newUser);
+      res.redirect('/login');
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 }
