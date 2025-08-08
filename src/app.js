@@ -1,15 +1,16 @@
-const express = require('express');
+import express from 'express';
 
-const path = require('path');
+import path from 'path';
 
-const UserDAO = require('./dao/userDAO');
-const UserController = require('./controller/userController');
+import UserDAO from './dao/userDAO.js';
+import UserController from './controller/userController.js';
 
-const createUserRouter = require('./routers/api/userRouter');
-const authRouter = require('./routers/views/authRouter.js');
-const dashboardRouter = require('./routers/views/dashboardRouter.js');
+import createUserRouter from './routers/api/userRouter.js';
+import authRouter from './routers/views/authRouter.js';
+import dashboardRouter from './routers/views/dashboardRouter.js';
+import { __dirname, __filename } from './config/config.js';
 
-async function createApp(db) {
+export default async function createApp(db) {
   const app = express();
 
   const userDao = new UserDAO(db);
@@ -17,7 +18,6 @@ async function createApp(db) {
   const userRouter = createUserRouter(userController);
 
   app.set('view engine', 'ejs');
-  app.set('views', path.join(__dirname + '/views'));
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -34,5 +34,3 @@ async function createApp(db) {
 
   return app;
 }
-
-module.exports = createApp;

@@ -1,4 +1,4 @@
-class UserController {
+export default class UserController {
   constructor(userDao) {
     this.userDao = userDao;
   }
@@ -55,5 +55,3 @@ class UserController {
     }
   };
 }
-
-module.exports = UserController;

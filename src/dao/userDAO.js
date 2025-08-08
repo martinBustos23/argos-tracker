@@ -3,9 +3,9 @@
   cambiar id a username
 */
 
-const UserDTO = require('../dto/userDTO.js');
+import UserDTO from '../dto/userDTO.js';
 
-class UserDAO {
+export default class UserDAO {
   #db;
   constructor(db) {
     this.#db = db;
@@ -45,5 +45,3 @@ class UserDAO {
     return { message: `Usuario ${id} eliminado` };
   }
 }
-
-module.exports = UserDAO;

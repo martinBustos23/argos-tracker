@@ -1,9 +1,9 @@
-const mysql = require('mysql2/promise');
-const config = require('./config.js');
+import mysql from 'mysql2/promise';
+import config from './config.js';
 
 let db = null;
 
-async function initDB() {
+export async function initDB() {
   if (db) return db;
 
   try {
@@ -22,15 +22,10 @@ async function initDB() {
   }
 }
 
-function getConnection() {
+export function getConnection() {
   //probablemente quitarlo
   if (!db) {
     throw new Error('Conexión a la base de datos no inicicalizada');
   }
   return db;
 }
-
-module.exports = {
-  initDB,
-  getConnection,
-};

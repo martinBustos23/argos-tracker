@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 
-module.exports = (UserController) => {
+export default function createUserRouter(UserController) {
   const router = express.Router();
 
   router.get('/users/', UserController.getAll);
