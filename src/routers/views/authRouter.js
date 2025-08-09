@@ -5,6 +5,8 @@ export default (UserController) => {
   const router = express.Router();
 
   router.get('/login', (req, res) => {
+    const token = req.cookies.authorization;
+    if (token) return res.redirect('/dashboard');
     res.render('login');
   });
 
