@@ -1,8 +1,10 @@
 import express from 'express';
+import { authToken } from '../../utils.js';
 
 export default function createUserRouter(UserController) {
   const router = express.Router();
-
+  router.use(authToken);
+  
   router.post('/users', async (req, res) => {
     try {
       const newUser = await UserController.create(req.body);
