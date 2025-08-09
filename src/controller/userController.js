@@ -1,87 +1,97 @@
+import { Exception, NotFound } from '../utils.js';
+
 export default class UserController {
   constructor(userDao) {
     this.userDao = userDao;
   }
 
-  create = async (req, res) => {
+  async create(newUser) {
     try {
-      const newUser = await this.userDao.create(req.body);
-      console.table(newUser);
-      res.status(201).json(newUser);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
+      const user = await this.userDao.findByID(newUser.username);
 
-  getAll = async (req, res) => {
-    try {
-      const users = await this.userDao.getAll();
-      console.table(users);
-      res.json(users);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
-
-  findByID = async (req, res) => {
-    try {
-      const user = await this.userDao.findByID(req.params.uid);
-      if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+      if (user) {
+        throw new Exception(`Error usuario ya registrado`, 404);
       }
-      console.table(user);
-      res.json(user);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
 
-  update = async (req, res) => {
-    try {
-      const updatedUser = await this.userDao.update(req.params.uid, req.body);
-      console.table(updatedUser);
-      res.json(updatedUser);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
+      await this.userDao.create(newUser);
 
-  delete = async (req, res) => {
-    try {
-      const result = await this.userDao.delete(req.params.uid);
-      res.json(result);
+      return newUser;
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      throw new Exception(`Error creando usuario: ${error.message}`, 500);
     }
-  };
+  }
 
-  login = async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      const exist = await this.userDao.findByID(username);
-      if (!exist || password !== exist.password)
-        return res.status(400).json({ message: 'El usuario o la contraseña es incorrecta' });
-      res.redirect('/dashboard');
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
+  async getAll() {
+    const users = await this.userDao.getAll();
+    return users;
+  }
 
-  register = async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      const exist = await this.userDao.findByID(username);
-      if (exist) return res.status(400).json({ message: 'El usuario ya existe' });
-      const newUser = await this.userDao.create({
-        username,
-        password,
-        admin: false,
-        active: true,
-      });
-      console.table(newUser);
-      res.redirect('/login');
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  async findByID(username) {
+    const user = await this.userDao.findByID(username);
+    if (!user) {
+      throw new NotFound(`El usuario (${username}) no fue encontrado`);
     }
-  };
+    return user;
+  }
+
+  async update(username, user) {
+    try {
+      const updatedUser = await this.userDao.findByID(username); //probable no const
+
+      if (!updatedUser) {
+        throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      }
+
+      //validar datos user?
+
+      updatedUser = await this.userDao.update(username, user);
+
+      return updatedUser;
+    } catch (error) {
+      throw new Exception(`Error actualizando el usuario: ${error.message}`, 500);
+    }
+  }
+
+  async delete(username) {
+    try {
+      const exist = await this.userDao.findByID(username); //probable no const
+
+      if (!exist) {
+        throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      }
+
+      //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
+
+      const result = await this.userDao.delete(username);
+
+      return result;
+    } catch (error) {
+      throw new Exception(`Error eliminando el usuario: ${error.message}`, 500);
+    }
+  }
+
+  //// ACCESO
+
+  async login(user) {
+    try {
+      const exist = await this.userDao.findByID(user.username);
+
+      if (!exist || user.password !== exist.password)
+        throw new Exception(`Usuario o contraseña incorrectos`, 404);
+
+      return;
+    } catch (error) {
+      throw new Exception(`Error al ingresar: ${error.message}`, 500);
+    }
+  }
+
+  async register(newUser) {
+    //probable no exista :)
+    try {
+      await this.userDao.create(newUser);
+      return newUser;
+    } catch (error) {
+      throw new Exception(`Error al registrarse: ${error.message}`, 500);
+    }
+  }
 }
