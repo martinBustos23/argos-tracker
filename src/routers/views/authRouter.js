@@ -1,4 +1,5 @@
 import express from 'express';
+import { generateToken } from '../../utils.js';
 
 export default (UserController) => {
   const router = express.Router();
@@ -18,7 +19,14 @@ export default (UserController) => {
       console.log('-- Login --');
       console.log(req.body); //test
 
-      res.redirect('dashboard');
+      const token = generateToken(req.body.username);
+
+      res
+        .cookie('token', token, {
+          httpOnly: true, // la cookie solo puede ser obtenida por nuestro servidor
+          maxAge: 1000 * 60 * 60, // 1h
+        })
+        .redirect('dashboard');
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

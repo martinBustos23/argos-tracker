@@ -1,5 +1,7 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import jwt from 'jsonwebtoken';
+import config from './config/config.js';
 
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
@@ -34,4 +36,20 @@ export class Forbidden extends Exception {
   constructor(message) {
     super(message, 403);
   }
+}
+
+export const generateToken = (username) => {
+  const token = jwt.sign({username}, config.JWT_KEY, {expiresIn:'1h'});
+  return token;
+}
+
+export const authToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({error: 'Usuario no autenticado'});
+  const token = authHeader.split(' ')[1]; // remueve la palabra 'Bearer'
+  jwt.verify(token, config.JWT_KEY, (error, credentials) => {
+    if (error) return res.status(403).json({error: 'Usuario no autorizado'});
+    req.user = credentials.user;
+    next();
+  })
 }

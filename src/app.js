@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 
 import path from 'path';
 
@@ -25,7 +26,7 @@ export default async function createApp(db) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(express.static(path.join(__dirname, '..', 'public')));
-
+  app.use(cookieParser());
   // app.get('/', (req, res) => {
   //   res.json({ message: 'Bienvenido ArgosTracker App' });
   // });
