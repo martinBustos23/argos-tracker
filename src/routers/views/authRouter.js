@@ -22,7 +22,7 @@ export default (UserController) => {
       const token = generateToken(req.body.username);
 
       res
-        .cookie('token', token, {
+        .cookie('authorization', token, {
           httpOnly: true, // la cookie solo puede ser obtenida por nuestro servidor
           maxAge: 1000 * 60 * 60, // 1h
         })

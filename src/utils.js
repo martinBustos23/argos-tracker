@@ -44,9 +44,8 @@ export const generateToken = (username) => {
 }
 
 export const authToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({error: 'Usuario no autenticado'});
-  const token = authHeader.split(' ')[1]; // remueve la palabra 'Bearer'
+  const token = req.cookies.authorization;
+  if (!token) return res.status(401).json({error: 'Usuario no autenticado'});
   jwt.verify(token, config.JWT_KEY, (error, credentials) => {
     if (error) return res.status(403).json({error: 'Usuario no autorizado'});
     req.user = credentials.user;
