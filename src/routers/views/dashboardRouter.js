@@ -1,7 +1,9 @@
 import express from 'express';
+import { authToken } from '../../utils.js';
 
 export default (userController) => {
   const router = express.Router();
+  router.use(authToken);
 
   router.get('/', (req, res) => {
     res.render('./dashboard/general');
