@@ -32,19 +32,5 @@ export default (UserController) => {
     }
   });
 
-  router.post('/register', async (req, res) => {
-    try {
-      const newUser = await UserController.register(req.body);
-
-      console.log('-- Registrar usuario --');
-      console.log(req.body); //test
-      console.table(newUser); //
-
-      res.redirect('login');
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
   return router;
 };
