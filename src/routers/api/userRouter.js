@@ -7,6 +7,8 @@ export default function createUserRouter(UserController) {
   
   router.post('/users', async (req, res) => {
     try {
+      const user = await UserController.findByID(req.user);
+      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const newUser = await UserController.create(req.body);
 
       console.log('-- Crear usuario --');
@@ -47,6 +49,8 @@ export default function createUserRouter(UserController) {
 
   router.put('/users/:uid', async (req, res) => {
     try {
+      const user = await UserController.findByID(req.user);
+      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const updatedUser = await UserController.update(req.params.uid, req.body);
 
       console.log('-- Actualizar usuario --');
@@ -62,6 +66,8 @@ export default function createUserRouter(UserController) {
 
   router.delete('/users/:uid', async (req, res) => {
     try {
+      const user = await UserController.findByID(req.user);
+      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const result = await UserController.delete(req.params.uid);
 
       console.log('-- Eleminar usuario --');
