@@ -1,19 +1,19 @@
 import { Exception, NotFound } from '../utils.js';
 
 export default class UserController {
-  constructor(userDao) {
-    this.userDao = userDao;
+  constructor(userModel) {
+    this.userModel = userModel;
   }
 
   async create(newUser) {
     try {
-      const user = await this.userDao.findByID(newUser.username);
+      const user = await this.userModel.findByUsername(newUser.username);
 
       if (user) {
         throw new Exception(`Error usuario ya registrado`, 404);
       }
 
-      await this.userDao.create(newUser);
+      await this.userModel.createUser(newUser);
 
       return newUser;
     } catch (error) {
@@ -22,12 +22,12 @@ export default class UserController {
   }
 
   async getAll() {
-    const users = await this.userDao.getAll();
+    const users = await this.userModel.getAllUsers();
     return users;
   }
 
   async findByID(username) {
-    const user = await this.userDao.findByID(username);
+    const user = await this.userModel.findByUsername(username);
     if (!user) {
       throw new NotFound(`El usuario (${username}) no fue encontrado`);
     }
@@ -36,7 +36,7 @@ export default class UserController {
 
   async update(username, user) {
     try {
-      const updatedUser = await this.userDao.findByID(username); //probable no const
+      const updatedUser = await this.userModel.findByUsername(username); //probable no const
 
       if (!updatedUser) {
         throw new NotFound(`El usuario (${username}) no fue encontrado`);
@@ -44,7 +44,7 @@ export default class UserController {
 
       //validar datos user?
 
-      updatedUser = await this.userDao.update(username, user);
+      updatedUser = await this.userModel.updateUser(username, user);
 
       return updatedUser;
     } catch (error) {
@@ -54,7 +54,7 @@ export default class UserController {
 
   async delete(username) {
     try {
-      const exist = await this.userDao.findByID(username); //probable no const
+      const exist = await this.userModel.findByID(username); //probable no const
 
       if (!exist) {
         throw new NotFound(`El usuario (${username}) no fue encontrado`);
@@ -62,7 +62,7 @@ export default class UserController {
 
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
-      const result = await this.userDao.delete(username);
+      const result = await this.userModel.deleteUser(username);
 
       return result;
     } catch (error) {
@@ -74,7 +74,7 @@ export default class UserController {
 
   async login(user) {
     try {
-      const exist = await this.userDao.findByID(user.username);
+      const exist = await this.userModel.findByUsername(user.username);
 
       if (!exist || user.password !== exist.password)
         throw new Exception(`Usuario o contraseña incorrectos`, 404);
@@ -88,7 +88,7 @@ export default class UserController {
   async register(newUser) {
     //probable no exista :)
     try {
-      await this.userDao.create(newUser);
+      await this.userModel.createUser(newUser);
       return newUser;
     } catch (error) {
       throw new Exception(`Error al registrarse: ${error.message}`, 500);
