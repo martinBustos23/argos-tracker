@@ -34,5 +34,14 @@ export default (UserController) => {
     }
   });
 
+  router.get('/logout', async (req, res) => {
+    try {
+      const token = req.cookies.authorization;
+      if (token) return res.clearCookie('authorization').redirect('/login');
+      res.redirect('/login');
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
   return router;
 };
