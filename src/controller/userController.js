@@ -1,4 +1,5 @@
 import { Exception, NotFound } from '../utils.js';
+import bcrypt from "bcryptjs";
 
 export default class UserController {
   constructor(userModel) {
@@ -76,8 +77,9 @@ export default class UserController {
     try {
       const exist = await this.userModel.findByUsername(user.username);
 
-      if (!exist || user.password !== exist.password)
-        throw new Exception(`Usuario o contraseña incorrectos`, 404);
+      if (!exist) throw new Exception('Usuario no existe', 404);
+      if (!await bcrypt.compare(user.password, exist.password))
+        throw new Exception(`Contraseña incorrecta`, 404);
 
       return;
     } catch (error) {
