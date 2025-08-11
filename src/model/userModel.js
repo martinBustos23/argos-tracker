@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
 export default class UserModel {
   #dao;
   constructor(dao) {
@@ -8,9 +8,9 @@ export default class UserModel {
   async createUser(user) {
     const exists = await this.#dao.findByID(user.username);
     if (exists) throw new Error('Usuario ya existe');
-    const salt = await bcrypt.genSalt(12);      // 12 rondas de sason
-    const hash = await bcrypt.hash(user.password,salt);
-    user.password = hash;   // actualizar la contrasenia para que sea el hash
+    const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+    const hash = await bcrypt.hash(user.password, salt);
+    user.password = hash; // actualizar la contrasenia para que sea el hash
     return await this.#dao.create(user);
   }
 

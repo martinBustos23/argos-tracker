@@ -39,16 +39,16 @@ export class Forbidden extends Exception {
 }
 
 export const generateToken = (username) => {
-  const token = jwt.sign({username}, config.JWT_KEY, {expiresIn:'1h'});
+  const token = jwt.sign({ username }, config.JWT_KEY, { expiresIn: '1h' });
   return token;
-}
+};
 
 export const authToken = (req, res, next) => {
   const token = req.cookies.authorization;
-  if (!token) return res.status(401).json({error: 'Usuario no autenticado'});
+  if (!token) return res.status(401).json({ error: 'Usuario no autenticado' });
   jwt.verify(token, config.JWT_KEY, (error, credentials) => {
-    if (error) return res.status(403).json({error: 'Usuario no autorizado'});
+    if (error) return res.status(403).json({ error: 'Usuario no autorizado' });
     req.user = credentials.username;
     next();
-  })
-}
+  });
+};

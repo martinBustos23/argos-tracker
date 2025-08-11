@@ -4,7 +4,7 @@ import { authToken } from '../../utils.js';
 export default function createUserRouter(UserController) {
   const router = express.Router();
   router.use(authToken);
-  
+
   router.post('/users', async (req, res) => {
     try {
       const user = await UserController.findByID(req.user);

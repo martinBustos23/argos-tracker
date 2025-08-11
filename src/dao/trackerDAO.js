@@ -11,7 +11,7 @@ export default class TrackerDAO {
 
     const queryMsg =
       'INSERT INTO trackers (petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius) VALUES (?, ?, ?, ?, ?, ?)';
-    const [ result ] = await this.#db.execute(queryMsg, [
+    const [result] = await this.#db.execute(queryMsg, [
       petName,
       frequency,
       lowBat,
@@ -24,13 +24,14 @@ export default class TrackerDAO {
   }
 
   async findById(id) {
-    const [ result ] = await this.#db.execute('SELECT * FROM trackers WHERE id = ?', [id]);
+    const [result] = await this.#db.execute('SELECT * FROM trackers WHERE id = ?', [id]);
     if (result.length === 0) return null;
     return new TrackerDTO(result[0]);
   }
 
   async update(tracker) {
-    let { id, petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active } = tracker;
+    let { id, petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active } =
+      tracker;
     await this.#db.execute(
       'UPDATE trackers SET petName = ?, frecuency = ?, lowBat = ?, safeZoneLat = ?, safeZoneLon = ?, safeZoneRadius = ?, active = ? WHERE username = ?',
       [petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active]
@@ -39,7 +40,7 @@ export default class TrackerDAO {
   }
 
   async delete(trackerId) {
-    await this.#db.execute('DELETE FROM trackers WHERE id = ?', [trackerId])
+    await this.#db.execute('DELETE FROM trackers WHERE id = ?', [trackerId]);
     return { message: `Tracker ${trackerId} eliminado` };
   }
 
