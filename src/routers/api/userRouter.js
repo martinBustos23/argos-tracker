@@ -70,7 +70,7 @@ export default function createUserRouter(UserController) {
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const result = await UserController.delete(req.params.uid);
 
-      console.log('-- Eleminar usuario --');
+      console.log('-- Eliminar usuario --');
       console.log(req.params.uid);
       console.table(result);
 
