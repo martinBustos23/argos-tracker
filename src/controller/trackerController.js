@@ -26,5 +26,20 @@ export default class TrackerController {
     }
     return tracker;
   }
-  
+
+  async updateTracker(id, tracker) {
+    try {
+      const exist = await this.#trackerDAO.findById(id); //probable no const
+
+      if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
+
+      //validar datos tracker?
+
+      const updatedTracker = await this.#trackerDAO.update(id, tracker);
+
+      return updatedTracker;
+    } catch (error) {
+      throw new Exception(`Error actualizando el tracker: ${error.message}`, 500);
+    }
+  }
 }
