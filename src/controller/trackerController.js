@@ -19,8 +19,8 @@ export default class TrackerController {
     return trackers;
   }
 
-  async findByID(tracker) {
-    const tracker = await this.#trackerDAO.findById(tracker.id);
+  async findByID(trackerId) {
+    const tracker = await this.#trackerDAO.findById(trackerId);
     if (!tracker) {
       throw new NotFound(`El tracker (${tracker.id}) no fue encontrado`);
     }
