@@ -2,50 +2,47 @@ import { Exception, NotFound } from '../utils.js';
 import bcrypt from 'bcryptjs';
 
 export default class UserController {
-  constructor(userModel) {
-    this.userModel = userModel;
+  #userDAO;
+  constructor(userDAO) {
+    this.#userDAO = userDAO;
   }
 
   async create(newUser) {
     try {
-      const user = await this.userModel.findByUsername(newUser.username);
-
-      if (user) {
+      const exists = await this.#userDAO.findByID(newUser.username);
+      if (exists)
         throw new Exception(`Error usuario ya registrado`, 404);
-      }
-
-      await this.userModel.createUser(newUser);
-
-      return newUser;
+      const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+      const hash = await bcrypt.hash(user.password, salt);
+      user.password = hash; // actualizar la contrasenia para que sea el hash
+      return this.#userDAO.create(newUser);
     } catch (error) {
       throw new Exception(`Error creando usuario: ${error.message}`, 500);
     }
   }
 
   async getAll() {
-    const users = await this.userModel.getAllUsers();
+    const users = await this.#userDAO.getAll();
     return users;
   }
 
   async findByID(username) {
-    const user = await this.userModel.findByUsername(username);
-    if (!user) {
+    const user = await this.#userDAO.findByID(username);
+    if (!user)
       throw new NotFound(`El usuario (${username}) no fue encontrado`);
-    }
     return user;
   }
 
   async update(username, user) {
     try {
-      const updatedUser = await this.userModel.findByUsername(username); //probable no const
+      const updatedUser = await this.#userDAO.findByID(username); //probable no const
 
-      if (!updatedUser) {
+      if (!updatedUser)
         throw new NotFound(`El usuario (${username}) no fue encontrado`);
-      }
 
       //validar datos user?
 
-      updatedUser = await this.userModel.updateUser(username, user);
+      updatedUser = await this.#userDAO.update(username, user);
 
       return updatedUser;
     } catch (error) {
@@ -55,15 +52,14 @@ export default class UserController {
 
   async delete(username) {
     try {
-      const exist = await this.userModel.findByID(username); //probable no const
+      const exist = await this.#userDAO.findByID(username); //probable no const
 
-      if (!exist) {
+      if (!exist)
         throw new NotFound(`El usuario (${username}) no fue encontrado`);
-      }
 
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
-      const result = await this.userModel.deleteUser(username);
+      const result = await this.#userDAO.delete(username);
 
       return result;
     } catch (error) {
@@ -75,25 +71,14 @@ export default class UserController {
 
   async login(user) {
     try {
-      const exist = await this.userModel.findByUsername(user.username);
+      const exist = await this.#userDAO.findByID(user.username);
 
       if (!exist) throw new Exception('Usuario no existe', 404);
       if (!(await bcrypt.compare(user.password, exist.password)))
         throw new Exception(`Contraseña incorrecta`, 404);
-
       return;
     } catch (error) {
       throw new Exception(`Error al ingresar: ${error.message}`, 500);
-    }
-  }
-
-  async register(newUser) {
-    //probable no exista :)
-    try {
-      await this.userModel.createUser(newUser);
-      return newUser;
-    } catch (error) {
-      throw new Exception(`Error al registrarse: ${error.message}`, 500);
     }
   }
 }

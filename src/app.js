@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 
 import UserDAO from './dao/userDAO.js';
-import UserModel from './model/userModel.js';
 import UserController from './controller/userController.js';
 
 import createUserRouter from './routers/api/userRouter.js';
@@ -16,8 +15,7 @@ export default async function createApp(db) {
   const app = express();
 
   const userDao = new UserDAO(db);
-  const userModel = new UserModel(userDao);
-  const userController = new UserController(userModel);
+  const userController = new UserController(userDao);
   const userRouter = createUserRouter(userController);
   const authRouter = createAuthRouter(userController);
   const dashboardRouter = createDashboardRouter(userController);
