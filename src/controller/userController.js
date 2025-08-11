@@ -10,8 +10,7 @@ export default class UserController {
   async create(newUser) {
     try {
       const exists = await this.#userDAO.findByID(newUser.username);
-      if (exists)
-        throw new Exception(`Error usuario ya registrado`, 404);
+      if (exists) throw new Exception(`Error usuario ya registrado`, 404);
       const salt = await bcrypt.genSalt(12); // 12 rondas de sason
       const hash = await bcrypt.hash(user.password, salt);
       user.password = hash; // actualizar la contrasenia para que sea el hash
@@ -28,8 +27,7 @@ export default class UserController {
 
   async findByID(username) {
     const user = await this.#userDAO.findByID(username);
-    if (!user)
-      throw new NotFound(`El usuario (${username}) no fue encontrado`);
+    if (!user) throw new NotFound(`El usuario (${username}) no fue encontrado`);
     return user;
   }
 
@@ -37,8 +35,7 @@ export default class UserController {
     try {
       const updatedUser = await this.#userDAO.findByID(username); //probable no const
 
-      if (!updatedUser)
-        throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       //validar datos user?
 
@@ -54,8 +51,7 @@ export default class UserController {
     try {
       const exist = await this.#userDAO.findByID(username); //probable no const
 
-      if (!exist)
-        throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
