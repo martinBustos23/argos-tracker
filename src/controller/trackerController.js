@@ -8,8 +8,6 @@ export default class TrackerController {
 
   async createTracker(tracker) {
     try {
-      const exists = await this.#trackerDAO.findById(tracker.id);
-      if (!exists) throw new Exception('Tracker ya existe', 404);
       return await this.#trackerDAO.create(tracker);
     } catch (error) {
       throw new Exception(`Error creando tracker: ${error.message}`, 500);
