@@ -7,18 +7,15 @@ export default class TrackerDAO {
   }
 
   async create(tracker) {
-    let { id, petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius } = tracker;
+    const columns = Object.getOwnPropertyNames(tracker);
 
-    const queryMsg =
-      'INSERT INTO trackers (petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius) VALUES (?, ?, ?, ?, ?, ?)';
-    const [result] = await this.#db.execute(queryMsg, [
-      petName,
-      frequency,
-      lowBat,
-      safeZoneLat,
-      safeZoneLon,
-      safeZoneRadius,
-    ]);
+    // extraer descriptor y placeholders del mensaje del query
+    const descriptor = columns.toString();
+    const placeHolders = columns.map((column) => '?').toString();
+    const values = columns.map((column) => tracker[column]);
+
+    const queryMsg = `INSERT INTO trackers (${descriptor}) VALUES (${placeHolders})`;
+    const [result] = await this.#db.execute(queryMsg, values);
 
     return this.findById(result.insertId);
   }
@@ -29,12 +26,21 @@ export default class TrackerDAO {
     return new TrackerDTO(result[0]);
   }
 
-  async update(tracker) {
-    let { id, petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active } =
-      tracker;
+  async update(id, tracker) {
+    // let { id, petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active } =
+    //   tracker;
+
+    const columns = Object.getOwnPropertyNames(tracker);
+
+    // extraer descriptor y placeholders del mensaje del query
+    const descriptor = columns.join(' = ?,').concat(' = ?');
+    const values = columns.map((column) => tracker[column]);
+
+    console.log(descriptor);
+    console.log(values);
     await this.#db.execute(
-      'UPDATE trackers SET petName = ?, frecuency = ?, lowBat = ?, safeZoneLat = ?, safeZoneLon = ?, safeZoneRadius = ?, active = ? WHERE username = ?',
-      [petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active]
+      `UPDATE trackers SET ${descriptor} WHERE id = ?`,
+      [...values, id]
     );
     return { id, ...tracker };
   }
