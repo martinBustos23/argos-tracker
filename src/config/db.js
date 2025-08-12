@@ -7,12 +7,19 @@ export async function initDB() {
   if (db) return db;
 
   try {
-    db = await mysql.createConnection({
+    db = mysql.createPool({
       host: config.DB_URL,
       port: config.DB_PORT,
       database: config.DB_NAME,
       user: config.DB_USER,
       password: config.DB_PASSWORD,
+      waitForConnections: true,
+      connectionLimit: 10,
+      maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+      idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+      queueLimit: 0,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
     });
     console.log('Conexión establecida con la base de datos');
     return db;
