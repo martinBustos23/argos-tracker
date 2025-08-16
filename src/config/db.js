@@ -15,8 +15,8 @@ export async function initDB() {
       password: config.DB_PASSWORD,
       waitForConnections: true,
       connectionLimit: 10,
-      maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-      idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+      maxIdle: 10,  // conexiones maximas
+      idleTimeout: 60000, // milisegundos
       queueLimit: 0,
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,
