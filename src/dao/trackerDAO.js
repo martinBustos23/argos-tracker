@@ -51,4 +51,15 @@ export default class TrackerDAO {
     const [rows] = await this.#db.execute('SELECT * FROM trackers');
     return rows.map((row) => new TrackerDTO(row));
   }
+
+  async countActive() {
+    const [result] = await this.#db.execute('SELECT COUNT(*) FROM trackers WHERE active = true');
+    return result[0]['COUNT(*)'];
+  }
+
+  async createLogTable(tracker) {
+    const columns = 'timestamp DATE NOT NULL, type INT NOT NULL, payload VARCHAR(128) NOT NULL';
+    await this.#db.execute(`CREATE TABLE tracker_${tracker.id}_log (${columns})`);
+    return { message: `Log trackers ${tracker.id} creado` };
+  }
 }

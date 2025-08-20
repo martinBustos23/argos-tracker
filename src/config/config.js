@@ -10,4 +10,6 @@ export default {
   DB_PASSWORD: process.env.DB_PASSWORD,
 
   JWT_KEY: process.env.JWT_KEY,
+
+  MAX_TRACKERS: process.env.MAX_TRACKERS,
 };

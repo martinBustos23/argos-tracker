@@ -1,4 +1,5 @@
 import { Exception, NotFound } from '../utils.js';
+import config from '../config/config.js';
 
 export default class TrackerController {
   #trackerDAO;
@@ -8,7 +9,11 @@ export default class TrackerController {
 
   async createTracker(tracker) {
     try {
-      return await this.#trackerDAO.create(tracker);
+      if ((await this.#trackerDAO.countActive()) >= config.MAX_TRACKERS)
+        throw new Exception('Cantidad maxima de trackers alcanzada');
+      const newTracker = await this.#trackerDAO.create(tracker);
+      console.log(await this.#trackerDAO.createLogTable(newTracker));
+      return newTracker;
     } catch (error) {
       throw new Exception(`Error creando tracker: ${error.message}`, 500);
     }
