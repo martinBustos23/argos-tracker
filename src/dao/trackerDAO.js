@@ -38,10 +38,7 @@ export default class TrackerDAO {
 
     console.log(descriptor);
     console.log(values);
-    await this.#db.execute(
-      `UPDATE trackers SET ${descriptor} WHERE id = ?`,
-      [...values, id]
-    );
+    await this.#db.execute(`UPDATE trackers SET ${descriptor} WHERE id = ?`, [...values, id]);
     return { id, ...tracker };
   }
 
