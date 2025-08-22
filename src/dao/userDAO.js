@@ -46,4 +46,9 @@ export default class UserDAO {
     await this.#db.execute('DELETE FROM users WHERE username = ?', [username]);
     return { message: `Usuario ${username} eliminado` };
   }
+
+  async getAllInactive() {
+    const [rows] = await this.#db.execute('SELECT * FROM users WHERE active = false');
+    return rows.map((row) => new UserDTO(row));
+  }
 }

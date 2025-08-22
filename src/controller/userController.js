@@ -47,6 +47,15 @@ export default class UserController {
     }
   }
 
+  async getInactiveUsers() {
+    try{
+      const users = await this.#userDAO.getAllInactive();
+      return users;
+    } catch (error) {
+      throw new Exception(`Error buscando usuarios: ${error.message}`, 500);
+    }
+  }
+
   async delete(username) {
     try {
       const exist = await this.#userDAO.findByID(username); //probable no const

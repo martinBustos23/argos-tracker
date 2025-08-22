@@ -23,6 +23,18 @@ export default function createUserRouter(UserController) {
 
   router.get('/users', async (req, res) => {
     try {
+      
+      const user = await UserController.findByID(req.user);
+      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
+
+      const active = req.query.active === 'true'; // convertir a bool
+      if (!active) {
+        const users = await UserController.getInactiveUsers();
+        console.log('-- Encontrar usuario/s inactivos --');
+        console.table(users); //test
+        return res.status(200).json(users);
+      }
+
       const users = await UserController.getAll();
 
       console.log('-- Encontrar usuario/s --');
