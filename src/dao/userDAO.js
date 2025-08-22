@@ -33,12 +33,16 @@ export default class UserDAO {
     return new UserDTO(result[0]);
   }
 
-  async update(user) {
-    const { username, password, admin, active } = user;
-    await this.#db.execute(
-      'UPDATE users SET password = ?, admin = ?, active = ? WHERE username = ?',
-      [password, admin, active, username]
-    );
+  async update(username, user) {
+    const columns = Object.getOwnPropertyNames(user);
+
+    // extraer descriptor y placeholders del mensaje del query
+    const descriptor = columns.join(' = ?,').concat(' = ?');
+    const values = columns.map((column) => user[column]);
+
+    console.log(descriptor);
+    console.log(values);
+    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE username = ?`, [...values, username]);
     return { username, ...user };
   }
 

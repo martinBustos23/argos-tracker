@@ -37,11 +37,14 @@ export default class UserController {
 
       if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
-      //validar datos user?
+      // si se actualiza la contrasenia hashearla
+      if (user.password) {
+        const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+        const hash = await bcrypt.hash(user.password, salt);
+        user.password = hash; // actualizar la contrasenia para que sea el hash
+      }
 
-      updatedUser = await this.#userDAO.update(username, user);
-
-      return updatedUser;
+      return await this.#userDAO.update(username, user);
     } catch (error) {
       throw new Exception(`Error actualizando el usuario: ${error.message}`, 500);
     }
