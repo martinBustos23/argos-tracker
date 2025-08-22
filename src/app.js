@@ -13,7 +13,7 @@ import createUserRouter from './routers/api/userRouter.js';
 import createAuthRouter from './routers/views/authRouter.js';
 import createDashboardRouter from './routers/views/dashboardRouter.js';
 import createTrackerRouter from './routers/api/trackerRouter.js';
-import { __dirname } from './utils.js';
+import { __dirname, Exception } from './utils.js';
 
 export default async function createApp(db) {
   const app = express();
