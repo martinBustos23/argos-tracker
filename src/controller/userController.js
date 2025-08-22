@@ -51,7 +51,7 @@ export default class UserController {
   }
 
   async getInactiveUsers() {
-    try{
+    try {
       const users = await this.#userDAO.getAllInactive();
       return users;
     } catch (error) {

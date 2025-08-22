@@ -58,7 +58,8 @@ export default class TrackerDAO {
   }
 
   async createLogTable(tracker) {
-    const columns = 'timestamp DATE NOT NULL, level INT NOT NULL, type INT NOT NULL, payload VARCHAR(128) NOT NULL';
+    const columns =
+      'timestamp DATE NOT NULL, level INT NOT NULL, type INT NOT NULL, payload VARCHAR(128) NOT NULL';
     await this.#db.execute(`CREATE TABLE tracker_${tracker.id}_log (${columns})`);
     console.log(`Log trackers ${tracker.id} creado`);
   }

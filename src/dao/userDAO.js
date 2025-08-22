@@ -42,7 +42,10 @@ export default class UserDAO {
 
     console.log(descriptor);
     console.log(values);
-    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE username = ?`, [...values, username]);
+    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE username = ?`, [
+      ...values,
+      username,
+    ]);
     return { username, ...user };
   }
 

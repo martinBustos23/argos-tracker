@@ -23,7 +23,6 @@ export default function createUserRouter(UserController) {
 
   router.get('/users', async (req, res) => {
     try {
-      
       const user = await UserController.findByID(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
 
