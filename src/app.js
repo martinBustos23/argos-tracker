@@ -5,12 +5,15 @@ import path from 'path';
 
 import UserDAO from './dao/userDAO.js';
 import UserController from './controller/userController.js';
+import UserLogDAO from './dao/userLogDAO.js';
+import UserLogController from './controller/userLogController.js';
 
 import TrackerDAO from './dao/trackerDAO.js';
 import TrackerController from './controller/trackerController.js';
 
 import createUserRouter from './routers/api/userRouter.js';
 import createAuthRouter from './routers/views/authRouter.js';
+import createUserLogRouter from './routers/api/userLogRouter.js';
 import createDashboardRouter from './routers/views/dashboardRouter.js';
 import createTrackerRouter from './routers/api/trackerRouter.js';
 import { __dirname, Exception } from './utils.js';
@@ -19,11 +22,14 @@ export default async function createApp(db) {
   const app = express();
 
   const userDao = new UserDAO(db);
+  const userLogDao = new UserLogDAO(db);
   const trackerDao = new TrackerDAO(db);
-  const userController = new UserController(userDao);
+  const userLogController = new UserLogController(userLogDao);
+  const userController = new UserController(userDao, userLogController);
   const trackerController = new TrackerController(trackerDao);
   const userRouter = createUserRouter(userController);
   const authRouter = createAuthRouter(userController);
+  const userLogRouter = createUserLogRouter(userLogController)
   const dashboardRouter = createDashboardRouter(userController);
   const trackerRouter = createTrackerRouter(trackerController, userController);
 
@@ -43,6 +49,7 @@ export default async function createApp(db) {
 
   app.use('/api', userRouter);
   app.use('/api', trackerRouter);
+  app.use('/api', userLogRouter);
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {

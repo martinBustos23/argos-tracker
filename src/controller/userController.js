@@ -3,8 +3,10 @@ import bcrypt from 'bcryptjs';
 
 export default class UserController {
   #userDAO;
-  constructor(userDAO) {
+  #userLogController;
+  constructor(userDAO, userLogController) {
     this.#userDAO = userDAO;
+    this.#userLogController = userLogController;
   }
 
   async create(newUser) {
@@ -14,8 +16,11 @@ export default class UserController {
       const salt = await bcrypt.genSalt(12); // 12 rondas de sason
       const hash = await bcrypt.hash(newUser.password, salt);
       newUser.password = hash; // actualizar la contrasenia para que sea el hash
-      return this.#userDAO.create(newUser);
+      const result = await this.#userDAO.create(newUser);
+      await this.#userLogController.addRegister(newUser.username, true);
+      return result;
     } catch (error) {
+      await this.#userLogController.addRegister(newUser.username, false);
       throw new Exception(`Error creando usuario: ${error.message}`, 500);
     }
   }
@@ -84,8 +89,10 @@ export default class UserController {
       if (!exist) throw new Exception('Usuario no existe', 404);
       if (!(await bcrypt.compare(user.password, exist.password)))
         throw new Exception(`Contraseña incorrecta`, 404);
+      await this.#userLogController.addLogin(user.username, true);
       return;
     } catch (error) {
+      await this.#userLogController.addLogin(user.username, false);
       throw new Exception(`Error al ingresar: ${error.message}`, 500);
     }
   }
