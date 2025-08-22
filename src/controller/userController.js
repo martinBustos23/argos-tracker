@@ -12,8 +12,8 @@ export default class UserController {
       const exists = await this.#userDAO.findByID(newUser.username);
       if (exists) throw new Exception(`Error usuario ya registrado`, 404);
       const salt = await bcrypt.genSalt(12); // 12 rondas de sason
-      const hash = await bcrypt.hash(user.password, salt);
-      user.password = hash; // actualizar la contrasenia para que sea el hash
+      const hash = await bcrypt.hash(newUser.password, salt);
+      newUser.password = hash; // actualizar la contrasenia para que sea el hash
       return this.#userDAO.create(newUser);
     } catch (error) {
       throw new Exception(`Error creando usuario: ${error.message}`, 500);
