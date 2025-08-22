@@ -47,4 +47,15 @@ export default class TrackerController {
       throw new Exception(`Error actualizando el tracker: ${error.message}`, 500);
     }
   }
+
+  async deleteTracker(id) {
+    try {
+      const exist = await this.#trackerDAO.findById(id);
+      if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
+
+      return this.#trackerDAO.delete(id);
+    } catch (error) {
+      throw new Exception(`Error borrando el tracker: ${error.message}`, 500);
+    }
+  }
 }
