@@ -12,7 +12,7 @@ export default class TrackerController {
       if ((await this.#trackerDAO.countActive()) >= config.MAX_TRACKERS)
         throw new Exception('Cantidad maxima de trackers alcanzada');
       const newTracker = await this.#trackerDAO.create(tracker);
-      console.log(await this.#trackerDAO.createLogTable(newTracker));
+      await this.#trackerDAO.createLogTable(newTracker);
       return newTracker;
     } catch (error) {
       throw new Exception(`Error creando tracker: ${error.message}`, 500);
