@@ -52,3 +52,12 @@ export const authToken = (req, res, next) => {
     next();
   });
 };
+
+export const getUserFromToken = (token) => {
+  let username;
+  jwt.verify(token, config.JWT_KEY, (error, credentials) => {
+    if (error) throw new Exception('No se pudo autenticar al usuario', 500);
+    username = credentials.username;
+  });
+  return username;
+}
