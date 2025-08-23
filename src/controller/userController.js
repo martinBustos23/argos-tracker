@@ -76,9 +76,10 @@ export default class UserController {
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
       const result = await this.#userDAO.delete(username);
-
+      await this.#userLogController.addDeletion(username, true);
       return result;
     } catch (error) {
+      await this.#userLogController.addDeletion(username, false);
       throw new Exception(`Error eliminando el usuario: ${error.message}`, 500);
     }
   }

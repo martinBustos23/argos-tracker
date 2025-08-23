@@ -59,6 +59,14 @@ export default class UserLogController {
     }
   }
 
+  async addDeletion(username, status) {
+    try {
+      return await this.#addLog('INFO', username, 'Deletion', null, status);
+    } catch (error) {
+      throw new Exception(`Error creando log: ${error.message}`, 500);
+    }
+  }
+
   async getLatest(n) {
     try {
       return this.#userLogDAO.getLatest(n);

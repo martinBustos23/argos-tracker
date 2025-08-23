@@ -15,7 +15,7 @@ export default class UserLogDAO {
   }
 
   async getLatest(n) {
-    const [logs] = await this.#db.execute(`SELECT * FROM usersLog LIMIT ${n}`);
+    const [logs] = await this.#db.execute(`SELECT * FROM usersLog ORDER BY timestamp DESC LIMIT ${n}`);
     return logs.map((log) => new UserLogDTO(log));
   }
 
