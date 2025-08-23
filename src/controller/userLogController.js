@@ -51,6 +51,14 @@ export default class UserLogController {
     }
   }
 
+  async addLogout(username, status) {
+    try {
+      return await this.#addLog('INFO', username, 'Logout', null, status);
+    } catch (error) {
+      throw new Exception(`Error creando log: ${error.message}`, 500);
+    }
+  }
+
   async getLatest(n) {
     try {
       return this.#userLogDAO.getLatest(n);

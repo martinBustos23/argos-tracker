@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateToken } from '../../utils.js';
+import { generateToken, getUserFromToken } from '../../utils.js';
 
 export default (UserController) => {
   const router = express.Router();
@@ -37,7 +37,11 @@ export default (UserController) => {
   router.get('/logout', async (req, res) => {
     try {
       const token = req.cookies.authorization;
-      if (token) return res.clearCookie('authorization').redirect('/login');
+      if (token) {
+        const username = getUserFromToken(token);
+        await UserController.logout(username);
+        return res.clearCookie('authorization').redirect('/login');
+      }
       res.redirect('/login');
     } catch (error) {
       res.status(500).json({ error: error.message });

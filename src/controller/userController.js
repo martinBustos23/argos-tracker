@@ -98,4 +98,13 @@ export default class UserController {
       throw new Exception(`Error al ingresar: ${error.message}`, 500);
     }
   }
+
+  async logout(username) {
+    try {
+      await this.#userLogController.addLogout(username, true);
+    } catch (error) {
+      await this.#userLogController.addLogout(username, false);
+      throw new Exception(`Error al cerrar sesion: ${error.message}`, 500);
+    }
+  }
 }
