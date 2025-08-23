@@ -9,16 +9,18 @@ export default class UserLogController {
 
   async #addLog(type, id, action, description, status) {
     try {
-      return this.#trackerLogDAO.create(new LogDTO({
-        timestamp: new Date()
+      return this.#trackerLogDAO.create(
+        new LogDTO({
+          timestamp: new Date()
             .toISOString() // obtiente el timestamp YYYY-MM-DDTHH:mm:ss.sssZ
             .replace(/[A-Z]/g, ' '), // reemplaza los caracteres T y Z por espacios
-        level: type,
-        id: id,
-        action: action,
-        description: description,
-        status: status
-      }));
+          level: type,
+          id: id,
+          action: action,
+          description: description,
+          status: status,
+        })
+      );
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
@@ -35,7 +37,9 @@ export default class UserLogController {
   async addUpdate(id, trackerUpdate, level) {
     try {
       const columns = Object.getOwnPropertyNames(trackerUpdate);
-      const description = columns.map((column) => `${column} = ${trackerUpdate[column]}`).join(', ');
+      const description = columns
+        .map((column) => `${column} = ${trackerUpdate[column]}`)
+        .join(', ');
 
       return await this.#addLog(level, id, 'Update', description);
     } catch (error) {

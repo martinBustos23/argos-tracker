@@ -17,8 +17,9 @@ export default class LogDAO {
   }
 
   async getLatest(n) {
-    const [logs] = await this.#db.execute(`SELECT * FROM ${this.#table} ORDER BY timestamp DESC LIMIT ${n}`);
+    const [logs] = await this.#db.execute(
+      `SELECT * FROM ${this.#table} ORDER BY timestamp DESC LIMIT ${n}`
+    );
     return logs.map((log) => new LogDTO(log));
   }
-
 }

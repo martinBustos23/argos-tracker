@@ -9,16 +9,18 @@ export default class UserLogController {
 
   async #addLog(type, username, action, description, status) {
     try {
-      return this.#userLogDAO.create(new LogDTO({
-        timestamp: new Date()
+      return this.#userLogDAO.create(
+        new LogDTO({
+          timestamp: new Date()
             .toISOString() // obtiente el timestamp YYYY-MM-DDTHH:mm:ss.sssZ
             .replace(/[A-Z]/g, ' '), // reemplaza los caracteres T y Z por espacios
-        level: type,
-        id: username,
-        action: action,
-        description: description,
-        status: status
-      }));
+          level: type,
+          id: username,
+          action: action,
+          description: description,
+          status: status,
+        })
+      );
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
@@ -43,7 +45,9 @@ export default class UserLogController {
   async addUpdate(username, userUpdate, level) {
     try {
       const columns = Object.getOwnPropertyNames(userUpdate);
-      const description = columns.map((column) => `${column} = ${column !== 'password' ? userUpdate[column] : '...'}`).join(', ');
+      const description = columns
+        .map((column) => `${column} = ${column !== 'password' ? userUpdate[column] : '...'}`)
+        .join(', ');
 
       return await this.#addLog(level, username, 'Update', description);
     } catch (error) {

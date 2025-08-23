@@ -60,4 +60,4 @@ export const getUserFromToken = (token) => {
     username = credentials.username;
   });
   return username;
-}
+};
