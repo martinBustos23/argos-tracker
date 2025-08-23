@@ -7,7 +7,7 @@ export default class UserLogController {
     this.#userLogDAO = userLogDAO;
   }
 
-  async #addLog(type, username, action, status) {
+  async #addLog(type, username, action, description, status) {
     try {
       return this.#userLogDAO.create(new UserLogDTO({
         timestamp: new Date()
@@ -16,6 +16,7 @@ export default class UserLogController {
         level: type,
         user: username,
         action: action,
+        description: description,
         status: status
       }));
     } catch (error) {
@@ -25,7 +26,7 @@ export default class UserLogController {
 
   async addLogin(username, status) {
     try {
-      return await this.#addLog('INFO', username, 'Login', status);
+      return await this.#addLog('INFO', username, 'Login', null, status);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
@@ -33,15 +34,18 @@ export default class UserLogController {
 
   async addRegistration(username, status) {
     try {
-      return await this.#addLog('INFO', username, 'Registration', status);
+      return await this.#addLog('INFO', username, 'Registration', null, status);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addUpdate(username, fields, status) {
+  async addUpdate(username, userUpdate, status) {
     try {
-      return await this.#addLog('INFO', username, 'Update', status);
+      const columns = Object.getOwnPropertyNames(userUpdate);
+      const description = columns.map((column) => `${column} = ${column !== 'password' ? userUpdate[column] : '...'}`).join(', ');
+
+      return await this.#addLog('INFO', username, 'Update', description, status);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }

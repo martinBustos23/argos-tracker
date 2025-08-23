@@ -4,6 +4,7 @@ export default class UserLog {
     this.level = log.level;
     this.user = log.user;
     this.action = log.action;
+    this.description = log.description;
     this.status = log.status;
   }
 }

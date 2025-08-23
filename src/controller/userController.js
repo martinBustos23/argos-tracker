@@ -48,9 +48,11 @@ export default class UserController {
         const hash = await bcrypt.hash(user.password, salt);
         user.password = hash; // actualizar la contrasenia para que sea el hash
       }
-
-      return await this.#userDAO.update(username, user);
+      const result = await this.#userDAO.update(username, user);
+      await this.#userLogController.addUpdate(username, user, true);
+      return result;
     } catch (error) {
+      await this.#userLogController.addUpdate(username, user, false);
       throw new Exception(`Error actualizando el usuario: ${error.message}`, 500);
     }
   }

@@ -7,10 +7,10 @@ export default class UserLogDAO {
   }
 
   async create(log) {
-    const { timestamp, level, user, action, status } = log;
+    const { timestamp, level, user, description, action, status } = log;
     await this.#db.execute(
-      'INSERT INTO usersLog (timestamp, level, user, action, status) VALUES (?, ?, ?, ?, ?)',
-      [timestamp, level, user, action, status]
+      'INSERT INTO usersLog (timestamp, level, user, action, description, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [timestamp, level, user, action, description, status]
     );
   }
 
