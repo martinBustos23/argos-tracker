@@ -15,6 +15,7 @@ import TrackerLogController from './controller/trackerLogController.js';
 import createUserRouter from './routers/api/userRouter.js';
 import createAuthRouter from './routers/views/authRouter.js';
 import createUserLogRouter from './routers/api/userLogRouter.js';
+import createTrackerLogRouter from './routers/api/trackerLogRouter.js';
 import createDashboardRouter from './routers/views/dashboardRouter.js';
 import createTrackerRouter from './routers/api/trackerRouter.js';
 import { __dirname, Exception } from './utils.js';
@@ -35,6 +36,7 @@ export default async function createApp(db) {
   const userLogRouter = createUserLogRouter(userLogController)
   const dashboardRouter = createDashboardRouter(userController);
   const trackerRouter = createTrackerRouter(trackerController, userController);
+  const trackerLogRouter = createTrackerLogRouter(trackerLogController);
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname + '/views'));
@@ -50,7 +52,7 @@ export default async function createApp(db) {
   app.use('/', authRouter);
   app.use('/dashboard', dashboardRouter);
 
-  app.use('/api', userRouter, trackerRouter, userLogRouter);
+  app.use('/api', userRouter, trackerRouter, userLogRouter, trackerLogRouter);
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {
