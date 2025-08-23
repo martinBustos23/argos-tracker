@@ -5,7 +5,7 @@ import path from 'path';
 
 import UserDAO from './dao/userDAO.js';
 import UserController from './controller/userController.js';
-import UserLogDAO from './dao/userLogDAO.js';
+import LogDAO from './dao/logDAO.js';
 import UserLogController from './controller/userLogController.js';
 
 import TrackerDAO from './dao/trackerDAO.js';
@@ -22,7 +22,7 @@ export default async function createApp(db) {
   const app = express();
 
   const userDao = new UserDAO(db);
-  const userLogDao = new UserLogDAO(db);
+  const userLogDao = new LogDAO(db, 'usersLog');
   const trackerDao = new TrackerDAO(db);
   const userLogController = new UserLogController(userLogDao);
   const userController = new UserController(userDao, userLogController);
