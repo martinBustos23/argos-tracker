@@ -1,8 +1,8 @@
-export default class UserLog {
+export default class Log {
   constructor(log) {
     this.timestamp = log.timestamp;
     this.level = log.level;
-    this.user = log.user;
+    this.id = log.id;
     this.action = log.action;
     this.description = log.description;
     this.status = log.status;
