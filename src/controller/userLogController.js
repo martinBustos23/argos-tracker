@@ -24,44 +24,44 @@ export default class UserLogController {
     }
   }
 
-  async addLogin(username, status) {
+  async addLogin(username, level) {
     try {
-      return await this.#addLog('INFO', username, 'Login', null, status);
+      return await this.#addLog(level, username, 'Login', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addRegistration(username, status) {
+  async addRegistration(username, level) {
     try {
-      return await this.#addLog('INFO', username, 'Registration', null, status);
+      return await this.#addLog(level, username, 'Registration', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addUpdate(username, userUpdate, status) {
+  async addUpdate(username, userUpdate, level) {
     try {
       const columns = Object.getOwnPropertyNames(userUpdate);
       const description = columns.map((column) => `${column} = ${column !== 'password' ? userUpdate[column] : '...'}`).join(', ');
 
-      return await this.#addLog('INFO', username, 'Update', description, status);
+      return await this.#addLog(level, username, 'Update', description);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addLogout(username, status) {
+  async addLogout(username, level) {
     try {
-      return await this.#addLog('INFO', username, 'Logout', null, status);
+      return await this.#addLog(level, username, 'Logout', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addDeletion(username, status) {
+  async addDeletion(username, level) {
     try {
-      return await this.#addLog('INFO', username, 'Deletion', null, status);
+      return await this.#addLog(level, username, 'Deletion', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }

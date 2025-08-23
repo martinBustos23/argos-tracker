@@ -17,10 +17,10 @@ export default class UserController {
       const hash = await bcrypt.hash(newUser.password, salt);
       newUser.password = hash; // actualizar la contrasenia para que sea el hash
       const result = await this.#userDAO.create(newUser);
-      await this.#userLogController.addRegistration(newUser.username, true);
+      await this.#userLogController.addRegistration(newUser.username, 'INFO');
       return result;
     } catch (error) {
-      await this.#userLogController.addRegistration(newUser.username, false);
+      await this.#userLogController.addRegistration(newUser.username, 'ERROR');
       throw new Exception(`Error creando usuario: ${error.message}`, 500);
     }
   }
@@ -49,10 +49,10 @@ export default class UserController {
         user.password = hash; // actualizar la contrasenia para que sea el hash
       }
       const result = await this.#userDAO.update(username, user);
-      await this.#userLogController.addUpdate(username, user, true);
+      await this.#userLogController.addUpdate(username, user, 'INFO');
       return result;
     } catch (error) {
-      await this.#userLogController.addUpdate(username, user, false);
+      await this.#userLogController.addUpdate(username, user, 'ERROR');
       throw new Exception(`Error actualizando el usuario: ${error.message}`, 500);
     }
   }
@@ -76,10 +76,10 @@ export default class UserController {
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
       const result = await this.#userDAO.delete(username);
-      await this.#userLogController.addDeletion(username, true);
+      await this.#userLogController.addDeletion(username, 'INFO');
       return result;
     } catch (error) {
-      await this.#userLogController.addDeletion(username, false);
+      await this.#userLogController.addDeletion(username, 'ERROR');
       throw new Exception(`Error eliminando el usuario: ${error.message}`, 500);
     }
   }
@@ -93,19 +93,19 @@ export default class UserController {
       if (!exist) throw new Exception('Usuario no existe', 404);
       if (!(await bcrypt.compare(user.password, exist.password)))
         throw new Exception(`Contraseña incorrecta`, 404);
-      await this.#userLogController.addLogin(user.username, true);
+      await this.#userLogController.addLogin(user.username, 'INFO');
       return;
     } catch (error) {
-      await this.#userLogController.addLogin(user.username, false);
+      await this.#userLogController.addLogin(user.username, 'ERROR');
       throw new Exception(`Error al ingresar: ${error.message}`, 500);
     }
   }
 
   async logout(username) {
     try {
-      await this.#userLogController.addLogout(username, true);
+      await this.#userLogController.addLogout(username, 'INFO');
     } catch (error) {
-      await this.#userLogController.addLogout(username, false);
+      await this.#userLogController.addLogout(username, 'ERROR');
       throw new Exception(`Error al cerrar sesion: ${error.message}`, 500);
     }
   }

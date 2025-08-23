@@ -24,28 +24,28 @@ export default class UserLogController {
     }
   }
 
-  async addLinking(id, status) {
+  async addLinking(id, level) {
     try {
-      return await this.#addLog('INFO', id, 'Link', null, status);
+      return await this.#addLog(level, id, 'Link', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addUpdate(id, trackerUpdate, status) {
+  async addUpdate(id, trackerUpdate, level) {
     try {
       const columns = Object.getOwnPropertyNames(trackerUpdate);
       const description = columns.map((column) => `${column} = ${trackerUpdate[column]}`).join(', ');
 
-      return await this.#addLog('INFO', id, 'Update', description, status);
+      return await this.#addLog(level, id, 'Update', description);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addUnlinking(id, status) {
+  async addUnlinking(id, level) {
     try {
-      return await this.#addLog('INFO', id, 'Unlink', null, status);
+      return await this.#addLog(level, id, 'Unlink', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }

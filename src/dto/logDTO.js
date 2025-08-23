@@ -5,6 +5,5 @@ export default class Log {
     this.id = log.id;
     this.action = log.action;
     this.description = log.description;
-    this.status = log.status;
   }
 }
