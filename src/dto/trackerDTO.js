@@ -7,6 +7,9 @@ export default class TrackerDTO {
     this.safeZoneLat = tracker.safeZoneLat;
     this.safeZoneLon = tracker.safeZoneLon;
     this.safeZoneRadius = tracker.safeZoneRadius;
+    this.enableSafeZone = tracker.enableSafeZone;
+    this.enableSoundAlert = tracker.enableSoundAlert;
+    this.emergencyFrequency = tracker.emergencyFrequency;
     this.active = tracker.active;
   }
 }
