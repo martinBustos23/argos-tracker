@@ -10,6 +10,7 @@ import UserLogController from './controller/userLogController.js';
 
 import TrackerDAO from './dao/trackerDAO.js';
 import TrackerController from './controller/trackerController.js';
+import TrackerLogController from './controller/trackerLogController.js';
 
 import createUserRouter from './routers/api/userRouter.js';
 import createAuthRouter from './routers/views/authRouter.js';
@@ -24,9 +25,11 @@ export default async function createApp(db) {
   const userDao = new UserDAO(db);
   const userLogDao = new LogDAO(db, 'usersLog');
   const trackerDao = new TrackerDAO(db);
+  const trackerLogDao = new LogDAO(db, 'trackersLog');
   const userLogController = new UserLogController(userLogDao);
   const userController = new UserController(userDao, userLogController);
-  const trackerController = new TrackerController(trackerDao);
+  const trackerLogController = new TrackerLogController(trackerLogDao);
+  const trackerController = new TrackerController(trackerDao, trackerLogController);
   const userRouter = createUserRouter(userController);
   const authRouter = createAuthRouter(userController);
   const userLogRouter = createUserLogRouter(userLogController)

@@ -1,5 +1,5 @@
 import { Exception, NotFound } from '../utils.js';
-import UserLogDTO from '../dto/userLogDTO.js';
+import LogDTO from '../dto/logDTO.js';
 
 export default class UserLogController {
   #userLogDAO;
@@ -9,12 +9,12 @@ export default class UserLogController {
 
   async #addLog(type, username, action, description, status) {
     try {
-      return this.#userLogDAO.create(new UserLogDTO({
+      return this.#userLogDAO.create(new LogDTO({
         timestamp: new Date()
             .toISOString() // obtiente el timestamp YYYY-MM-DDTHH:mm:ss.sssZ
             .replace(/[A-Z]/g, ' '), // reemplaza los caracteres T y Z por espacios
         level: type,
-        user: username,
+        id: username,
         action: action,
         description: description,
         status: status

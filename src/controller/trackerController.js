@@ -3,8 +3,10 @@ import config from '../config/config.js';
 
 export default class TrackerController {
   #trackerDAO;
-  constructor(trackerDAO) {
+  #trackerLogController;
+  constructor(trackerDAO, trackerLogController) {
     this.#trackerDAO = trackerDAO;
+    this.#trackerLogController = trackerLogController;
   }
 
   async createTracker(tracker) {
@@ -12,9 +14,11 @@ export default class TrackerController {
       if ((await this.#trackerDAO.countActive()) >= config.MAX_TRACKERS)
         throw new Exception('Cantidad maxima de trackers alcanzada');
       const newTracker = await this.#trackerDAO.create(tracker);
+      await this.#trackerLogController.addLinking(newTracker.id, true);
       await this.#trackerDAO.createLogTable(newTracker);
       return newTracker;
     } catch (error) {
+      // await this.#trackerLogController.addLinking(newTracker.id, false);
       throw new Exception(`Error creando tracker: ${error.message}`, 500);
     }
   }
@@ -41,9 +45,10 @@ export default class TrackerController {
       //validar datos tracker?
 
       const updatedTracker = await this.#trackerDAO.update(id, tracker);
-
+      await this.#trackerLogController.addUpdate(id, true);
       return updatedTracker;
     } catch (error) {
+      await this.#trackerLogController.addUpdate(id, false);
       throw new Exception(`Error actualizando el tracker: ${error.message}`, 500);
     }
   }
