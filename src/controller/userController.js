@@ -17,10 +17,10 @@ export default class UserController {
       const hash = await bcrypt.hash(newUser.password, salt);
       newUser.password = hash; // actualizar la contrasenia para que sea el hash
       const result = await this.#userDAO.create(newUser);
-      await this.#userLogController.addRegister(newUser.username, true);
+      await this.#userLogController.addRegistration(newUser.username, true);
       return result;
     } catch (error) {
-      await this.#userLogController.addRegister(newUser.username, false);
+      await this.#userLogController.addRegistration(newUser.username, false);
       throw new Exception(`Error creando usuario: ${error.message}`, 500);
     }
   }
@@ -71,6 +71,7 @@ export default class UserController {
       const exist = await this.#userDAO.findByID(username); //probable no const
 
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      if (exist.admin) throw new Exception('No se puede borrar a administrador');
 
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
