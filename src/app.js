@@ -50,9 +50,7 @@ export default async function createApp(db) {
   app.use('/', authRouter);
   app.use('/dashboard', dashboardRouter);
 
-  app.use('/api', userRouter);
-  app.use('/api', trackerRouter);
-  app.use('/api', userLogRouter);
+  app.use('/api', userRouter, trackerRouter, userLogRouter);
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {
