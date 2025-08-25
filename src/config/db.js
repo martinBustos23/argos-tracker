@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import config from './config.js';
+import tables from './dbStructure.json' with { type: 'json' };
 
 let db = null;
 
@@ -22,6 +23,26 @@ export async function initDB() {
       keepAliveInitialDelay: 0,
     });
     console.log('Conexión establecida con la base de datos');
+    // inicializar tablas
+    for (const table of tables) {
+      let [result] = await db.execute(`SHOW TABLES LIKE '${table.name}'`);
+      if (!result.length)  // si no existe, crear la tabla segun dbSetructure.json
+      {
+        let queryMessage = 'CREATE TABLE ' + table.name + ' (';
+        for (let i = 0; i < table.fields.length; i++) {
+          const field = table.fields[i];
+          queryMessage += field.name + ' ' + field.type;
+          if (field.key) queryMessage += ' ' + field.key;
+          if (!field.nullable) queryMessage += ' NOT NULL';
+          if (field.default) queryMessage += ' DEFAULT ' + field.default;
+          if (field.extra) queryMessage += ' ' + field.extra;
+          if (i < table.fields.length - 1) queryMessage += ', ';
+        }
+        queryMessage += ')';
+        const [result] = await db.execute(queryMessage);
+        if (result) console.log(`Tabla ${table.name} creada`);
+      }
+    }
     return db;
   } catch (error) {
     console.error('', error.message);
