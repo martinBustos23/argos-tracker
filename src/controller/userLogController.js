@@ -9,18 +9,16 @@ export default class UserLogController {
 
   async #addLog(type, username, action, description, status) {
     try {
-      return this.#userLogDAO.create(
+      const log = this.#userLogDAO.create(
         new LogDTO({
-          timestamp: new Date()
-            .toISOString() // obtiente el timestamp YYYY-MM-DDTHH:mm:ss.sssZ
-            .replace(/[A-Z]/g, ' '), // reemplaza los caracteres T y Z por espacios
           level: type,
-          id: username,
+          source: username,
           action: action,
           description: description,
           status: status,
         })
       );
+      return log;
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }

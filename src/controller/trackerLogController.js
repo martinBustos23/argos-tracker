@@ -7,15 +7,12 @@ export default class UserLogController {
     this.#trackerLogDAO = trackerLogDAO;
   }
 
-  async #addLog(type, id, action, description, status) {
+  async #addLog(type, source, action, description, status) {
     try {
       return this.#trackerLogDAO.create(
         new LogDTO({
-          timestamp: new Date()
-            .toISOString() // obtiente el timestamp YYYY-MM-DDTHH:mm:ss.sssZ
-            .replace(/[A-Z]/g, ' '), // reemplaza los caracteres T y Z por espacios
           level: type,
-          id: id,
+          source: source,
           action: action,
           description: description,
           status: status,
@@ -26,30 +23,30 @@ export default class UserLogController {
     }
   }
 
-  async addLinking(id, level) {
+  async addLinking(source, level) {
     try {
-      return await this.#addLog(level, id, 'Link', null);
+      return await this.#addLog(level, source, 'Link', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addUpdate(id, trackerUpdate, level) {
+  async addUpdate(source, trackerUpdate, level) {
     try {
       const columns = Object.getOwnPropertyNames(trackerUpdate);
       const description = columns
         .map((column) => `${column} = ${trackerUpdate[column]}`)
         .join(', ');
 
-      return await this.#addLog(level, id, 'Update', description);
+      return await this.#addLog(level, source, 'Update', description);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }
   }
 
-  async addUnlinking(id, level) {
+  async addUnlinking(source, level) {
     try {
-      return await this.#addLog(level, id, 'Unlink', null);
+      return await this.#addLog(level, source, 'Unlink', null);
     } catch (error) {
       throw new Exception(`Error creando log: ${error.message}`, 500);
     }

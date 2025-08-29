@@ -8,13 +8,20 @@ export default class LogDAO {
     this.#table = table;
   }
 
+  async findLog(id) {
+    const [result] = await this.#db.execute('SELECT * FROM usersLog WHERE id = ?', [id]);
+    if (result.length === 0) return null;
+    return new LogDTO(result[0]);
+  }
+
   async create(log) {
-    const { timestamp, level, id, description, action } = log;
+    const {level, source, description, action } = log;
     const [result] = await this.#db.execute(
-      `INSERT INTO ${this.#table} (timestamp, level, id, action, description) VALUES (?, ?, ?, ?, ?)`,
-      [timestamp, level, id, action, description]
+      `INSERT INTO ${this.#table} (level, source, action, description) VALUES (?, ?, ?, ?)`,
+      [level, source, action, description]
     );
-    return log;
+    const resultLog = await this.findLog(result.insertId);
+    return resultLog;
   }
 
   async getLatest(n) {

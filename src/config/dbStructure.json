@@ -142,11 +142,19 @@
     "name": "usersLog",
     "fields": [
       {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
         "name": "timestamp",
         "type": "datetime",
         "key": null,
         "nullable": false,
-        "default": null,
+        "default": "utc_timestamp()",
         "extra": null
       },
       {
@@ -158,7 +166,7 @@
         "extra": null
       },
       {
-        "name": "id",
+        "name": "source",
         "type": "varchar(32)",
         "key": null,
         "nullable": true,
@@ -187,11 +195,19 @@
     "name": "trackersLog",
     "fields": [
       {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
         "name": "timestamp",
         "type": "datetime",
         "key": null,
         "nullable": false,
-        "default": null,
+        "default": "utc_timestamp()",
         "extra": null
       },
       {
@@ -203,7 +219,7 @@
         "extra": null
       },
       {
-        "name": "id",
+        "name": "source",
         "type": "varchar(32)",
         "key": null,
         "nullable": true,
