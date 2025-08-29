@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 import config from './config.js';
 import tables from './dbStructure.json' with { type: 'json' };
+import bcrypt from 'bcryptjs';
 
 let db = null;
 
@@ -42,6 +43,22 @@ export async function initDB() {
         const [result] = await db.execute(queryMessage);
         if (result) console.log(`Tabla ${table.name} creada`);
       }
+    }
+    //crear admin
+    const [result] = await db.query('SELECT * FROM users WHERE admin = ?', [[1]]);
+    if (!result.length)
+    {
+      const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+      const hash = await bcrypt.hash('admin', salt);
+      const [result] = await db.execute('INSERT INTO users (username, password, admin) VALUES (?, ?, ?)', [
+        'admin',
+        hash,
+        true
+      ]);
+      if (result) console.log('Administrador creado\nUsername: admin\nPassword: admin');
+    } else {
+      console.log("Lista de administradores");
+      result.forEach(admin => console.log(admin.username));
     }
     return db;
   } catch (error) {
