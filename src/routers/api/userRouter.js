@@ -26,6 +26,7 @@ export default function createUserRouter(UserController) {
       const user = await UserController.findByID(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
 
+      // obtener usuarios inactivos
       const active = req.query.active === 'true'; // convertir a bool
       if (!active) {
         const users = await UserController.getInactiveUsers();
