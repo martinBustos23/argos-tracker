@@ -61,7 +61,7 @@
               <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
 
               <h2 id="edit-username-title" class="modal-title">Editar usuario</h2>
-              <form class="edit-user__form" action="/api/users/:uid" method="PUT">
+              <form class="edit-user__form" action="/api/users/:uid" method="PUT" id="PUT">
 
                 <div class="edit-user__div">
                   <div class="form-group">
@@ -76,6 +76,7 @@
                   <div class="form-group">
                     <label for="rol">Rol</label>
                     <select id="rol" name="rol">
+                      <option value="" selected></option>
                       <option value="0">Usuario</option>
                       <option value="1">Admin</option>
                     </select>
@@ -85,7 +86,7 @@
 
               </form>
               <!-- formulario eliminar usuario en base uid -->
-              <form class="delete-user-form" action="/api/users/:uid" method="DELETE">
+              <form class="delete-user-form" action="/api/users/:uid" method="DELETE" id="DELETE">
                 <h2 id="delete-username-title" class="modal-title delete">Eliminar usuario</h2>
                 <button class="delete-btn" type="submit">Eliminar</button>
               </form>
@@ -437,6 +438,47 @@
         registerContainer.classList.toggle("active");
       });
 
+      document.querySelector(".edit-user__form")
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+          try {
+            let payload = {};
+            if (event.target.username.value)
+              payload.username = event.target.username.value;
+            if (event.target.password.value)
+              payload.password = event.target.password.value;
+            if (event.target.rol.value)
+              payload.rol = event.target.rol.value;
+            const url = event.target.action;
+            const response = await fetch(url, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload),
+            })
+            if (response.ok) return console.log("Usuario modificado exitosamente");
+            console.log("Ocurrio un error modificando al usuario");
+          } catch (error) {
+            console.log("Ocurrio un error modificando al usuario");
+          }
+        });
+
+      document.querySelector(".delete-user-form")
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+          try {
+            const url = event.target.action;
+            const response = await fetch(url, {
+              method: 'DELETE'
+            })
+            if (response.ok) return console.log("Usuario dado de baja");
+            console.log("Ocurrio un error dando de baja al usuario");
+          } catch (error) {
+            console.log("Ocurrio un error dando de baja al usuario");
+            console.log(error);
+          }
+        });
 
       document.querySelectorAll(".open-edit-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -445,6 +487,8 @@
           document.getElementById("edit-user-modal").style.display = "flex";
           document.getElementById("edit-username-title").textContent = "Editar usuario: " + username;
           document.getElementById("username_input").placeholder = username;
+          document.querySelector(".edit-user__form").action = "/api/users/" + username;
+          document.querySelector(".delete-user-form").action = "/api/users/" + username;
         });
       });
 
