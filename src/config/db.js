@@ -35,7 +35,7 @@ export async function initDB() {
           queryMessage += field.name + ' ' + field.type;
           if (field.key) queryMessage += ' ' + field.key;
           if (!field.nullable) queryMessage += ' NOT NULL';
-          if (field.default) queryMessage += ' DEFAULT ' + field.default;
+          if (field.default != null) queryMessage += ' DEFAULT ' + field.default;
           if (field.extra) queryMessage += ' ' + field.extra;
           if (i < table.fields.length - 1) queryMessage += ', ';
         }
