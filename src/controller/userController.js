@@ -95,7 +95,7 @@ export default class UserController {
         throw new Exception(`Contraseña incorrecta`, 404);
       const log = await this.#userLogController.addLogin(user.username, 'INFO');
       // obtener el timestamp del nuevo log, pasarlo a UTF y reemplazar T y Z del string
-      const timestamp = log.timestamp.toISOString().replace(/[A-Z]/g, ' ');
+      const timestamp = new Date(log.timestamp + ' UTC').toISOString().replace(/[A-Z]/g, ' ');
       // actualizar el atributo lastLogin del usuario
       await this.update(user.username, { lastLogin: timestamp });
       return;
