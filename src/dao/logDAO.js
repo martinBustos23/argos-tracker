@@ -9,7 +9,7 @@ export default class LogDAO {
   }
 
   async findLog(id) {
-    const [result] = await this.#db.execute('SELECT * FROM usersLog WHERE id = ?', [id]);
+    const [result] = await this.#db.execute(`SELECT * FROM ${this.#table} WHERE id = ?`, [id]);
     if (result.length === 0) return null;
     return new LogDTO(result[0]);
   }
