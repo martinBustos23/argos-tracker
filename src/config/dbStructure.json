@@ -144,7 +144,7 @@
       {
         "name": "timestamp",
         "type": "datetime",
-        "key": "primary key",
+        "key": null,
         "nullable": false,
         "default": null,
         "extra": null
@@ -189,7 +189,7 @@
       {
         "name": "timestamp",
         "type": "datetime",
-        "key": "primary key",
+        "key": null,
         "nullable": false,
         "default": null,
         "extra": null
