@@ -1,9 +1,379 @@
-<%- include('../layouts/header', {title: 'general-title'}); %>
+<%- include('../layouts/header', {title: 'general-title' }); %>
 
-<%- include('../layouts/sidebar'); %>
+  <%- include('../layouts/sidebar'); %>
 
-<div class="main-content">
-  <h1>Bienvenido a General</h1>
-</div>
+    <div class="main-content">
 
-<%- include('../layouts/footer'); %>
+      <%- include('../layouts/navbar', { title: 'Dashboard' , subtitle: 'Vista general del sistema' }); %>
+
+        <div class="main-content__body">
+
+          <div class="main-content__map">
+            <div class="content__trackers">
+              <h2>Dispositivos vinculados</h2>
+              <span>Seleccione para filtrar</span>
+
+              <section class="tracker-list">
+                <div class="tracker-list__btn" onclick="">
+                  <div class="tracker-list__img">img</div>
+                  <div class="tracker-list__info"> 
+                    <span class="label">Toto</span>
+                    <span class="label-name">Conectado</span>
+                  </div>
+                </div>
+
+                <div class="tracker-list__btn" onclick="">
+                  <div class="tracker-list__img">img</div>
+                  <div class="tracker-list__info"> 
+                    <span class="label">Mona</span>
+                    <span class="label-name">Desconectado</span>
+                  </div>
+                </div>
+
+                <div class="tracker-list__btn" onclick="">
+                  <div class="tracker-list__img">img</div>
+                  <div class="tracker-list__info"> 
+                    <span class="label">Theo</span>
+                    <span class="label-name">Conectado</span>
+                  </div>
+                </div>
+
+                <div class="add-btn" onclick="">
+                  <a href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
+                </div>
+              </section>
+
+            </div>
+
+            <div id="map"></div>
+          </div>
+
+          <div class="log-container">
+            <h2>Últimos datos recibidos</h2>
+            <table class="log-container__table">
+              <thead>
+                <tr>
+                  <th>Dispositivo</th>
+                  <th>Mascota</th>
+                  <th>Evento</th>
+                  <th>Latitud</th>
+                  <th>Longitud</th>
+                  <th>Fecha</th>
+                  <th>Ir al mapa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tracker 1</td>
+                  <td>Perro - Toto</td>
+                  <td>Inicio</td>
+                  <td>-34.6201</td>
+                  <td>-58.4334</td>
+                  <td>2025-05-30 10:00:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <tr>
+                  <td>Tracker 2</td>
+                  <td>Gato - Mona</td>
+                  <td>Movimiento</td>
+                  <td>-34.6205</td>
+                  <td>-58.4340</td>
+                  <td>2025-05-30 10:05:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <tr>
+                  <td>Tracker 3</td>
+                  <td>Perro - Rex</td>
+                  <td>Parada</td>
+                  <td>-34.6210</td>
+                  <td>-58.4350</td>
+                  <td>2025-05-30 10:10:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <tr>
+                  <td>Tracker 4</td>
+                  <td>Gato - Luna</td>
+                  <td>Inicio</td>
+                  <td>-34.6220</td>
+                  <td>-58.4360</td>
+                  <td>2025-05-30 10:15:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <!--  -->
+                <tr>
+                  <td>Tracker 1</td>
+                  <td>Perro - Toto</td>
+                  <td>Inicio</td>
+                  <td>-34.6201</td>
+                  <td>-58.4334</td>
+                  <td>2025-05-30 10:00:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <tr>
+                  <td>Tracker 2</td>
+                  <td>Gato - Mona</td>
+                  <td>Movimiento</td>
+                  <td>-34.6205</td>
+                  <td>-58.4340</td>
+                  <td>2025-05-30 10:05:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <tr>
+                  <td>Tracker 3</td>
+                  <td>Perro - Rex</td>
+                  <td>Parada</td>
+                  <td>-34.6210</td>
+                  <td>-58.4350</td>
+                  <td>2025-05-30 10:10:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+                <tr>
+                  <td>Tracker 4</td>
+                  <td>Gato - Luna</td>
+                  <td>Inicio</td>
+                  <td>-34.6220</td>
+                  <td>-58.4360</td>
+                  <td>2025-05-30 10:15:00</td>
+                  <td><i class="bi bi-compass"></i></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+    </div>
+
+    <style>
+      .main-content__body {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex: 1;
+        padding: .5rem 0rem 0rem;
+        background-color: rgba(170, 170, 170, 0.2);
+      }
+
+      .main-content__map {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        min-height: 90vh;
+      }
+
+      .content__trackers {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30%;
+        background-color: white;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        margin: 0rem 1rem .5rem;
+        border-radius: 5px;
+      }
+
+      .content__trackers h2 {
+        width: 100%;
+        text-align: center;
+        font-size: 1.5rem;
+        margin: .5rem 0rem 0rem;
+        color: #691c32;
+      }
+
+      .content__trackers span {
+        text-align: center;
+        font-size: 1rem;
+        color: #6d6d6d;
+        width: 100%;
+        padding-bottom: .25rem;
+        
+      }
+
+
+      #map {
+        width: 80%;
+        height: calc(90vh - .5rem);
+        border-radius: 10px;
+
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        border: 1px solid #aaa;
+        transition: all 0.25s ease-out;
+      }
+
+      #map:hover {
+        border: 1px solid rgba(69, 19, 33, 0.6);
+      }
+
+
+
+      .log-container {
+        display: block;
+        width: 100%;
+        height: 100vh;
+        padding: 1rem 0rem;
+        z-index: 1000;
+        box-shadow: 0px -20px 50px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .log-container h2 {
+        text-align: center;
+
+        /* padding-left: 1rem; */
+
+        font-weight: bold;
+        font-size: x-large;
+      }
+
+
+      .log-container__table {
+        width: 100%;
+        font-size: .9rem;
+        font-family: sans-serif;
+      }
+
+      .log-container__table thead tr {
+        background-color: white;
+        text-align: left;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+      }
+
+
+      .log-container__table th,
+      .log-container__table td {
+        padding: .5rem 1rem;
+        white-space: nowrap;
+      }
+
+
+      .log-container__table td {
+        padding: .5rem 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .log-container__table tbody tr {
+        transition: all .25s ease;
+      }
+
+      .log-container__table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .log-container__table tbody td:last-child {
+        text-align: center;
+      }
+
+
+      .tracker-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        width: 100%;
+        
+        margin: 1rem;
+        gap:1rem;
+      }
+
+
+      .tracker-list__btn {
+        display: flex;
+        flex-direction: row;
+        align-items: right;
+
+        width: 75%;
+        height: 75px;
+        padding: 10px 15px;
+
+        background-color: #691c32;
+        color: #ffe7e3;
+
+        border-radius: 5px;
+
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+
+        cursor: pointer;
+
+        transition: all 0.25s ease-out;
+      }
+
+      .tracker-list__btn:hover {
+        scale: 1.05;
+        box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .tracker-list__img{
+        width: 50px;
+        height: 50px;
+        background-color: white;
+        border-radius: 50%;
+        /* delete */
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: black;
+      }
+
+      .tracker-list__info{
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        margin-left : 1rem;
+      }
+      .tracker-list__info .label {
+        text-align: left;
+        font-weight: 500;
+        border-bottom: solid 1px #ffe7e3;
+        color: white;
+      }
+
+      .tracker-list__info .label-name {
+        text-align: center;
+        color: white;
+      }
+
+      .add-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+
+        min-width: 3.5rem;
+        max-height: 2rem;
+
+        /* padding: 0rem .25rem .3rem; */
+
+        font-weight: bold;
+        font-size: 1.5rem;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+
+        border: 1px solid #ccc;
+
+        cursor: pointer;
+
+        transition: all 0.2s ease-in-out;
+      }
+
+      .add-btn:hover {
+        border-color: #691c32;
+
+        box-shadow: 1px 1px 15px rgba(212, 77, 92, 0.4);
+      }
+
+    </style>
+
+    <script>    
+      var map = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([-34.6037, -58.3816], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      L.marker([-34.6037, -58.3816]).addTo(map)
+        .bindPopup('se te perdio el perrubi!!!')
+        .openPopup();
+    </script>
+
+    <%- include('../layouts/footer'); %>

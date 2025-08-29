@@ -1,29 +1,134 @@
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+/* 
+  Formato para mantener un orden...
+      Display
+      Tamaños
+      Espaciado
+      Tipografía
+      Colores
+      Bordes y sombras
+      Efectos de transición
+      Estilos de estado 
+*/
 
+body {
   width: 100%;
+
+  margin: 0;
   padding-right: 0;
   padding-left: 0;
   margin-right: 0;
   margin-left: 0;
+
+  font-family: 'Segoe UI', sans-serif;
+
 }
 
 .main-content {
+  min-height: 100vh;
+
   margin-left: 250px;
-  padding: 20px;
+
+  /* background: radial-gradient(circle, rgba(255, 255, 255, 1) 76%, rgba(238, 212, 201, 1) 100%); */
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
 }
 
+.main-content__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(170, 170, 170, 0.2);
+  min-height: 90vh;
+  min-width: 100%;
+}
+
+/*--------------navbar----------------*/
+.navbar {
+  width: 100%;
+  height: 10vh;
+  padding: 0 2rem;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.error-fix {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #343a40;
+  margin-bottom: 0.1rem;
+}
+
+.page-subtitle {
+  padding-left: 1px;
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.account-btn {
+  background-color: #691c32;
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.account-btn:hover {
+  background-color: #691c32d8;
+}
+
+.user-menu {
+  position: absolute;
+  top: 8vh;
+  right: 20px;
+  background-color: white;
+  border: 1px solid #691c32;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  min-width: 150px;
+  z-index: 2000;
+}
+
+.user-menu a {
+  padding: 10px;
+  text-decoration: none;
+  color: #691c32;
+  transition: all 0.2s;
+}
+
+.user-menu a:hover {
+  background-color: rgba(105, 28, 50, 0.15);
+}
+
+/*------------------------------------*/
+
+/*-------------sidebar----------------*/
 .sidebar {
   height: 100vh;
   width: 250px;
   background-color: #691c32;
+  /* background-color: #691c32; */
   color: white;
   padding-top: 30px;
   position: fixed;
   display: flex;
+  z-index: 2000;
   flex-direction: column;
   justify-content: space-between;
+
 }
 
 .sidebar .logo {
@@ -44,21 +149,24 @@ body {
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding-left: 30px;
 }
 
 .sidebar nav a {
+  padding-left: 30px;
+  padding-bottom: 10px;
+  padding-top: 10px;
   color: white;
   text-decoration: none;
   font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 10px;
+  transition: all 0.25s ease-in-out;
 }
 
 .sidebar nav a:hover {
-  color: #cccccc;
+  background-color: rgb(87, 14, 34);
+  color: #fffbfb;
 }
 
 .logout {
@@ -77,3 +185,6 @@ body {
 .logout a:hover {
   color: #cccccc;
 }
+
+/*------------------------------------*/
+

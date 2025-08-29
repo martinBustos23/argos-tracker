@@ -1,0 +1,91 @@
+<%- include('../layouts/header', {title: 'vincular-title' }); %>
+
+    <%- include('../layouts/sidebar'); %>
+
+        <div class="main-content">
+
+            <%- include('../layouts/navbar', { title: 'Vincular dispositivo' ,
+                subtitle: 'Complete el formulario para crear nuevo vinculo' }); %>
+
+                <div class="main-content__body">
+                    <div class="vincular-form">
+                        <h2>Completar formulario...</h2>
+                        <div class="vincular-form__div">
+                            <label for="">ID: asxajlk1234</label>
+                            
+                        </div>
+                        <div class="vincular-form__div">
+                            <label for="">Nombre</label>
+                            <input type="text">
+                        </div>
+                        <div class="vincular-form__div">
+                            <label for="">etc...</label>
+                            <input type="text">
+                        </div>
+                    </div>
+
+                </div>
+
+        </div>
+
+        <style>
+            .main-content__body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                flex: 1;
+                padding: .5rem 0rem 0rem;
+                background-color: rgba(170, 170, 170, 0.2);
+            }
+
+            .vincular-form {
+                display: flex;
+                flex-direction: column;
+                width: 80%;
+                flex: .95;
+                background-color: white;
+                color: #691c32;
+                box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+                padding: 1rem;
+                border-radius: 5px;
+            }
+
+            .vincular-form h2{
+                font-size: 1.5rem;
+                padding: .5rem 0rem .5rem;
+                margin-bottom: .5rem;
+                width: 100%;
+                border-bottom: 2px solid #691c32;
+            }
+
+            .vincular-form__div{
+                padding: .5rem 0rem;
+                margin: .25rem 1rem;
+                display: flex;
+                flex-direction: column;
+                width: 50%;
+                border-bottom: 1px solid #691c32;
+            }
+
+            .vincular-form__div label{
+                font-size: 1rem;
+                font-weight: 400;
+                margin: .15rem 0rem;
+            }
+
+            .vincular-form__div input{
+                outline: none;
+                border: 1px solid #ddd;
+                box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+                border-radius: 25px;
+                width: 80%;
+            }
+        </style>
+        <script>
+
+
+        </script>
+
+        <%- include('../layouts/footer'); %>

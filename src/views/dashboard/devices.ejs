@@ -1,9 +1,703 @@
-<%- include('../layouts/header', {title: 'devices-title'}); %>
+<%- include('../layouts/header', {title: 'devices-title' }); %>
 
-<%- include('../layouts/sidebar'); %>
+  <%- include('../layouts/sidebar'); %>
 
-<div class="main-content">
-  <h1>Bienvenido a Dispositivos</h1>
-</div>
+    <div class="main-content">
 
-<%- include('../layouts/footer'); %>
+      <%- include('../layouts/navbar', {title: 'Gestion de dispositivos' ,
+        subtitle: 'Lista de los dispositivos vinculados' }); %>
+
+        <div class="body-content">
+          <div class="tabs-container" id="tabs"></div>
+          <div class="content1-container">
+
+            <div class="button-container">
+              <div class="tab-btn" data-target="tab-configg"><i class="bi bi-gear"></i></div>
+              <div class="tab-btn active" data-target="tab-tracker"><i class="bi bi-house"></i></div>
+              <div class="tab-btn" data-target="tab-log"><i class="bi bi-geo-alt"></i></div>
+            </div>
+
+            <div id="tab-tracker" class="tab-tracker tab-content active">
+
+              <div class="tracker-info">
+                <div class="tracker-info__div">
+                  <div class="tracker-info__pet">
+                    <div class="tracker-pet__img">img</div>
+                    <div class="tracker-pet__name">
+                      <h2>Toto</h2>
+                      <span>Gran mascota</span>
+                    </div>
+                  </div>
+                  <div class="tracker-info__data">
+                    <p>Tracker: activo</p>
+                    <p>Alerta sonido: activo</p>
+                    <p>Ultimo estado: perdido</p>
+                    <p>Geo-fencing: activo</p>
+                  </div>
+                </div>
+                <div id="map" class="data-container__map"></div>
+              </div>
+
+              <div class="tracker-pos">
+                <h2>Últimas posiciones</h2>
+
+                <div>11111</div>
+                <div>22222</div>
+                <div>33333</div>
+                <div>44444</div>
+                <div>55555</div>
+              </div>
+
+            </div>
+
+            <div id="tab-configg" class="tab-configg tab-content">
+              <div class="tab-config">
+                <div class="tab-config__options">
+                  <div class="tab-config__identify">
+                    <h2>Identificación</h2>
+                    <p><strong>ID:</strong> 001</p>
+                    <p><strong>Nombre:</strong> Toto</p>
+                  </div>
+
+                  <div class="tab-config__alerts">
+                    <h2>Alertas</h2>
+                    <div>
+                      <h3>Batería baja</h3>
+                      <button>Activar</button>
+                    </div>
+                    <div>
+                      <h3>Salida de zona</h3>
+                      <button>Activar</button>
+                    </div>
+                    <div>
+                      <h3>Sin conexión</h3>
+                      <button>Activar</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-config__geozone">
+                  <div class="geozone__config">
+                    <h2>Geo-fencing</h2>
+                    <p><strong>LAT:</strong> -34.6201</p>
+                    <p><strong>LONG:</strong> -58.4334</p>
+                  </div>
+
+                  <div id="geo-map" class="geozone__map"></div>
+                </div>
+
+              </div>
+
+
+            </div>
+
+            <div id="tab-log" class="tab-log tab-content">
+              <div class="tab-log__nav">
+                <div class="tab-log__buscador">
+                  <input type="text" name="" id="" placeholder="Buscar...">
+                  <button><i class="bi bi-search"></i></button>
+                </div>
+                <button><i class="bi bi-download"></i></button>
+              </div>
+              <table class="log-container__table">
+                <thead>
+                  <tr>
+                    <th>Posición</th>
+                    <th>Evento</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>-34.6037, -58.3816</td>
+                    <td>Entrada a zona segura</td>
+                    <td>2021-02-26 14:35</td>
+                    <td>Activo</td>
+                  </tr>
+                  <tr>
+                    <td>-34.6100, -58.4000</td>
+                    <td>Salida de zona segura</td>
+                    <td>2021-02-26 13:20</td>
+                    <td>En movimiento</td>
+                  </tr>
+                  <tr>
+                    <td>-34.6200, -58.3950</td>
+                    <td>Alerta de sonido</td>
+                    <td>2021-02-26 12:05</td>
+                    <td>En alerta</td>
+                  </tr>
+                  <tr>
+                    <td>-34.6150, -58.3900</td>
+                    <td>Ubicación registrada</td>
+                    <td>2021-02-26 11:50</td> 
+                    <td>OK</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+
+          <style>
+            .tab-log {
+              display: none;
+              flex-direction: column;
+              flex: 1;
+              align-items: center;
+              width: 100%;
+              background-color: rgba(170, 170, 170, 0.2);
+            }
+
+            .tab-log.active {
+              display: flex;
+            }
+
+            .tab-log__nav {
+              display: flex;
+              flex-direction: row;
+              width: 100%;
+              padding: 1rem 2rem;
+              justify-content: space-between;
+              border: 1px solid #aaa;
+            }
+
+            .tab-log__nav button {
+              height: 2rem;
+              width: 2rem;
+              margin-left: .5rem;
+              border-radius: 50%;
+              border: none;
+              transition: all .25s ease;
+            }
+
+            .tab-log__nav button:hover {
+              background-color: rgba(69, 19, 33, 0.15);
+            }
+
+            .tab-log__buscador input {
+              width: 250px;
+              height: 2rem;
+              padding: 0rem 1rem;
+              border-radius: 15px;
+              border: 1px solid #aaa;
+              font-size: 1rem;
+              font-weight: 400;
+            }
+
+            .tab-log__buscador input:focus {
+              border: none;
+            }
+
+            .log-container__table {
+              width: 100%;
+              font-size: .9rem;
+              font-family: sans-serif;
+            }
+
+            .log-container__table thead tr {
+              background-color: white;
+              text-align: left;
+              border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .log-container__table th,
+            .log-container__tabletd {
+              padding: .5rem 1rem;
+              white-space: nowrap;
+            }
+
+            .log-container__table td {
+              padding: .5rem 1.5rem;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .log-container__table tbody tr {
+              transition: all .25s ease;
+            }
+
+            .log-container__table tbody tr:hover {
+              background-color: rgba(0, 0, 0, 0.05);
+            }
+
+            /*  */
+
+            .tab-configg {
+              display: none;
+              flex-direction: column;
+              flex: 1;
+              align-items: center;
+              width: 100%;
+
+              background-color: rgba(170, 170, 170, 0.2);
+            }
+
+            .tab-configg.active {
+              display: flex;
+            }
+
+            .tab-config {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              flex: 1;
+              width: 100%;
+            }
+
+            .tab-config h2 {
+              align-self: center;
+              text-align: center;
+              font-size: 1.25rem;
+              padding: .25rem 0rem;
+              margin-bottom: .5rem;
+              width: 50%;
+              min-width: fit-content;
+
+              border-bottom: 1px solid #451321;
+              transition: all .25s ease-out;
+            }
+
+            .tab-config__options {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 50%;
+            }
+
+            .tab-config__identify:hover h2 {
+              width: 100%;
+              border-bottom: 1px solid #451321;
+            }
+
+            .tab-config__geozone:hover h2 {
+              width: 90%;
+              border-bottom: 1px solid #451321;
+            }
+
+            .tab-config__alerts:hover h2 {
+              width: 100%;
+              border-bottom: 1px solid #451321;
+            }
+
+            .tab-config__identify {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              width: 95%;
+              min-height: 30%;
+              margin: .5rem 0rem;
+              padding: 0rem 2rem;
+              border-radius: 4px;
+              box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+              background-color: white;
+              color: #451321;
+            }
+
+            .tab-config__div {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              width: 80%;
+              flex: 1;
+            }
+
+            .tab-config__geozone {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 50%;
+              box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.15);
+
+            }
+
+            .geozone__config {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              align-self: center;
+              flex: 1;
+              width: 90%;
+              margin: .5rem 0rem;
+              border-radius: 4px;
+              box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+              background-color: white;
+              color: #451321;
+            }
+
+            #geo-map {
+              height: 50vh;
+              width: 90%;
+              border-radius: 4px;
+              margin: .5rem 0rem;
+              border: 1px solid #aaa;
+              transition: all .5s ease-in;
+              box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            #geo-map:hover {
+              border: 1px solid rgba(69, 19, 33, 0.6);
+            }
+
+            .tab-config__alerts {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              width: 95%;
+              flex: 1;
+              margin: .5rem 0rem;
+              padding: 0rem 2rem;
+              border-radius: 4px;
+              box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+              background-color: white;
+              color: #451321;
+            }
+
+            .tab-config__alerts div {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: space-between;
+              width: 100%;
+              margin: .25rem 0rem;
+            }
+
+            .tab-config__alerts h3 {
+              font-size: 1rem;
+              font-weight: 400;
+              padding: 0rem;
+              margin: 0rem;
+            }
+
+            .tab-config__alerts button {
+              height: fit-content;
+              width: fit-content;
+              padding: 0rem 1.5rem;
+              background-color: white;
+              border: 1px solid #451321;
+              border-radius: 15px;
+              transition: all .15s ease;
+            }
+
+            .tab-config__alerts button:hover {
+              background-color: rgba(69, 19, 33, 0.2);
+            }
+
+
+            /*  */
+            #map {
+              height: 50vh;
+              width: 70%;
+              border-radius: 4px;
+              margin: .5rem 0rem;
+              border: 1px solid #aaa;
+              box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+              transition: all .5s ease-in;
+            }
+
+            #map:hover {
+              border: 1px solid rgba(69, 19, 33, 0.6);
+            }
+
+            .tab-tracker {
+              display: none;
+              flex-direction: row;
+              flex: 1;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(170, 170, 170, 0.2);
+            }
+
+            .tab-tracker.active {
+              display: flex;
+            }
+
+            .tracker-info {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 70%;
+
+            }
+
+            .tracker-info__div {
+              display: flex;
+              flex-direction: column;
+              width: 70%;
+              margin: 1rem 0rem 0rem;
+              border-radius: 4px;
+              box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+              background-color: white;
+              color: #451321;
+            }
+
+            .tracker-info__div p {
+              margin-bottom: 0;
+            }
+
+            .tracker-info__pet {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              padding: .5rem 1rem;
+            }
+
+            .tracker-pet__img {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 75px;
+              height: 75px;
+              border-radius: 50%;
+              background-color: #451321;
+              color: white;
+            }
+
+            .tracker-pet__name {
+              display: flex;
+              flex-direction: column;
+              margin-left: 1rem;
+              width: fit-content;
+
+            }
+
+            .tracker-info__pet h2 {
+              font-size: 1.5rem;
+              margin-bottom: 0;
+            }
+
+            .tracker-info__data {
+              display: grid;
+              grid-template-columns: 200px 200px;
+              align-items: center;
+              justify-content: space-evenly;
+              padding: .5rem 1rem;
+              border-top: 1px solid #451321;
+              width: 90%;
+              align-self: center;
+            }
+
+
+            .tracker-pos {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 30%;
+              background-color: white;
+              color: #451321;
+              box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .tracker-pos h2 {
+              align-self: center;
+              text-align: center;
+              font-size: 1.25rem;
+              padding: .75rem 0rem 0.25rem;
+              margin-bottom: .5rem;
+              width: 20%;
+              min-width: fit-content;
+
+              border-bottom: 1px solid #451321;
+              transition: all .25s ease-out;
+            }
+
+            .tracker-pos:hover h2 {
+              width: 80%;
+            }
+
+            .tracker-pos div {
+              display: flex;
+              align-items: center;
+
+              width: 80%;
+              min-height: 50px;
+              margin: .5rem;
+              background-color: white;
+              padding-left: 1rem;
+              border-radius: 4px;
+              transition: all .3s ease;
+              box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.6);
+            }
+
+            .tracker-pos div:hover {
+              background-color: rgba(69, 19, 33, 0.15);
+
+            }
+
+            /*  */
+
+
+            .button-container {
+              display: flex;
+              background-color: #773344;
+
+            }
+
+            .tab-btn {
+              min-width: calc(100%/3);
+              position: relative;
+              padding: 0.4rem .25rem 0.8rem;
+              text-align: center;
+              font-size: 1rem;
+              /* font-style: italic; */
+              /* line-height: 1.5px; */
+              /* font-weight: bold; */
+              background-color: #773344;
+              color: white;
+              cursor: pointer;
+              transition: all 0.3s ease-in-out;
+            }
+
+            .tab-btn:hover {
+              background-color: rgba(0, 0, 0, 0.2);
+            }
+
+            .tab-btn::after {
+              content: "";
+              position: absolute;
+              bottom: 15%;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 5%;
+              height: 2px;
+              background-color: white;
+              border-radius: 2px;
+              transition: width 0.3s ease-in-out;
+            }
+
+            .tab-btn:hover::after {
+              width: 50%;
+            }
+
+            .tab-btn.active::after {
+              width: 50%;
+            }
+
+            .body-content {
+              display: flex;
+              flex-direction: column;
+              min-height: 90vh;
+            }
+
+            .tabs-container {
+              display: flex;
+              align-items: center;
+              padding-top: 10px;
+              padding-left: 10px;
+              overflow-x: auto;
+            }
+
+            .tab {
+              background: #451321;
+              color: white;
+              padding: 8px 25px;
+              margin-right: 10px;
+              border-radius: 8px 8px 0 0;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              transition: all 0.2s;
+            }
+
+            .tab.active {
+              background: #691c32;
+            }
+
+            .tab:hover {
+              background: #691c32;
+            }
+
+
+            .content1-container {
+              display: flex;
+              flex-direction: column;
+              flex: 1;
+              box-shadow: 2px -2px 8px 2px rgba(0, 0, 0, 0.2);
+              background-color: #ffffff;
+
+              margin-top: -2px;
+            }
+          </style>
+
+          <script>
+            let map = L.map('map').setView([-34.6037, -58.3816], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+            L.marker([-34.6037, -58.3816]).addTo(map)
+              .bindPopup('se te perdio el perrubi!!!')
+              .openPopup();
+
+            let geomap = L.map('geo-map').setView([-34.6037, -58.3816], 19);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19
+            }).addTo(geomap);
+
+
+            let circle = L.circle([-34.6037, -58.3816], {
+              radius: 20,
+              color: "#691c32",
+              fillColor: "#f03",
+              fillOpacity: 0.15
+            }).addTo(geomap)
+              .bindPopup("Zona Segura");
+
+            const tabBtns = document.querySelectorAll(".tab-btn");
+            const tabContents = document.querySelectorAll(".tab-content");
+
+            tabBtns.forEach(btn => {
+              btn.addEventListener("click", () => {
+                tabBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                tabContents.forEach(c => c.classList.remove("active"));
+                const targetId = btn.getAttribute("data-target");
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) targetEl.classList.add("active");
+
+                if (targetId === "tab-tracker") {
+                  map.invalidateSize();
+                }
+                if (targetId === "tab-configg") {
+                  geomap.invalidateSize();
+                }
+              });
+            });
+
+
+            // testing no oficial... esto es viejo... tengo que cambiar
+            const tabs = [
+              { id: 1, name: "Toto" },
+              { id: 2, name: "Mona" },
+              { id: 3, name: "Luna" }
+            ];
+
+            function renderTabs(tabsData) {
+              const tabsContainer = document.getElementById("tabs");
+              tabsContainer.innerHTML = "";
+              tabsData.forEach((tabData, index) => {
+                const tab = document.createElement("div");
+                tab.className = "tab" + (index === 0 ? " active" : "");
+                tab.innerHTML = `<span>${tabData.name}</span>`;
+                tab.addEventListener("click", () => showTabContent(tabData));
+                tabsContainer.appendChild(tab);
+              });
+
+              if (tabsData.length > 0) {
+                showTabContent(tabsData[0]);
+              }
+            }
+
+            function showTabContent(tabData) {
+              document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+              const activeTab = [...document.querySelectorAll(".tab")]
+                .find(t => t.textContent.includes(tabData.name));
+              if (activeTab) activeTab.classList.add("active");
+
+            }
+            renderTabs(tabs);
+
+            // 
+          </script>
+
+          <%- include('../layouts/footer'); %>

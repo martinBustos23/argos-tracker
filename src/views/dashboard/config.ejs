@@ -1,9 +1,313 @@
-<%- include('../layouts/header', {title: 'config-title'}); %>
+<%- include('../layouts/header', {title: 'config-title' }); %>
 
-<%- include('../layouts/sidebar'); %>
+  <%- include('../layouts/sidebar'); %>
 
-<div class="main-content">
-  <h1>Bienvenido a Configuración</h1>
-</div>
+    <div class="main-content">
 
-<%- include('../layouts/footer'); %>
+      <%- include('../layouts/navbar', {title: 'Configuración del sistema' ,
+        subtitle: 'aca se tocan opciones y se rompe todo' }); %>
+
+        <div class="body-content">
+
+          <div class="config-sidebar">
+            <div class="config-sidebar__option active" data-target="configuracion">
+              <h2>Configuración</h2>
+            </div>
+            <div class="config-sidebar__option" data-target="sistema">
+              <h2>Auditoría Sistema</h2>
+            </div>
+            <div class="config-sidebar__option" data-target="trackers">
+              <h2>Auditoría Trackers</h2>
+            </div>
+            <div class="config-sidebar__option" data-target="usuarios">
+              <h2>Auditoría Usuarios</h2>
+            </div>
+            <div class="config-sidebar__option" data-target="ayuda">
+              <h2>Ayuda</h2>
+            </div>
+            <div class="config-sidebar__option ultimo">
+              <h2>Restaurar de fábrica</h2>
+            </div>
+          </div>
+
+          <div class="config-content">
+
+            <div class="log-container" id="configuracion" style="display: block;">
+              <h2>Configuración del sistema</h2>
+              <table class="log-container__table">
+                <thead>
+                  <tr>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Activar wifi</td>
+                    <td>Sí</td>
+                  </tr>
+                  <tr>
+                    <td>Activar alertas</td>
+                    <td>No</td>
+                  </tr>
+                  <tr>
+                    <td>Volumen de alerta</td>
+                    <td>50%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="log-container" id="sistema">
+              <h2>Registro de auditoría del sistema</h2>
+              <table class="log-container__table">
+                <thead>
+                  <tr>
+                    <th>Evento</th>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Resultado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Encendido del servidor</td>
+                    <td>2023-04-15 08:00:00</td>
+                    <td>sysadmin</td>
+                    <td>OK</td>
+                  </tr>
+                  <tr>
+                    <td>Actualización de software</td>
+                    <td>2023-04-15 10:00:00</td>
+                    <td>sysadmin</td>
+                    <td>OK</td>
+                  </tr>
+                  <tr>
+                    <td>Error de red</td>
+                    <td>2023-04-15 10:15:00</td>
+                    <td>-</td>
+                    <td>Fallo</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="log-container" id="trackers">
+              <h2>Registro de auditoría de dispositivos</h2>
+              <table class="log-container__table">
+                <thead>
+                  <tr>
+                    <th>ID Tracker</th>
+                    <th>Nombre</th>
+                    <th>Evento</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>asdas2234</td>
+                    <td>Toto</td>
+                    <td>Conectado</td>
+                    <td>2023-04-15 09:00:00</td>
+                  </tr>
+                  <tr>
+                    <td>1gfAzfd</td>
+                    <td>Mona</td>
+                    <td>Entró en zona segura</td>
+                    <td>2023-04-15 09:05:00</td>
+                  </tr>
+                  <tr>
+                    <td>12555AA</td>
+                    <td>Theo</td>
+                    <td>Desconectado</td>
+                    <td>2023-04-15 09:10:00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="log-container" id="usuarios">
+              <h2>Registro de auditoría de usuarios</h2>
+              <table class="log-container__table">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Activo</th>
+                    <th>Rol</th>
+                    <th>Acción</th>
+                    <th>Código</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>juanperez</td>
+                    <td>Sí</td>
+                    <td>Admin</td>
+                    <td>Inicio de sesión</td>
+                    <td>pippip</td>
+                    <td>2023-04-15 09:15:00</td>
+                  </tr>
+                  <tr>
+                    <td>maria.g</td>
+                    <td>Sí</td>
+                    <td>Usuario</td>
+                    <td>Modificó perfil</td>
+                    <td>pippip</td>
+                    <td>2023-04-15 09:20:00</td>
+                  </tr>
+                  <tr>
+                    <td>roberto</td>
+                    <td>Sí</td>
+                    <td>Usuario</td>
+                    <td>Error en autenticación</td>
+                    <td>pippip</td>
+                    <td>2023-04-15 09:25:00</td>
+                  </tr>
+                  <tr>
+                    <td>ana</td>
+                    <td>No</td>
+                    <td>Usuario</td>
+                    <td>Cuenta desactivada</td>
+                    <td>pippip</td>
+                    <td>2023-04-15 09:30:00</td>
+                  </tr>
+                  <tr>
+                    <td>sysadmin</td>
+                    <td>Sí</td>
+                    <td>Admin</td>
+                    <td>Cambió permisos de usuario</td>
+                    <td>pippip</td>
+                    <td>2023-04-15 09:45:00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="log-container" id="ayuda" style="display:none;">
+              <h2>Ayudin</h2>
+              <div style="width:60%; margin:auto; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" > Ir a la pagina web de ayuda!!!</a>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+    </div>
+
+
+    <style>
+      .body-content {
+        display: flex;
+        flex-direction: row;
+        min-height: 90vh;
+      }
+
+      .config-sidebar {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
+        z-index: 500;
+        width: 20%;
+      }
+
+      .config-sidebar__option {
+        width: 100%;
+        padding: .8rem 1rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+
+        border-right: 5px solid transparent;
+      }
+
+      .config-sidebar__option:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+      }
+
+      .config-sidebar__option.active {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #691c32;
+      }
+
+      .config-sidebar__option h2 {
+        font-size: 1rem;
+        font-weight: 400;
+        margin: 0;
+      }
+
+      .ultimo {
+        margin-top: auto;
+      }
+
+      .config-content {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        background-color: rgba(170, 170, 170, 0.2);
+      }
+
+      .log-container {
+        display: none;
+        align-self: center;
+        justify-self: center;
+        width: 100%;
+        height: 100%;
+        padding: 1rem 0rem;
+      }
+
+      .log-container h2 {
+        text-align: center;
+        font-weight: bold;
+        padding: .5rem 1rem;
+        font-size: 1.25rem;
+      }
+
+      .log-container__table {
+        width: 100%;
+        font-size: .9rem;
+        font-family: sans-serif;
+      }
+
+      .log-container__table thead tr {
+        background-color: white;
+        text-align: left;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .log-container__table th,
+      .log-container__table td {
+        padding: .5rem 1rem;
+        white-space: nowrap;
+      }
+
+      .log-container__table td {
+        padding: .5rem 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .log-container__table tbody tr {
+        transition: all .25s ease;
+      }
+
+      .log-container__table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    </style>
+
+    <script>
+      const sidebarOptions = document.querySelectorAll(".config-sidebar__option");
+      const sections = document.querySelectorAll(".log-container");
+
+      sidebarOptions.forEach(opt => {
+        opt.addEventListener("click", () => {
+          sidebarOptions.forEach(option => option.classList.remove("active"));
+          sections.forEach(section => section.style.display = "none");
+
+          opt.classList.add("active");
+          document.getElementById(opt.dataset.target).style.display = "block";
+        });
+      });
+    </script>
+
+    <%- include('../layouts/footer'); %>
