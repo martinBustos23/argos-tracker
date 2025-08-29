@@ -28,6 +28,10 @@ export default (userController) => {
       const users = await userController.getAll();
       // convertir timestamp a utc-3
       for (let i = 0; i < users.length; i++) {
+        if (!users[i].lastLogin) {
+          users[i].lastLogin = 'Todavia no logeado';
+          continue;
+        }
         users[i].lastLogin = new Date(users[i].lastLogin + ' UTC').toLocaleString('es-AR', { hour12: false });
       }
       const token = req.cookies.authorization;
