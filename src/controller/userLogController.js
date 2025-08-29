@@ -28,7 +28,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Login', null);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw new Exception(`Error creando login log: ${error.message}`, 500);
     }
   }
 
@@ -36,7 +36,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Registration', null);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw new Exception(`Error creando registration log: ${error.message}`, 500);
     }
   }
 
@@ -49,7 +49,7 @@ export default class UserLogController {
 
       return await this.#addLog(level, username, 'Update', description);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw new Exception(`Error creando update log: ${error.message}`, 500);
     }
   }
 
@@ -57,7 +57,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Logout', null);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw new Exception(`Error creando logout log: ${error.message}`, 500);
     }
   }
 
@@ -65,7 +65,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Deletion', null);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw new Exception(`Error creando deletion log: ${error.message}`, 500);
     }
   }
 
