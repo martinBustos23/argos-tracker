@@ -33,6 +33,14 @@
         "nullable": false,
         "default": 1,
         "extra": null
+      },
+      {
+        "name": "lastLogin",
+        "type": "datetime",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
       }
     ]
   },

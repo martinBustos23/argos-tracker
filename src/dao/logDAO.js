@@ -10,10 +10,11 @@ export default class LogDAO {
 
   async create(log) {
     const { timestamp, level, id, description, action } = log;
-    await this.#db.execute(
+    const [result] = await this.#db.execute(
       `INSERT INTO ${this.#table} (timestamp, level, id, action, description) VALUES (?, ?, ?, ?, ?)`,
       [timestamp, level, id, action, description]
     );
+    return log;
   }
 
   async getLatest(n) {

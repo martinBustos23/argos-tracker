@@ -93,7 +93,9 @@ export default class UserController {
       if (!exist) throw new Exception('Usuario no existe', 404);
       if (!(await bcrypt.compare(user.password, exist.password)))
         throw new Exception(`Contraseña incorrecta`, 404);
-      await this.#userLogController.addLogin(user.username, 'INFO');
+      const log = await this.#userLogController.addLogin(user.username, 'INFO');
+      const timestamp = log.timestamp;
+      await this.update(user.username, { lastLogin: timestamp });
       return;
     } catch (error) {
       await this.#userLogController.addLogin(user.username, 'ERROR');

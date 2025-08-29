@@ -4,5 +4,6 @@ export default class UserDTO {
     this.password = user.password;
     this.admin = user.admin;
     this.active = user.active;
+    this.lastLogin = user.lastLogin.toISOString().replace(/[A-Z]/g, ' ');
   }
 }
