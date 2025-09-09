@@ -80,6 +80,8 @@ export default function createUserRouter(UserController) {
     try {
       const user = await UserController.findByID(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
+      if (await UserController.findByID(req.params.uid).admin === true)
+        return res.status(404).json({ error: 'No se puede borrar administradores' });
       const result = await UserController.delete(req.params.uid);
 
       console.log('-- Eliminar usuario --');
