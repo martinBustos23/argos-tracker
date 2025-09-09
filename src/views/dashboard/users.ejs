@@ -448,7 +448,7 @@
             if (event.target.password.value)
               payload.password = event.target.password.value;
             if (event.target.rol.value)
-              payload.rol = event.target.rol.value;
+              payload.admin = event.target.rol.value;
             const url = event.target.action;
             const response = await fetch(url, {
               method: 'PUT',
