@@ -1,14 +1,15 @@
 import express from 'express';
 import { authToken, getUserFromToken } from '../../utils.js';
 
-export default (userController) => {
+export default (userController, trackerController) => {
   const router = express.Router();
   router.use(authToken);
 
-  router.get('/', (req, res) => {
+  router.get('/', async (req, res) => {
     const token = req.cookies.authorization;
     const username = getUserFromToken(token);
-    res.render('./dashboard/general', { username });
+    const trackers = await trackerController.getAll();
+    res.render('./dashboard/general', { username, trackers });
   });
 
   router.get('/devices', (req, res) => {

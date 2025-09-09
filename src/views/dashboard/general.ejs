@@ -14,30 +14,15 @@
               <span>Seleccione para filtrar</span>
 
               <section class="tracker-list">
-                <div class="tracker-list__btn" onclick="">
-                  <div class="tracker-list__img">img</div>
-                  <div class="tracker-list__info"> 
-                    <span class="label">Toto</span>
-                    <span class="label-name">Conectado</span>
+                <% trackers.forEach( tracker => { %>
+                  <div class="tracker-list__btn" onclick="">
+                    <div class="tracker-list__img">img</div>
+                    <div class="tracker-list__info"> 
+                      <span class="label"><%= tracker.petName %></span>
+                      <span class="label-name">Conectado</span>
+                    </div>
                   </div>
-                </div>
-
-                <div class="tracker-list__btn" onclick="">
-                  <div class="tracker-list__img">img</div>
-                  <div class="tracker-list__info"> 
-                    <span class="label">Mona</span>
-                    <span class="label-name">Desconectado</span>
-                  </div>
-                </div>
-
-                <div class="tracker-list__btn" onclick="">
-                  <div class="tracker-list__img">img</div>
-                  <div class="tracker-list__info"> 
-                    <span class="label">Theo</span>
-                    <span class="label-name">Conectado</span>
-                  </div>
-                </div>
-
+                <% }) %>
                 <div class="add-btn" onclick="">
                   <a href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
                 </div>
