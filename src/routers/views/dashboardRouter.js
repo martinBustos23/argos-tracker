@@ -32,6 +32,7 @@ export default (userController) => {
           users[i].lastLogin = 'Todavia no logeado';
           continue;
         }
+        // converite la hora de UTC a horario argentino (UTC -03:00)
         users[i].lastLogin = new Date(users[i].lastLogin + ' UTC').toLocaleString('es-AR', { hour12: false });
       }
       const token = req.cookies.authorization;
