@@ -73,3 +73,19 @@ export const getUserFromToken = (token) => {
   });
   return username;
 };
+
+export async function createTable(name, structure, db) {
+  let queryMessage = 'CREATE TABLE ' + name + ' (';
+  for (let i = 0; i < structure.fields.length; i++) {
+    const field = structure.fields[i];
+    queryMessage += field.name + ' ' + field.type;
+    if (field.key) queryMessage += ' ' + field.key;
+    if (!field.nullable) queryMessage += ' NOT NULL';
+    if (field.default != null) queryMessage += ' DEFAULT ' + field.default;
+    if (field.extra) queryMessage += ' ' + field.extra;
+    if (i < structure.fields.length - 1) queryMessage += ', ';
+  }
+  queryMessage += ')';
+  const [result] = await db.execute(queryMessage);
+  if (result) console.log(`Tabla ${name} creada`);
+}
