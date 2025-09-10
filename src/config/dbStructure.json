@@ -211,14 +211,6 @@
         "extra": null
       },
       {
-        "name": "trackerId",
-        "type": "INT",
-        "key": null,
-        "nullable": false,
-        "default": null,
-        "extra": null
-      },
-      {
         "name": "eventDesc",
         "type": "varchar(32)",
         "key": null,
