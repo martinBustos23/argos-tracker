@@ -9,13 +9,16 @@ import LogDAO from './dao/logDAO.js';
 import UserLogController from './controller/userLogController.js';
 
 import TrackerDAO from './dao/trackerDAO.js';
+import TrackerEventDAO from './dao/trackerEventDAO.js';
 import TrackerController from './controller/trackerController.js';
 import TrackerLogController from './controller/trackerLogController.js';
+import TrackerEventController from './controller/trackerEventController.js';
 
 import createUserRouter from './routers/api/userRouter.js';
 import createAuthRouter from './routers/views/authRouter.js';
 import createUserLogRouter from './routers/api/userLogRouter.js';
 import createTrackerLogRouter from './routers/api/trackerLogRouter.js';
+import createTrackerEventRouter from './routers/api/trackerEventRouter.js';
 import createDashboardRouter from './routers/views/dashboardRouter.js';
 import createTrackerRouter from './routers/api/trackerRouter.js';
 import { __dirname, Exception } from './utils.js';
@@ -27,16 +30,20 @@ export default async function createApp(db) {
   const userLogDao = new LogDAO(db, 'usersLog');
   const trackerDao = new TrackerDAO(db);
   const trackerLogDao = new LogDAO(db, 'trackersLog');
+  const trackerEventDao = new TrackerEventDAO(db);
   const userLogController = new UserLogController(userLogDao);
   const userController = new UserController(userDao, userLogController);
   const trackerLogController = new TrackerLogController(trackerLogDao);
+  const trackerEventController = new TrackerEventController(trackerEventDao)
   const trackerController = new TrackerController(trackerDao, trackerLogController);
   const userRouter = createUserRouter(userController);
   const authRouter = createAuthRouter(userController);
   const userLogRouter = createUserLogRouter(userLogController);
   const dashboardRouter = createDashboardRouter(userController, trackerController);
   const trackerRouter = createTrackerRouter(trackerController, userController);
+  const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController)
   const trackerLogRouter = createTrackerLogRouter(trackerLogController);
+
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname + '/views'));
@@ -52,7 +59,7 @@ export default async function createApp(db) {
   app.use('/', authRouter);
   app.use('/dashboard', dashboardRouter);
 
-  app.use('/api', userRouter, trackerRouter, userLogRouter, trackerLogRouter);
+  app.use('/api', userRouter, trackerRouter, userLogRouter, trackerLogRouter, trackerEventRouter);
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {
