@@ -15,7 +15,7 @@ export default class TrackerController {
         throw new Conflict('Cantidad maxima de trackers alcanzada');
       const newTracker = await this.#trackerDAO.create(tracker);
       await this.#trackerLogController.addLinking(newTracker.id, 'INFO');
-      await this.#trackerDAO.createLogTable(newTracker);
+      await this.#trackerDAO.createEventTable(newTracker);
       return newTracker;
     } catch (error) {
       // await this.#trackerLogController.addLinking(newTracker.id, 'ERROR');

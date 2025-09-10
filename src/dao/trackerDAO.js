@@ -1,4 +1,6 @@
 import TrackerDTO from '../dto/trackerDTO.js';
+import dbStructure from '../config/dbStructure.json' with { type: 'json' };
+import { createTable } from '../utils.js';
 
 export default class TrackerDAO {
   #db;
@@ -57,10 +59,8 @@ export default class TrackerDAO {
     return result[0]['COUNT(*)'];
   }
 
-  async createLogTable(tracker) {
-    const columns =
-      'timestamp DATE NOT NULL, level INT NOT NULL, type INT NOT NULL, payload VARCHAR(128) NOT NULL';
-    await this.#db.execute(`CREATE TABLE tracker_${tracker.id}_log (${columns})`);
-    console.log(`Log trackers ${tracker.id} creado`);
+  async createEventTable(tracker) {
+    const eventTable = dbStructure.find( table => table.name == 'trackerEvents');
+    await createTable(`tracker_${tracker.id}_events`, eventTable, this.#db);
   }
 }
