@@ -38,6 +38,18 @@ export class Forbidden extends Exception {
   }
 }
 
+export class Conflict extends Exception {
+  constructor(message) {
+    super(message, 409);
+  }
+}
+
+export class InternalError extends Exception {
+  constructor(message) {
+    super(message, 500);
+  }
+}
+
 export const generateToken = (username) => {
   const token = jwt.sign({ username }, config.JWT_KEY, { expiresIn: '1h' });
   return token;
