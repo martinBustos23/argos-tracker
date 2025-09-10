@@ -1,14 +1,14 @@
 import express from 'express';
-import { authToken } from '../../utils.js';
+import { authToken, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../../utils.js';
 
 export default function createUserRouter(UserController) {
   const router = express.Router();
   router.use(authToken);
 
-  router.post('/users', async (req, res) => {
+  router.post('/users', async (req, res, next) => {
     try {
       const user = await UserController.findByID(req.user);
-      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
+      if (!user.admin) throw new Unauthorized('No autorizado');
       const newUser = await UserController.create(req.body);
 
       console.log('-- Crear usuario --');
@@ -17,14 +17,14 @@ export default function createUserRouter(UserController) {
 
       res.status(201).json(newUser);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.get('/users', async (req, res) => {
+  router.get('/users', async (req, res, next) => {
     try {
       const user = await UserController.findByID(req.user);
-      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
+      if (!user.admin) throw new Unauthorized('No autorizado');
 
       // obtener usuarios inactivos
       const active = req.query.active === 'true'; // convertir a bool
@@ -42,11 +42,11 @@ export default function createUserRouter(UserController) {
 
       res.status(200).json(users);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.get('/users/:uid', async (req, res) => {
+  router.get('/users/:uid', async (req, res, next) => {
     try {
       const user = await UserController.findByID(req.params.uid);
 
@@ -55,14 +55,14 @@ export default function createUserRouter(UserController) {
 
       res.status(200).json(user);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.put('/users/:uid', async (req, res) => {
+  router.put('/users/:uid', async (req, res, next) => {
     try {
       const user = await UserController.findByID(req.user);
-      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
+      if (!user.admin) throw new Unauthorized('No autorizado');
       const updatedUser = await UserController.update(req.params.uid, req.body);
 
       console.log('-- Actualizar usuario --');
@@ -72,16 +72,14 @@ export default function createUserRouter(UserController) {
 
       res.status(200).json(updatedUser);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.delete('/users/:uid', async (req, res) => {
+  router.delete('/users/:uid', async (req, res, next) => {
     try {
       const user = await UserController.findByID(req.user);
-      if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
-      if (await UserController.findByID(req.params.uid).admin === true)
-        return res.status(404).json({ error: 'No se puede borrar administradores' });
+      if (!user.admin) throw new Unauthorized('No autorizado');
       const result = await UserController.delete(req.params.uid);
 
       console.log('-- Eliminar usuario --');
@@ -90,7 +88,7 @@ export default function createUserRouter(UserController) {
 
       res.status(200).json(result);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 

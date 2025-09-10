@@ -1,4 +1,4 @@
-import { Exception, NotFound } from '../utils.js';
+import { InternalError, NotFound } from '../utils.js';
 import LogDTO from '../dto/logDTO.js';
 
 export default class UserLogController {
@@ -20,7 +20,8 @@ export default class UserLogController {
       );
       return log;
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      if (error.code) throw error;
+      throw new InternalError(`Error interno al crear log: '${action}'`);
     }
   }
 
@@ -28,7 +29,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Login', null);
     } catch (error) {
-      throw new Exception(`Error creando login log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -36,7 +37,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Registration', null);
     } catch (error) {
-      throw new Exception(`Error creando registration log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -49,7 +50,7 @@ export default class UserLogController {
 
       return await this.#addLog(level, username, 'Update', description);
     } catch (error) {
-      throw new Exception(`Error creando update log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -57,7 +58,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Logout', null);
     } catch (error) {
-      throw new Exception(`Error creando logout log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -65,7 +66,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, username, 'Deletion', null);
     } catch (error) {
-      throw new Exception(`Error creando deletion log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -73,7 +74,7 @@ export default class UserLogController {
     try {
       return this.#userLogDAO.getLatest(n);
     } catch (error) {
-      throw new Exception(`Error obteniendo log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -81,7 +82,7 @@ export default class UserLogController {
     try {
       return this.#userLogDAO.getLastConnection(username);
     } catch (error) {
-      throw new Exception(`Error ultima coneccion: ${error.message}`, 500);
+      throw error;
     }
   }
 }

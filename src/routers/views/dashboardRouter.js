@@ -40,7 +40,7 @@ export default (userController, trackerController) => {
       const username = getUserFromToken(token);
       res.render('./dashboard/users', { username, users });
     } catch (error) {
-      res.status(500).send('Error al obtener usuarios' + error.message);
+      next(error);
     }
   });
 

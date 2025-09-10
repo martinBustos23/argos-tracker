@@ -1,4 +1,4 @@
-import { Exception, NotFound } from '../utils.js';
+import { InternalError } from '../utils.js';
 import LogDTO from '../dto/logDTO.js';
 
 export default class UserLogController {
@@ -19,7 +19,8 @@ export default class UserLogController {
         })
       );
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      if (error.code) throw error;
+      throw new InternalError(`Error interno al crear log: '${action}'`);
     }
   }
 
@@ -27,7 +28,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, source, 'Link', null);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -40,7 +41,7 @@ export default class UserLogController {
 
       return await this.#addLog(level, source, 'Update', description);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -48,7 +49,7 @@ export default class UserLogController {
     try {
       return await this.#addLog(level, source, 'Unlink', null);
     } catch (error) {
-      throw new Exception(`Error creando log: ${error.message}`, 500);
+      throw error;
     }
   }
 
@@ -56,7 +57,7 @@ export default class UserLogController {
     try {
       return this.#trackerLogDAO.getLatest(n);
     } catch (error) {
-      throw new Exception(`Error obteniendo log: ${error.message}`, 500);
+      throw error;
     }
   }
 }

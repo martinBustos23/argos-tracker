@@ -5,14 +5,14 @@ export default function createTrackerLogRouter(trackerLogController) {
   const router = express.Router();
   router.use(authToken);
 
-  router.get('/trackerLogs', async (req, res) => {
+  router.get('/trackerLogs', async (req, res, next) => {
     try {
       const n = req.query.n;
       const logs = await trackerLogController.getLatest(n);
 
       res.status(200).json(logs);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 

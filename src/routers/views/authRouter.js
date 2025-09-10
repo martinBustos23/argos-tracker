@@ -14,7 +14,7 @@ export default (UserController) => {
     res.render('register');
   });
 
-  router.post('/login', async (req, res) => {
+  router.post('/login', async (req, res, next) => {
     try {
       await UserController.login(req.body);
 
@@ -30,11 +30,11 @@ export default (UserController) => {
         })
         .redirect('dashboard');
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.get('/logout', async (req, res) => {
+  router.get('/logout', async (req, res, next) => {
     try {
       const token = req.cookies.authorization;
       if (token) {
@@ -44,7 +44,7 @@ export default (UserController) => {
       }
       res.redirect('/login');
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
   return router;

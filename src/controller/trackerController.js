@@ -1,4 +1,4 @@
-import { Exception, NotFound } from '../utils.js';
+import { Conflict, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../utils.js';
 import config from '../config/config.js';
 
 export default class TrackerController {
@@ -12,28 +12,39 @@ export default class TrackerController {
   async createTracker(tracker) {
     try {
       if ((await this.#trackerDAO.countActive()) >= config.MAX_TRACKERS)
-        throw new Exception('Cantidad maxima de trackers alcanzada');
+        throw new Conflict('Cantidad maxima de trackers alcanzada');
       const newTracker = await this.#trackerDAO.create(tracker);
       await this.#trackerLogController.addLinking(newTracker.id, 'INFO');
       await this.#trackerDAO.createLogTable(newTracker);
       return newTracker;
     } catch (error) {
       // await this.#trackerLogController.addLinking(newTracker.id, 'ERROR');
-      throw new Exception(`Error creando tracker: ${error.message}`, 500);
+      if (error.code) throw error;
+      throw new InternalError('Error interno creando tracker');
     }
   }
 
   async getAll() {
-    const trackers = await this.#trackerDAO.getAll();
-    return trackers;
+    try {
+      const trackers = await this.#trackerDAO.getAll();
+      return trackers;
+    } catch (error) {
+      if (error.code) throw error;
+      throw new InternalError('Error interno obteniendo trackers');
+    }
   }
 
   async findByID(trackerId) {
-    const tracker = await this.#trackerDAO.findById(trackerId);
-    if (!tracker) {
-      throw new NotFound(`El tracker (${tracker.id}) no fue encontrado`);
+    try {
+      const tracker = await this.#trackerDAO.findById(trackerId);
+      if (!tracker) {
+        throw new NotFound(`El tracker (${tracker.id}) no fue encontrado`);
+      }
+      return tracker;
+    } catch (error) {
+      if (error.code) throw error;
+      throw new InternalError('Error interno buscando tracker');
     }
-    return tracker;
   }
 
   async updateTracker(id, tracker) {
@@ -49,7 +60,8 @@ export default class TrackerController {
       return updatedTracker;
     } catch (error) {
       await this.#trackerLogController.addUpdate(id, 'ERROR');
-      throw new Exception(`Error actualizando el tracker: ${error.message}`, 500);
+      if (error.code) throw error;
+      throw new InternalError('Error interno actualizando tracker');
     }
   }
 
@@ -60,7 +72,8 @@ export default class TrackerController {
 
       return this.#trackerDAO.delete(id);
     } catch (error) {
-      throw new Exception(`Error borrando el tracker: ${error.message}`, 500);
+      if (error.code) throw error;
+      throw new InternalError('Error interno eliminando tracker');
     }
   }
 }

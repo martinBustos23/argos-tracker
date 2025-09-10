@@ -5,7 +5,7 @@ export default function createTrackerRouter(trackerController, userController) {
   const router = express.Router();
   router.use(authToken);
 
-  router.post('/trackers', async (req, res) => {
+  router.post('/trackers', async (req, res, next) => {
     try {
       // console.log(Object.getOwnPropertyNames(req.body));
       const user = await userController.findByID(req.user);
@@ -17,11 +17,11 @@ export default function createTrackerRouter(trackerController, userController) {
 
       res.status(201).json(tracker);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.get('/trackers', async (req, res) => {
+  router.get('/trackers', async (req, res, next) => {
     try {
       const trackers = await trackerController.getAll();
 
@@ -30,11 +30,11 @@ export default function createTrackerRouter(trackerController, userController) {
 
       res.status(200).json(trackers);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.get('/trackers/:id', async (req, res) => {
+  router.get('/trackers/:id', async (req, res, next) => {
     try {
       const tracker = await trackerController.findByID(req.params.id);
 
@@ -43,11 +43,11 @@ export default function createTrackerRouter(trackerController, userController) {
 
       res.status(200).json(tracker);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.put('/trackers/:id', async (req, res) => {
+  router.put('/trackers/:id', async (req, res, next) => {
     try {
       const user = await userController.findByID(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
@@ -60,11 +60,11 @@ export default function createTrackerRouter(trackerController, userController) {
 
       res.status(200).json(updatedTracker);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 
-  router.delete('/trackers/:id', async (req, res) => {
+  router.delete('/trackers/:id', async (req, res, next) => {
     try {
       const user = await userController.findByID(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
@@ -76,7 +76,7 @@ export default function createTrackerRouter(trackerController, userController) {
 
       res.status(200).json(result);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   });
 

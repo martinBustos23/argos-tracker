@@ -56,11 +56,12 @@ export default async function createApp(db) {
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {
-      res.status(error.status).json({ status: 'error', message: error.message });
+      console.log(error.status + ": " + error.message);
+      return res.status(error.status).json({ status: 'error', message: error.message });
     } else {
       const message = `Ocurrio un error desconocido: ${error.message}`;
       console.log(message);
-      res.status(500).json({ status: 'error', message });
+      return res.status(500).json({ status: 'error', message });
     }
   });
 

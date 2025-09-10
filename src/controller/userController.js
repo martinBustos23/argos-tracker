@@ -1,4 +1,4 @@
-import { Exception, NotFound } from '../utils.js';
+import { Conflict, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../utils.js';
 import bcrypt from 'bcryptjs';
 
 export default class UserController {
@@ -12,7 +12,7 @@ export default class UserController {
   async create(newUser) {
     try {
       const exists = await this.#userDAO.findByID(newUser.username);
-      if (exists) throw new Exception(`Error usuario ya registrado`, 404);
+      if (exists) throw new Conflict('Usuario ya registrado');
       const salt = await bcrypt.genSalt(12); // 12 rondas de sason
       const hash = await bcrypt.hash(newUser.password, salt);
       newUser.password = hash; // actualizar la contrasenia para que sea el hash
@@ -21,25 +21,34 @@ export default class UserController {
       return result;
     } catch (error) {
       await this.#userLogController.addRegistration(newUser.username, 'ERROR');
-      throw new Exception(`Error creando usuario: ${error.message}`, 500);
+      if (error.status) throw error;
+      throw new InternalError('Error interno creando usuario');
     }
   }
 
   async getAll() {
-    const users = await this.#userDAO.getAll();
-    return users;
+    try {
+      const users = await this.#userDAO.getAll();
+      return users;
+    } catch (error) {
+      throw new InternalError('Error interno obteniendo usuarios');
+    }
   }
 
   async findByID(username) {
-    const user = await this.#userDAO.findByID(username);
-    if (!user) throw new NotFound(`El usuario (${username}) no fue encontrado`);
-    return user;
+    try {
+      const user = await this.#userDAO.findByID(username);
+      if (!user) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      return user;
+    } catch (error) {
+      if (error.status) throw error;
+      throw new InternalError('Error interno buscando usuario');
+    }
   }
 
   async update(username, user) {
     try {
       const updatedUser = await this.#userDAO.findByID(username); //probable no const
-
       if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
@@ -53,7 +62,9 @@ export default class UserController {
       return result;
     } catch (error) {
       await this.#userLogController.addUpdate(username, user, 'ERROR');
-      throw new Exception(`Error actualizando el usuario: ${error.message}`, 500);
+      if (error.status) throw error;
+      console.log(error.message);
+      throw new InternalError('Error interno actualizando usuario');
     }
   }
 
@@ -62,7 +73,8 @@ export default class UserController {
       const users = await this.#userDAO.getAllInactive();
       return users;
     } catch (error) {
-      throw new Exception(`Error buscando usuarios: ${error.message}`, 500);
+      if (error.status) throw error;
+      throw new InternalError('Error interno buscando usuarios');
     }
   }
 
@@ -71,7 +83,10 @@ export default class UserController {
       const exist = await this.#userDAO.findByID(username); //probable no const
 
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
-      if (exist.admin) throw new Exception('No se puede borrar a administrador');
+
+      const users = await this.getAll();
+      const admins = users.filter(user => user.admin == true);
+      if (admins.length <= 1) throw new Unauthorized('No se puede borrar todos los administradores');
 
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
@@ -80,7 +95,8 @@ export default class UserController {
       return result;
     } catch (error) {
       await this.#userLogController.addDeletion(username, 'ERROR');
-      throw new Exception(`Error eliminando el usuario: ${error.message}`, 500);
+      if (error.status) throw error;
+      throw new InternalError('Error interno eliminando usuario');
     }
   }
 
@@ -90,9 +106,9 @@ export default class UserController {
     try {
       const exist = await this.#userDAO.findByID(user.username);
 
-      if (!exist) throw new Exception('Usuario no existe', 404);
+      if (!exist) throw new NotFound('Usuario no existe');
       if (!(await bcrypt.compare(user.password, exist.password)))
-        throw new Exception(`Contraseña incorrecta`, 404);
+        throw new Unauthorized('Contraseña incorrecta');
       const log = await this.#userLogController.addLogin(user.username, 'INFO');
       // obtener el timestamp del nuevo log, pasarlo a UTF y reemplazar T y Z del string
       const timestamp = new Date(log.timestamp + ' UTC').toISOString().replace(/[A-Z]/g, ' ');
@@ -101,7 +117,8 @@ export default class UserController {
       return;
     } catch (error) {
       await this.#userLogController.addLogin(user.username, 'ERROR');
-      throw new Exception(`Error al ingresar: ${error.message}`, 500);
+      if (error.status) throw error;
+      throw new InternalError('Error interno al autenticar usuario');
     }
   }
 
@@ -110,7 +127,8 @@ export default class UserController {
       await this.#userLogController.addLogout(username, 'INFO');
     } catch (error) {
       await this.#userLogController.addLogout(username, 'ERROR');
-      throw new Exception(`Error al cerrar sesion: ${error.message}`, 500);
+      if (error.status) throw error;
+      throw new InternalError('Error interno cerrar sesion');
     }
   }
 }
