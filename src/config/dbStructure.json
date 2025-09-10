@@ -192,6 +192,67 @@
     ]
   },
   {
+    "name": "trackerEvents",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "key": null,
+        "nullable": false,
+        "default": "utc_timestamp()",
+        "extra": null
+      },
+      {
+        "name": "trackerId",
+        "type": "INT",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "eventDesc",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "latitude",
+        "type": "DOUBLE",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "longitude",
+        "type": "DOUBLE",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "batteryLvl",
+        "type": "DOUBLE",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      }
+    ]
+  },
+  {
     "name": "trackersLog",
     "fields": [
       {
