@@ -11,8 +11,6 @@ export default class TrackerController {
 
   async createTracker(tracker) {
     try {
-      if ((await this.#trackerDAO.countActive()) >= config.MAX_TRACKERS)
-        throw new Conflict('Cantidad maxima de trackers alcanzada');
       const newTracker = await this.#trackerDAO.create(tracker);
       await this.#trackerLogController.addLinking(newTracker.id, 'INFO');
       return newTracker;

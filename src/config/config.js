@@ -11,6 +11,5 @@ export default {
 
   JWT_KEY: process.env.JWT_KEY,
 
-  MAX_TRACKERS: process.env.MAX_TRACKERS,
   DEFAULT_ADMIN_PASSWORD: process.env.DEFAULT_ADMIN_PASSWORD
 };
