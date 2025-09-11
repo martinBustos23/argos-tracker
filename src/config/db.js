@@ -26,7 +26,6 @@ export async function initDB() {
     console.log('Conexión establecida con la base de datos');
     // inicializar tablas
     for (const table of tables) {
-      if (table.name == 'trackerEvents') continue;  // evitar hacer tabla con la plantilla de eventos de tracker
       let [result] = await db.execute(`SHOW TABLES LIKE '${table.name}'`);
       if (!result.length)  // si no existe, crear la tabla segun dbSetructure.json
         await createTable(table.name, table, db);

@@ -10,8 +10,8 @@ export default class TrackerEventController {
   async #addEvent(trackerId, eventDesc, latitude, longitude, batteryLvl) {
     try {
       const event = this.#trackerEventDAO.create(
-        trackerId,
         new TrackerEventDTO({
+          trackerId,
           eventDesc,
           latitude,
           longitude,
@@ -41,9 +41,9 @@ export default class TrackerEventController {
     }
   }
 
-  async getLatest(trackerId, n) {
+  async getLatest(n) {
     try {
-      return this.#trackerEventDAO.getLatest(trackerId, n);
+      return this.#trackerEventDAO.getLatest(n);
     } catch (error) {
       throw error;
     }

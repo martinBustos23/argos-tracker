@@ -58,9 +58,4 @@ export default class TrackerDAO {
     const [result] = await this.#db.execute('SELECT COUNT(*) FROM trackers WHERE active = true');
     return result[0]['COUNT(*)'];
   }
-
-  async createEventTable(tracker) {
-    const eventTable = dbStructure.find( table => table.name == 'trackerEvents');
-    await createTable(`tracker_${tracker.id}_events`, eventTable, this.#db);
-  }
 }
