@@ -29,9 +29,9 @@ export default class TrackerEventDAO {
     return logs.map((log) => new TrackerEventDTO(log));
   }
 
-  async getAll(trackerId) {
+  async getAll() {
     const [logs] = await this.#db.execute(
-      `SELECT * FROM tracker_${trackerId}_events ORDER BY timestamp DESC`
+      `SELECT * FROM trackerEvents ORDER BY timestamp DESC`
     );
     return logs.map((log) => new TrackerEventDTO(log));
   }
