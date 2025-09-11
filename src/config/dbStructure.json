@@ -169,7 +169,7 @@
         "name": "source",
         "type": "varchar(32)",
         "key": null,
-        "nullable": true,
+        "nullable": false,
         "default": null,
         "extra": null
       },
@@ -188,6 +188,14 @@
         "nullable": true,
         "default": null,
         "extra": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "name": "user",
+        "column": "source",
+        "reference_table": "users",
+        "reference_column": "username"
       }
     ]
   },
@@ -250,6 +258,14 @@
         "default": null,
         "extra": null
       }
+    ],
+    "foreignKeys": [
+      {
+        "name": "tracker",
+        "column": "trackerId",
+        "reference_table": "trackers",
+        "reference_column": "id"
+      }
     ]
   },
   {
@@ -281,9 +297,9 @@
       },
       {
         "name": "source",
-        "type": "varchar(32)",
+        "type": "int",
         "key": null,
-        "nullable": true,
+        "nullable": false,
         "default": null,
         "extra": null
       },
@@ -302,6 +318,14 @@
         "nullable": true,
         "default": null,
         "extra": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "name": "trackerLog",
+        "column": "source",
+        "reference_table": "trackers",
+        "reference_column": "id"
       }
     ]
   }

@@ -76,17 +76,22 @@ export const getUserFromToken = (token) => {
 };
 
 export async function createTable(name, structure, db) {
-  let queryMessage = 'CREATE TABLE ' + name + ' (';
-  for (let i = 0; i < structure.fields.length; i++) {
-    const field = structure.fields[i];
-    queryMessage += field.name + ' ' + field.type;
-    if (field.key) queryMessage += ' ' + field.key;
-    if (!field.nullable) queryMessage += ' NOT NULL';
-    if (field.default != null) queryMessage += ' DEFAULT ' + field.default;
-    if (field.extra) queryMessage += ' ' + field.extra;
-    if (i < structure.fields.length - 1) queryMessage += ', ';
+  let sentences = new Array();
+
+  // obtener columnas
+  for (const field of structure.fields) {
+    const sentence = `${field.name} ${field.type} ${field.key || ""} ${field.nullable ? "" : "NOT NULL "}${field.default ? "DEFAULT " + field.default : ""}${field.extra || ""}`;
+    sentences.push(sentence);
   }
-  queryMessage += ')';
+
+  // obtener llaves foraneas
+  if (structure.foreignKeys)
+    for (const constraint of structure.foreignKeys) {
+      const sentence = `CONSTRAINT ${constraint.name} FOREIGN KEY (${constraint.column}) REFERENCES ${constraint.reference_table}(${constraint.reference_column})`;
+      sentences.push(sentence);
+    }
+  
+  const queryMessage = `CREATE TABLE ${name} (${sentences.join(', ')} )`
   const [result] = await db.execute(queryMessage);
   if (result) console.log(`Tabla ${name} creada`);
 }
