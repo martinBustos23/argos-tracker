@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import config from './config/config.js';
 
 export const __filename = fileURLToPath(import.meta.url);
@@ -88,4 +89,15 @@ export async function createTable(name, structure, db) {
   queryMessage += ')';
   const [result] = await db.execute(queryMessage);
   if (result) console.log(`Tabla ${name} creada`);
+}
+
+export async function createAdmin(db) {
+  const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+  const hash = await bcrypt.hash(config.DEFAULT_ADMIN_PASSWORD, salt);
+  const [result] = await db.execute('INSERT INTO users (username, password, admin) VALUES (?, ?, ?)', [
+    'admin',
+    hash,
+    true
+  ]);
+  if (result) console.log('Administrador creado\nUsername: admin\nPassword: admin');
 }
