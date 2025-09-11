@@ -24,6 +24,8 @@ export async function initDB() {
       keepAliveInitialDelay: 0,
     });
     console.log('Conexión establecida con la base de datos');
+    // configurar timezone en utc
+    await db.execute(`SET @@session.time_zone='+00:00'`);
     // inicializar tablas
     for (const table of tables) {
       let [result] = await db.execute(`SHOW TABLES LIKE '${table.name}'`);

@@ -154,7 +154,7 @@
         "type": "datetime",
         "key": null,
         "nullable": false,
-        "default": "utc_timestamp()",
+        "default": "current_timestamp()",
         "extra": null
       },
       {
@@ -207,7 +207,7 @@
         "type": "datetime",
         "key": null,
         "nullable": false,
-        "default": "utc_timestamp()",
+        "default": "current_timestamp()",
         "extra": null
       },
       {
@@ -268,7 +268,7 @@
         "type": "datetime",
         "key": null,
         "nullable": false,
-        "default": "utc_timestamp()",
+        "default": "current_timestamp()",
         "extra": null
       },
       {
