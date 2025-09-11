@@ -80,7 +80,7 @@ export async function createTable(name, structure, db) {
 
   // obtener columnas
   for (const field of structure.fields) {
-    const sentence = `${field.name} ${field.type} ${field.key || ""} ${field.nullable ? "" : "NOT NULL "}${field.default ? "DEFAULT " + field.default : ""}${field.extra || ""}`;
+    const sentence = `${field.name} ${field.type} ${field.key || ""} ${field.nullable ? "" : "NOT NULL "}${field.default != null ? "DEFAULT " + field.default : ""}${field.extra || ""}`;
     sentences.push(sentence);
   }
 
