@@ -118,6 +118,7 @@
                 background-color: #451321;
             }
         </style>
+        
         <script>
             const vincularForm = document.getElementById("vincularForm");
 
@@ -125,9 +126,9 @@
                 event.preventDefault();
 
                 const payload = {
-                    petName:    vincularForm.petName.value,
-                    frequency:  vincularForm.frequency.value,
-                    lowBat:     vincularForm.lowBat.value
+                    petName: vincularForm.petName.value,
+                    frequency: vincularForm.frequency.value,
+                    lowBat: vincularForm.lowBat.value
                 };
 
                 try {
@@ -141,7 +142,7 @@
 
                     if (response.ok) {
                         alert("Dispositivo creado correctamente");
-                        
+
                     } else {
                         alert("Error: " + result.error);
                     }

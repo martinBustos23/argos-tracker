@@ -14,18 +14,20 @@
               <span>Seleccione para filtrar</span>
 
               <section class="tracker-list">
-                <% trackers.forEach( tracker => { %>
+                <% trackers.forEach( tracker=> { %>
                   <div class="tracker-list__btn" onclick="">
                     <div class="tracker-list__img">img</div>
-                    <div class="tracker-list__info"> 
-                      <span class="label"><%= tracker.petName %></span>
+                    <div class="tracker-list__info">
+                      <span class="label">
+                        <%= tracker.petName %>
+                      </span>
                       <span class="label-name">Conectado</span>
                     </div>
                   </div>
-                <% }) %>
-                <div class="add-btn" onclick="">
-                  <a href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
-                </div>
+                  <% }) %>
+                    <div class="add-btn" onclick="">
+                      <a href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
+                    </div>
               </section>
 
             </div>
@@ -33,63 +35,71 @@
             <div id="map"></div>
           </div>
 
-<div class="log-container">
-  <h2>Últimos datos recibidos</h2>
-  <table class="log-container__table">
-    <thead>
-      <tr>
-        <th>Dispositivo</th>
-        <th>Mascota</th>
-        <th>Evento</th>
-        <th>Bateria</th>
-        <th>Latitud</th>
-        <th>Longitud</th>
-        <th>Fecha</th>
-        <th>Ir al mapa</th>
-      </tr>
-    </thead>
-    <tbody>
-  <% if (events && events.length > 0) { %>
-    <% events.forEach(event => { %>
-      <tr>
-        <td><%= event.trackerId %></td>
-        <td><%= event.trackerName %></td>
-        <td><%= event.eventDesc %></td>
-        <td>
-          <% if (event.batteryLvl) { %>
-            <%= event.batteryLvl %>%
-          <% } else { %>
-            -
-          <% } %>
-        </td>
-        <td>
-          <% if (event.latitude) { %>
-            <%= event.latitude %>
-          <% } else { %>
-            -
-          <% } %>
-        <td>
-          <% if (event.longitude) { %>
-            <%= event.longitude %>
-          <% } else { %>
-            -
-          <% } %>
-        </td>
-        <td><%= event.timestamp %></td>
-        <td>
-            -
-        </td>
-      </tr>
-    <% }) %>
-  <% } else { %>
-    <tr>
-      <td colspan="7" style="text-align:center;">No hay registros recientes.</td>
-    </tr>
-  <% } %>
-</tbody>
+          <div class="log-container">
+            <h2>Últimos datos recibidos</h2>
+            <table class="log-container__table">
+              <thead>
+                <tr>
+                  <th>Dispositivo</th>
+                  <th>Mascota</th>
+                  <th>Evento</th>
+                  <th>Bateria</th>
+                  <th>Latitud</th>
+                  <th>Longitud</th>
+                  <th>Fecha</th>
+                  <th>Ir al mapa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (events && events.length> 0) { %>
+                  <% events.forEach(event=> { %>
+                    <tr>
+                      <td>
+                        <%= event.trackerId %>
+                      </td>
+                      <td>
+                        <%= event.trackerName %>
+                      </td>
+                      <td>
+                        <%= event.eventDesc %>
+                      </td>
+                      <td>
+                        <% if (event.batteryLvl) { %>
+                          <%= event.batteryLvl %>%
+                            <% } else { %>
+                              -
+                              <% } %>
+                      </td>
+                      <td>
+                        <% if (event.latitude) { %>
+                          <%= event.latitude %>
+                            <% } else { %>
+                              -
+                              <% } %>
+                      <td>
+                        <% if (event.longitude) { %>
+                          <%= event.longitude %>
+                            <% } else { %>
+                              -
+                              <% } %>
+                      </td>
+                      <td>
+                        <%= event.timestamp %>
+                      </td>
+                      <td>
+                        -
+                      </td>
+                    </tr>
+                    <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="8" style="text-align:center;">No hay registros recientes.</td>
+                        </tr>
+                        <% } %>
+              </tbody>
 
-  </table>
-</div>
+            </table>
+          </div>
 
         </div>
 
@@ -103,7 +113,7 @@
         flex: 1;
         padding: .5rem 0rem 0rem;
         background-color: rgba(170, 170, 170, 0.2);
-       
+
       }
 
       .main-content__map {
@@ -138,7 +148,7 @@
         color: #6d6d6d;
         width: 100%;
         padding-bottom: .25rem;
-        
+
       }
 
 
@@ -221,9 +231,9 @@
         align-items: center;
 
         width: 100%;
-        
+
         margin: 1rem;
-        gap:1rem;
+        gap: 1rem;
       }
 
 
@@ -253,7 +263,7 @@
         box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.5);
       }
 
-      .tracker-list__img{
+      .tracker-list__img {
         width: 50px;
         height: 50px;
         background-color: white;
@@ -266,12 +276,13 @@
         color: black;
       }
 
-      .tracker-list__info{
+      .tracker-list__info {
         display: flex;
         flex: 1;
         flex-direction: column;
-        margin-left : 1rem;
+        margin-left: 1rem;
       }
+
       .tracker-list__info .label {
         text-align: left;
         font-weight: 500;
@@ -312,10 +323,9 @@
 
         box-shadow: 1px 1px 15px rgba(212, 77, 92, 0.4);
       }
-
     </style>
 
-    <script>    
+    <script>
       var map = L.map('map', {
         scrollWheelZoom: false
       }).setView([-34.6037, -58.3816], 15);
