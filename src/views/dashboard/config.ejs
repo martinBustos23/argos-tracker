@@ -5,7 +5,7 @@
     <div class="main-content">
 
       <%- include('../layouts/navbar', {title: 'Configuración del sistema' ,
-        subtitle: 'aca se tocan opciones y se rompe todo' }); %>
+        subtitle: 'Opciones, registros, restauración...' }); %>
 
         <div class="body-content">
 
@@ -97,96 +97,99 @@
                 <thead>
                   <tr>
                     <th>ID Tracker</th>
-                    <th>Nombre</th>
-                    <th>Evento</th>
-                    <th>Fecha</th>
+                    <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>Source</th>
+                    <th>Action</th>
+                    <th>Description</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>asdas2234</td>
-                    <td>Toto</td>
-                    <td>Conectado</td>
-                    <td>2023-04-15 09:00:00</td>
-                  </tr>
-                  <tr>
-                    <td>1gfAzfd</td>
-                    <td>Mona</td>
-                    <td>Entró en zona segura</td>
-                    <td>2023-04-15 09:05:00</td>
-                  </tr>
-                  <tr>
-                    <td>12555AA</td>
-                    <td>Theo</td>
-                    <td>Desconectado</td>
-                    <td>2023-04-15 09:10:00</td>
-                  </tr>
+                  <% if (trackerLogs && trackerLogs.length> 0) { %>
+                    <% trackerLogs.forEach(log=> { %>
+                      <tr>
+                        <td>
+                          <%= log.id %>
+                        </td>
+                        <td>
+                          <%= log.timestamp %>
+                        </td>
+                        <td>
+                          <%= log.level %>
+                        </td>
+                        <td>
+                          <%= log.source %>
+                        </td>
+                        <td>
+                          <%= log.action %>
+                        </td>
+                        <td>
+                          <%= log.description %>
+                        </td>
+                      </tr>
+                      <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="7">No hay registros disponibles</td>
+                          </tr>
+                          <% } %>
                 </tbody>
               </table>
             </div>
+
 
             <div class="log-container" id="usuarios">
               <h2>Registro de auditoría de usuarios</h2>
               <table class="log-container__table">
                 <thead>
                   <tr>
-                    <th>Usuario</th>
-                    <th>Activo</th>
-                    <th>Rol</th>
-                    <th>Acción</th>
-                    <th>Código</th>
+                    <th>ID</th>
                     <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>Source</th>
+                    <th>Action</th>
+                    <th>Description</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>juanperez</td>
-                    <td>Sí</td>
-                    <td>Admin</td>
-                    <td>Inicio de sesión</td>
-                    <td>pippip</td>
-                    <td>2023-04-15 09:15:00</td>
-                  </tr>
-                  <tr>
-                    <td>maria.g</td>
-                    <td>Sí</td>
-                    <td>Usuario</td>
-                    <td>Modificó perfil</td>
-                    <td>pippip</td>
-                    <td>2023-04-15 09:20:00</td>
-                  </tr>
-                  <tr>
-                    <td>roberto</td>
-                    <td>Sí</td>
-                    <td>Usuario</td>
-                    <td>Error en autenticación</td>
-                    <td>pippip</td>
-                    <td>2023-04-15 09:25:00</td>
-                  </tr>
-                  <tr>
-                    <td>ana</td>
-                    <td>No</td>
-                    <td>Usuario</td>
-                    <td>Cuenta desactivada</td>
-                    <td>pippip</td>
-                    <td>2023-04-15 09:30:00</td>
-                  </tr>
-                  <tr>
-                    <td>sysadmin</td>
-                    <td>Sí</td>
-                    <td>Admin</td>
-                    <td>Cambió permisos de usuario</td>
-                    <td>pippip</td>
-                    <td>2023-04-15 09:45:00</td>
-                  </tr>
+                  <% if (userLogs && userLogs.length> 0) { %>
+                    <% userLogs.forEach(log=> { %>
+                      <tr>
+                        <td>
+                          <%= log.id %>
+                        </td>
+                        <td>
+                          <%= log.timestamp %>
+                        </td>
+                        <td>
+                          <%= log.level %>
+                        </td>
+                        <td>
+                          <%= log.source %>
+                        </td>
+                        <td>
+                          <%= log.action %>
+                        </td>
+                        <td>
+                          <%= log.description %>
+                        </td>
+                      </tr>
+                      <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="6">No hay registros disponibles</td>
+                          </tr>
+                          <% } %>
                 </tbody>
               </table>
             </div>
 
+
             <div class="log-container" id="ayuda" style="display:none;">
               <h2>Ayudin</h2>
               <div style="width:60%; margin:auto; text-align: center;">
-                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" > Ir a la pagina web de ayuda!!!</a>
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"> Ir a la pagina web de
+                  ayuda!!!</a>
 
               </div>
             </div>
@@ -241,6 +244,7 @@
       }
 
       .config-content {
+        left: 20%;
         display: flex;
         flex-direction: column;
         width: 80%;

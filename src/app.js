@@ -39,7 +39,7 @@ export default async function createApp(db) {
   const userRouter = createUserRouter(userController);
   const authRouter = createAuthRouter(userController);
   const userLogRouter = createUserLogRouter(userLogController);
-  const dashboardRouter = createDashboardRouter(userController, trackerController);
+  const dashboardRouter = createDashboardRouter(userController, userLogController, trackerController, trackerLogController, trackerEventController);
   const trackerRouter = createTrackerRouter(trackerController, userController);
   const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController)
   const trackerLogRouter = createTrackerLogRouter(trackerLogController);

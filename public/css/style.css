@@ -24,7 +24,7 @@ body {
 }
 
 .main-content {
-  min-height: 100vh;
+  min-height: 90vh;
 
   margin-left: 250px;
 
@@ -50,7 +50,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .error-fix {
@@ -99,7 +99,7 @@ body {
   display: none;
   flex-direction: column;
   min-width: 150px;
-  z-index: 2000;
+  z-index: 3000;
 }
 
 .user-menu a {
@@ -111,6 +111,21 @@ body {
 
 .user-menu a:hover {
   background-color: rgba(105, 28, 50, 0.15);
+}
+
+.user-name{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-name span{
+  padding: 0 1rem;
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: italic;
+
+  color: grey;
 }
 
 /*------------------------------------*/
@@ -126,6 +141,7 @@ body {
   position: fixed;
   display: flex;
   z-index: 2000;
+  top:0;
   flex-direction: column;
   justify-content: space-between;
 
@@ -143,7 +159,6 @@ body {
 .sidebar h3 {
   font-weight: 600;
   font-size: 1.2rem;
-  margin-top: 10px;
 }
 
 .sidebar nav {

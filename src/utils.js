@@ -51,7 +51,7 @@ export class InternalError extends Exception {
   }
 }
 
-export const generateToken = (username) => {
+export const generateToken = (username ) => {
   const token = jwt.sign({ username }, config.JWT_KEY, { expiresIn: '1h' });
   return token;
 };

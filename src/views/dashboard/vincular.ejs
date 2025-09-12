@@ -8,21 +8,31 @@
                 subtitle: 'Complete el formulario para crear nuevo vinculo' }); %>
 
                 <div class="main-content__body">
-                    <div class="vincular-form">
+                    <form class="vincular-form" id="vincularForm">
                         <h2>Completar formulario...</h2>
+
                         <div class="vincular-form__div">
-                            <label for="">ID: asxajlk1234</label>
-                            
+                            <label>ID</label>
+                            <input type="text" name="id" disabled placeholder="Se asigna automáticamente">
                         </div>
+
                         <div class="vincular-form__div">
-                            <label for="">Nombre</label>
-                            <input type="text">
+                            <label for="petName">Nombre de la mascota</label>
+                            <input type="text" name="petName" required>
                         </div>
+
                         <div class="vincular-form__div">
-                            <label for="">etc...</label>
-                            <input type="text">
+                            <label for="frequency">Frecuencia</label>
+                            <input type="number" name="frequency" value="5" min="1">
                         </div>
-                    </div>
+
+                        <div class="vincular-form__div">
+                            <label for="lowBat">Umbral batería (%)</label>
+                            <input type="number" name="lowBat" value="15" min="1" max="100">
+                        </div>
+
+                        <button type="submit" class="confirm-btn">Crear tracker</button>
+                    </form>
 
                 </div>
 
@@ -52,7 +62,7 @@
                 border-radius: 5px;
             }
 
-            .vincular-form h2{
+            .vincular-form h2 {
                 font-size: 1.5rem;
                 padding: .5rem 0rem .5rem;
                 margin-bottom: .5rem;
@@ -60,7 +70,7 @@
                 border-bottom: 2px solid #691c32;
             }
 
-            .vincular-form__div{
+            .vincular-form__div {
                 padding: .5rem 0rem;
                 margin: .25rem 1rem;
                 display: flex;
@@ -69,21 +79,77 @@
                 border-bottom: 1px solid #691c32;
             }
 
-            .vincular-form__div label{
+            .vincular-form__div label {
                 font-size: 1rem;
                 font-weight: 400;
                 margin: .15rem 0rem;
             }
 
-            .vincular-form__div input{
+            .vincular-form__div input {
                 outline: none;
                 border: 1px solid #ddd;
+                padding: .25rem .75rem;
                 box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
                 border-radius: 25px;
                 width: 80%;
             }
+
+            .confirm-btn {
+                width: 50%;
+                max-height: 3rem;
+
+                margin: 1rem 25% 0;
+                padding: .5rem 2rem;
+
+                font-weight: 400;
+
+                background-color: #691c32;
+                color: white;
+
+                border: none;
+                border-radius: 15px;
+
+                cursor: pointer;
+
+                transition: all 0.25s ease-in-out;
+            }
+
+            .confirm-btn:hover {
+                background-color: #451321;
+            }
         </style>
         <script>
+            const vincularForm = document.getElementById("vincularForm");
+
+            vincularForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                const payload = {
+                    petName:    vincularForm.petName.value,
+                    frequency:  vincularForm.frequency.value,
+                    lowBat:     vincularForm.lowBat.value
+                };
+
+                try {
+                    const response = await fetch("/api/trackers", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert("Dispositivo creado correctamente");
+                        
+                    } else {
+                        alert("Error: " + result.error);
+                    }
+                } catch (error) {
+                    console.log("Error al crear dispositivo", error);
+                    alert("Error al crear dispositivo");
+                }
+            });
 
 
         </script>

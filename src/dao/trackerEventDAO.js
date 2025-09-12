@@ -28,4 +28,11 @@ export default class TrackerEventDAO {
     );
     return logs.map((log) => new TrackerEventDTO(log));
   }
+
+  async getAll(trackerId) {
+    const [logs] = await this.#db.execute(
+      `SELECT * FROM tracker_${trackerId}_events ORDER BY timestamp DESC`
+    );
+    return logs.map((log) => new TrackerEventDTO(log));
+  }
 }

@@ -131,4 +131,6 @@ export default class UserController {
       throw new InternalError('Error interno cerrar sesion');
     }
   }
+
 }
+

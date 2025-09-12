@@ -8,7 +8,16 @@
         subtitle: 'Lista de los dispositivos vinculados' }); %>
 
         <div class="body-content">
-          <div class="tabs-container" id="tabs"></div>
+          <!-- <div class="tabs-container" id="tabs"></div> -->
+          <div class="tabs-container">
+            <% trackers.forEach(Tracker=> { %>
+              <a href="/dashboard/devices/<%= Tracker.id %>"
+                class="tab <%= tracker.id === Tracker.id ? 'active' : '' %>">
+                <%= Tracker.petName %>
+              </a>
+              <% }) %>
+          </div>
+
           <div class="content1-container">
 
             <div class="button-container">
@@ -20,11 +29,14 @@
             <div id="tab-tracker" class="tab-tracker tab-content active">
 
               <div class="tracker-info">
+
                 <div class="tracker-info__div">
                   <div class="tracker-info__pet">
                     <div class="tracker-pet__img">img</div>
                     <div class="tracker-pet__name">
-                      <h2>Toto</h2>
+                      <h2>
+                        <%= tracker.petName %>
+                      </h2>
                       <span>Gran mascota</span>
                     </div>
                   </div>
@@ -36,16 +48,20 @@
                   </div>
                 </div>
                 <div id="map" class="data-container__map"></div>
+
               </div>
 
               <div class="tracker-pos">
                 <h2>Últimas posiciones</h2>
 
-                <div>11111</div>
-                <div>22222</div>
-                <div>33333</div>
-                <div>44444</div>
-                <div>55555</div>
+                <% const positionEvents = lastEvents.filter(e => e.eventDesc === 'POSITION').slice(0, 5); %>
+                <% positionEvents.forEach(event => { %>
+                  <div>
+                    <p>Posición: <%= event.latitude %>, <%= event.longitude %></p>
+                    <p>Fecha: <%= event.timestamp %></p>
+                  </div>
+                <% }) %>
+
               </div>
 
             </div>
@@ -57,6 +73,9 @@
                     <h2>Identificación</h2>
                     <p><strong>ID:</strong> 001</p>
                     <p><strong>Nombre:</strong> Toto</p>
+                    <button id="delete-tracker-btn">
+                      Eliminar Tracker
+                    </button>
                   </div>
 
                   <div class="tab-config__alerts">
@@ -102,37 +121,50 @@
               <table class="log-container__table">
                 <thead>
                   <tr>
-                    <th>Posición</th>
                     <th>Evento</th>
+                    <th>Bateria</th>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
                     <th>Fecha</th>
-                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>-34.6037, -58.3816</td>
-                    <td>Entrada a zona segura</td>
-                    <td>2021-02-26 14:35</td>
-                    <td>Activo</td>
-                  </tr>
-                  <tr>
-                    <td>-34.6100, -58.4000</td>
-                    <td>Salida de zona segura</td>
-                    <td>2021-02-26 13:20</td>
-                    <td>En movimiento</td>
-                  </tr>
-                  <tr>
-                    <td>-34.6200, -58.3950</td>
-                    <td>Alerta de sonido</td>
-                    <td>2021-02-26 12:05</td>
-                    <td>En alerta</td>
-                  </tr>
-                  <tr>
-                    <td>-34.6150, -58.3900</td>
-                    <td>Ubicación registrada</td>
-                    <td>2021-02-26 11:50</td> 
-                    <td>OK</td>
-                  </tr>
+                  <% if (lastEvents && lastEvents.length> 0) { %>
+                    <% lastEvents.forEach(event=> { %>
+                      <tr>
+                        <td>
+                          <%= event.eventDesc %>
+                        </td>
+                        <td>
+                          <% if (event.batteryLvl) { %>
+                            <%= event.batteryLvl %>%
+                              <% } else { %>
+                                -
+                                <% } %>
+                        </td>
+                        <td>
+                          <% if (event.latitude) { %>
+                            <%= event.latitude %>
+                              <% } else { %>
+                                -
+                                <% } %>
+                        <td>
+                          <% if (event.longitude) { %>
+                            <%= event.longitude %>
+                              <% } else { %>
+                                -
+                                <% } %>
+                        </td>
+                        <td>
+                          <%= event.timestamp %>
+                        </td>
+                      </tr>
+                      <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="5" style="text-align:center;">No hay registros recientes.</td>
+                          </tr>
+                          <% } %>
                 </tbody>
               </table>
             </div>
@@ -292,6 +324,22 @@
               box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
               background-color: white;
               color: #451321;
+            }
+
+            .tab-config__identify button{
+              margin: 1rem; 
+              align-self: center;
+              background-color:#691c32; 
+              color:white; 
+              padding:0.5rem 1rem; 
+              border:none; 
+              border-radius:4px; 
+              cursor:pointer;
+              transition: all .25s ease-out;
+            }
+
+            .tab-config__identify button:hover{
+              background-color: #451321;
             }
 
             .tab-config__div {
@@ -507,6 +555,7 @@
 
             .tracker-pos div {
               display: flex;
+              flex-direction: column;
               align-items: center;
 
               width: 80%;
@@ -517,6 +566,10 @@
               border-radius: 4px;
               transition: all .3s ease;
               box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.6);
+            }
+
+            .tracker-pos p {
+              margin: 0;
             }
 
             .tracker-pos div:hover {
@@ -598,6 +651,7 @@
               align-items: center;
               gap: 8px;
               transition: all 0.2s;
+              text-decoration: none;
             }
 
             .tab.active {
@@ -606,6 +660,7 @@
 
             .tab:hover {
               background: #691c32;
+              color: white;
             }
 
 
@@ -665,39 +720,30 @@
             });
 
 
-            // testing no oficial... esto es viejo... tengo que cambiar
-            const tabs = [
-              { id: 1, name: "Toto" },
-              { id: 2, name: "Mona" },
-              { id: 3, name: "Luna" }
-            ];
+            const deleteBtn = document.getElementById('delete-tracker-btn');
+            if(deleteBtn) {
+              deleteBtn.addEventListener('click', async () => {
+                if(!confirm('¿Seguro que quieres eliminar este tracker?')) return;
 
-            function renderTabs(tabsData) {
-              const tabsContainer = document.getElementById("tabs");
-              tabsContainer.innerHTML = "";
-              tabsData.forEach((tabData, index) => {
-                const tab = document.createElement("div");
-                tab.className = "tab" + (index === 0 ? " active" : "");
-                tab.innerHTML = `<span>${tabData.name}</span>`;
-                tab.addEventListener("click", () => showTabContent(tabData));
-                tabsContainer.appendChild(tab);
+                try {
+                  const response = await fetch(`/api/trackers/${tracker.id}`, {
+                    method: 'DELETE'
+                  });
+
+                  if(response.ok) {
+                    alert('Tracker eliminado correctamente');
+                    location.reload();
+                  } else {
+                    const data = await response.json();
+                    alert('Error al eliminar tracker: ' + (data.message || 'Error desconocido'));
+                  }
+                } catch (err) {
+                  console.error(err);
+                  alert('Error al conectar con el servidor');
+                }
               });
-
-              if (tabsData.length > 0) {
-                showTabContent(tabsData[0]);
-              }
             }
 
-            function showTabContent(tabData) {
-              document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-              const activeTab = [...document.querySelectorAll(".tab")]
-                .find(t => t.textContent.includes(tabData.name));
-              if (activeTab) activeTab.classList.add("active");
-
-            }
-            renderTabs(tabs);
-
-            // 
           </script>
 
           <%- include('../layouts/footer'); %>

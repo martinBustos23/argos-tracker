@@ -4,13 +4,14 @@
           <span class="page-subtitle"><%= subtitle %></span>
         </div>
         
-        <div>
-          <%= username %>
+        <div class="user-name">
+          <span>¡Bienvenido, <%= username %>!</span>
+          
           <button class="account-btn" id="account-btn"><i class="bi bi-person-fill"></i></button>
         </div>
         
         <div id="user-menu" class="user-menu">
           <a href="/dashboard/users">Perfil</a>
-          <a href="/login">Cerrar sesión</a>
+          <a href="/logout">Cerrar sesión</a>
         </div>
       </nav>

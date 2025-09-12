@@ -9,91 +9,97 @@
 
         <div class="main-content__body">
 
-          <div class="register-container" id="registerContainer">
-            <div class="register-modal__btn" id="registerBtn">
-              <span>Crear nuevo usuario</span><i class="bi bi-arrow-down"></i>
-            </div>
-
-            <h2 class="form-title__h2">Registro</h2>
-
-            <form class="register-form" action="/api/users" method="POST">
-              <div class="register-form__div">
-                <div class="form-group">
-                  <label for="username">Usuario</label>
-                  <input type="text" id="username" name="username" placeholder="Escribir usuario" required />
-                </div>
-                <div class="form-group">
-                  <label for="password">Contraseña</label>
-                  <input type="password" id="password" name="password" placeholder="Escribir contraseña" required />
-                </div>
-                <button type="submit" class="confirm-btn">Confirmar</button>
+          <% if (admin===true) { %>
+            <div class="register-container" id="registerContainer">
+              <div class="register-modal__btn" id="registerBtn">
+                <span>Crear nuevo usuario</span><i class="bi bi-arrow-down"></i>
               </div>
-            </form>
-          </div>
 
-          <div class="user-container">
-            <% users.forEach(user=> { %>
-              <div class="user-container__div">
-                <div class="img-placeholder">
-                  <i><i class="bi bi-person-fill "></i></i>
-                </div>
-                <div class="user-info">
-                  <div>
-                    <p>
-                      <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
-                    </p>
-                    <span>Activo: <%= user.active ? "Sí" : "No" %></span>
+              <h2 class="form-title__h2">Registro</h2>
 
-                  </div>
 
-                  <p class="last">Última conexión: <%= user.lastLogin %></p>
-                </div>
-                <button class="open-edit-btn" data-username="<%= user.username %>">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-              </div>
-              <% }) %>
-          </div>
-
-          <div id="edit-user-modal" class="edit-user-modal">
-            <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
-            <div class="edit-user">
-              <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
-
-              <h2 id="edit-username-title" class="modal-title">Editar usuario</h2>
-              <form class="edit-user__form" action="/api/users/:uid" method="PUT" id="PUT">
-
-                <div class="edit-user__div">
+              <form class="register-form" id="registerForm">
+                <div class="register-form__div">
                   <div class="form-group">
                     <label for="username">Usuario</label>
-                    <input type="text" id="username_input" name="username" />
+                    <input type="text" id="username" name="username" placeholder="Escribir usuario" required />
                   </div>
                   <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" placeholder="Editar contraseña" />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="rol">Rol</label>
-                    <select id="rol" name="rol">
-                      <option value="" selected></option>
-                      <option value="0">Usuario</option>
-                      <option value="1">Admin</option>
-                    </select>
+                    <input type="password" id="password" name="password" placeholder="Escribir contraseña" required />
                   </div>
                   <button type="submit" class="confirm-btn">Confirmar</button>
                 </div>
+              </form>
 
-              </form>
-              <!-- formulario eliminar usuario en base uid -->
-              <form class="delete-user-form" action="/api/users/:uid" method="DELETE" id="DELETE">
-                <h2 id="delete-username-title" class="modal-title delete">Eliminar usuario</h2>
-                <button class="delete-btn" type="submit">Eliminar</button>
-              </form>
 
             </div>
+            <% } %>
 
-          </div>
+              <div class="user-container">
+                <% users.forEach(user=> { %>
+                  <div class="user-container__div">
+                    <div class="img-placeholder">
+                      <i><i class="bi bi-person-fill "></i></i>
+                    </div>
+                    <div class="user-info">
+                      <div>
+                        <p>
+                          <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
+                        </p>
+                        <span>Activo: <%= user.active ? "Sí" : "No" %></span>
+
+                      </div>
+
+                      <p class="last">Última conexión: <%= user.lastLogin %>
+                      </p>
+                    </div>
+                    <button class="open-edit-btn" data-username="<%= user.username %>">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </div>
+                  <% }) %>
+              </div>
+
+              <div id="edit-user-modal" class="edit-user-modal">
+                <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
+                <div class="edit-user">
+                  <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
+
+                  <h2 id="edit-username-title" class="modal-title">Editar usuario</h2>
+                  <form class="edit-user__form" id="editForm">
+
+                    <div class="edit-user__div">
+                      <div class="form-group">
+                        <label for="username">Usuario</label>
+                        <input type="text" id="username_input" name="username" />
+                      </div>
+                      <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" name="password" placeholder="Editar contraseña" />
+                      </div>
+
+                      <div class="form-group">
+                        <label for="rol">Rol</label>
+                        <select id="rol" name="rol">
+                          <option value="" selected></option>
+                          <option value="0">Usuario</option>
+                          <option value="1">Admin</option>
+                        </select>
+                      </div>
+                      <button type="submit" class="confirm-btn">Confirmar</button>
+                    </div>
+
+                  </form>
+                  <!-- formulario eliminar usuario en base uid -->
+                  <form class="delete-user-form" id="deleteForm">
+                    <h2 id="delete-username-title" class="modal-title delete">Eliminar usuario</h2>
+                    <button class="delete-btn" type="submit">Eliminar</button>
+                  </form>
+
+                </div>
+
+              </div>
 
         </div>
     </div>
@@ -286,7 +292,8 @@
         margin-top: 1rem;
         font-size: .8rem;
         border: none;
-        color: #691c32;;
+        color: #691c32;
+        ;
         font-style: italic;
       }
 
@@ -438,47 +445,91 @@
         registerContainer.classList.toggle("active");
       });
 
-      document.querySelector(".edit-user__form")
-        .addEventListener('submit', async (event) => {
-          event.preventDefault();
-          try {
-            let payload = {};
-            if (event.target.username.value)
-              payload.username = event.target.username.value;
-            if (event.target.password.value)
-              payload.password = event.target.password.value;
-            if (event.target.rol.value)
-              payload.admin = event.target.rol.value;
-            const url = event.target.action;
-            const response = await fetch(url, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(payload),
-            })
-            if (response.ok) return console.log("Usuario modificado exitosamente");
-            console.log("Ocurrio un error modificando al usuario");
-          } catch (error) {
-            console.log("Ocurrio un error modificando al usuario");
-          }
-        });
 
-      document.querySelector(".delete-user-form")
-        .addEventListener('submit', async (event) => {
-          event.preventDefault();
-          try {
-            const url = event.target.action;
-            const response = await fetch(url, {
-              method: 'DELETE'
-            })
-            if (response.ok) return console.log("Usuario dado de baja");
-            console.log("Ocurrio un error dando de baja al usuario");
-          } catch (error) {
-            console.log("Ocurrio un error dando de baja al usuario");
-            console.log(error);
+      const registerForm = document.getElementById("registerForm");
+      registerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = {
+          username: registerForm.username.value,
+          password: registerForm.password.value
+        };
+
+        try {
+          const response = await fetch("/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("Usuario creado correctamente");
+            location.reload();
+          } else {
+            alert("Error: " + result.error);
           }
-        });
+        } catch (error) {
+          console.log("Error al crear usuario", error);
+          alert("Error al crear usuario");
+        }
+      });
+
+
+      const editForm = document.getElementById("editForm");
+      editForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = {};
+        if (editForm.username.value) payload.username = editForm.username.value;
+        if (editForm.password.value) payload.password = editForm.password.value;
+        if (editForm.rol.value) payload.admin = editForm.rol.value;
+
+        try {
+          const response = await fetch(editForm.action, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("Usuario modificado exitosamente");
+            location.reload();
+          } else {
+            alert("Error al modificar usuario: " + result.error);
+          }
+        } catch (error) {
+          console.error("Error al modificar usuario:", error);
+          alert("Error al modificar usuario");
+        }
+      });
+
+      const deleteForm = document.getElementById("deleteForm");
+      deleteForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+
+        try {
+          const response = await fetch(deleteForm.action, { method: "DELETE" });
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("Usuario eliminado correctamente");
+            location.reload();
+          } else {
+            alert("Error al eliminar usuario: " + result.error);
+          }
+        } catch (error) {
+          console.error("Error al eliminar usuario:", error);
+          alert("Error al eliminar usuario");
+        }
+      });
+
+
 
       document.querySelectorAll(".open-edit-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {

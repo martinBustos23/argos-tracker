@@ -33,97 +33,64 @@
             <div id="map"></div>
           </div>
 
-          <div class="log-container">
-            <h2>Últimos datos recibidos</h2>
-            <table class="log-container__table">
-              <thead>
-                <tr>
-                  <th>Dispositivo</th>
-                  <th>Mascota</th>
-                  <th>Evento</th>
-                  <th>Latitud</th>
-                  <th>Longitud</th>
-                  <th>Fecha</th>
-                  <th>Ir al mapa</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Tracker 1</td>
-                  <td>Perro - Toto</td>
-                  <td>Inicio</td>
-                  <td>-34.6201</td>
-                  <td>-58.4334</td>
-                  <td>2025-05-30 10:00:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <tr>
-                  <td>Tracker 2</td>
-                  <td>Gato - Mona</td>
-                  <td>Movimiento</td>
-                  <td>-34.6205</td>
-                  <td>-58.4340</td>
-                  <td>2025-05-30 10:05:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <tr>
-                  <td>Tracker 3</td>
-                  <td>Perro - Rex</td>
-                  <td>Parada</td>
-                  <td>-34.6210</td>
-                  <td>-58.4350</td>
-                  <td>2025-05-30 10:10:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <tr>
-                  <td>Tracker 4</td>
-                  <td>Gato - Luna</td>
-                  <td>Inicio</td>
-                  <td>-34.6220</td>
-                  <td>-58.4360</td>
-                  <td>2025-05-30 10:15:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <!--  -->
-                <tr>
-                  <td>Tracker 1</td>
-                  <td>Perro - Toto</td>
-                  <td>Inicio</td>
-                  <td>-34.6201</td>
-                  <td>-58.4334</td>
-                  <td>2025-05-30 10:00:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <tr>
-                  <td>Tracker 2</td>
-                  <td>Gato - Mona</td>
-                  <td>Movimiento</td>
-                  <td>-34.6205</td>
-                  <td>-58.4340</td>
-                  <td>2025-05-30 10:05:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <tr>
-                  <td>Tracker 3</td>
-                  <td>Perro - Rex</td>
-                  <td>Parada</td>
-                  <td>-34.6210</td>
-                  <td>-58.4350</td>
-                  <td>2025-05-30 10:10:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-                <tr>
-                  <td>Tracker 4</td>
-                  <td>Gato - Luna</td>
-                  <td>Inicio</td>
-                  <td>-34.6220</td>
-                  <td>-58.4360</td>
-                  <td>2025-05-30 10:15:00</td>
-                  <td><i class="bi bi-compass"></i></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+<div class="log-container">
+  <h2>Últimos datos recibidos</h2>
+  <table class="log-container__table">
+    <thead>
+      <tr>
+        <th>Dispositivo</th>
+        <th>Mascota</th>
+        <th>Evento</th>
+        <th>Bateria</th>
+        <th>Latitud</th>
+        <th>Longitud</th>
+        <th>Fecha</th>
+        <th>Ir al mapa</th>
+      </tr>
+    </thead>
+    <tbody>
+  <% if (events && events.length > 0) { %>
+    <% events.forEach(event => { %>
+      <tr>
+        <td><%= event.trackerId %></td>
+        <td><%= event.trackerName %></td>
+        <td><%= event.eventDesc %></td>
+        <td>
+          <% if (event.batteryLvl) { %>
+            <%= event.batteryLvl %>%
+          <% } else { %>
+            -
+          <% } %>
+        </td>
+        <td>
+          <% if (event.latitude) { %>
+            <%= event.latitude %>
+          <% } else { %>
+            -
+          <% } %>
+        <td>
+          <% if (event.longitude) { %>
+            <%= event.longitude %>
+          <% } else { %>
+            -
+          <% } %>
+        </td>
+        <td><%= event.timestamp %></td>
+        <td>
+            -
+        </td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+    <tr>
+      <td colspan="7" style="text-align:center;">No hay registros recientes.</td>
+    </tr>
+  <% } %>
+</tbody>
+
+  </table>
+</div>
+
         </div>
 
     </div>
@@ -136,6 +103,7 @@
         flex: 1;
         padding: .5rem 0rem 0rem;
         background-color: rgba(170, 170, 170, 0.2);
+       
       }
 
       .main-content__map {

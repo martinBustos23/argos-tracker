@@ -48,4 +48,12 @@ export default class TrackerEventController {
       throw error;
     }
   }
+
+  async getAll(trackerId) {
+    try {
+      return this.#trackerEventDAO.getAll(trackerId);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
