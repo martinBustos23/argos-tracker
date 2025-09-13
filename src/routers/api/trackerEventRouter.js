@@ -39,5 +39,15 @@ export default function createTrackerEventRouter(trackerEventController, tracker
     }
   });
 
+  router.get('/trackerEvents', async (req, res, next) => {
+    try {
+      const events = await trackerEventController.getAll();
+
+      res.status(200).json(events);
+    } catch (error) {
+      next (error);
+    }
+  });
+
   return router;
 }
