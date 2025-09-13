@@ -29,6 +29,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
       const trackerId = req.params.id;
       const tracker = await trackerController.findByID(trackerId);
       if (!tracker) throw new NotFound(`No existe el tracker ${trackerId}`);
+      if (!req.query.n) throw new BadRequest('No se indico cantidad de eventos');
       const n = req.query.n;
       const logs = await trackerEventController.getLatest(trackerId, n);
 
