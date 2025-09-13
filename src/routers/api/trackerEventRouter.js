@@ -5,7 +5,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
   const router = express.Router();
   router.use(authToken);
 
-  router.post('/trackers/events/:id', async (req, res, next) => {
+  router.post('/trackerEvents/:id', async (req, res, next) => {
     try {
       const trackerId = req.params.id;
       const tracker = await trackerController.findByID(trackerId);
@@ -24,7 +24,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
     }
   });
 
-  router.get('/trackers/events/:id', async (req, res, next) => {
+  router.get('/trackerEvents/:id', async (req, res, next) => {
     try {
       const trackerId = req.params.id;
       const tracker = await trackerController.findByID(trackerId);
