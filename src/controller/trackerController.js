@@ -53,10 +53,10 @@ export default class TrackerController {
       //validar datos tracker?
 
       const updatedTracker = await this.#trackerDAO.update(id, tracker);
-      await this.#trackerLogController.addUpdate(id, 'INFO');
+      await this.#trackerLogController.addUpdate(id, tracker,'INFO');
       return updatedTracker;
     } catch (error) {
-      await this.#trackerLogController.addUpdate(id, 'ERROR');
+      await this.#trackerLogController.addUpdate(id, tracker,'ERROR');
       if (error.code) throw error;
       throw new InternalError('Error interno actualizando tracker');
     }
