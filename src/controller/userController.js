@@ -19,9 +19,7 @@ export default class UserController {
     try {
       const exists = await this.#userDAO.findByID(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
-      const salt = await bcrypt.genSalt(12); // 12 rondas de sason
-      const hash = await bcrypt.hash(newUser.password, salt);
-      newUser.password = hash; // actualizar la contrasenia para que sea el hash
+      newUser.password = this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
       const result = await this.#userDAO.create(newUser);
       await this.#userLogController.addRegistration(newUser.username, 'INFO');
       return result;
@@ -59,11 +57,8 @@ export default class UserController {
       if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
-      if (user.password) {
-        const salt = await bcrypt.genSalt(12); // 12 rondas de sason
-        const hash = await bcrypt.hash(user.password, salt);
-        user.password = hash; // actualizar la contrasenia para que sea el hash
-      }
+      if (user.password) user.password = this.#genPasswordHash(user.password);
+
       const result = await this.#userDAO.update(username, user);
       await this.#userLogController.addUpdate(username, user, 'INFO');
       return result;
@@ -120,7 +115,6 @@ export default class UserController {
       const exist = await this.#userDAO.findByID(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
-      if (!exist) throw new NotFound('Usuario no existe');
       
       if (!(await bcrypt.compare(user.password, exist.password))) {
         const logs = await this.#userLogController.getLastNMinutes(5, 'Login');
@@ -165,5 +159,10 @@ export default class UserController {
     }
   }
 
+  async #genPasswordHash(password) {
+    const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+  }
 }
 
