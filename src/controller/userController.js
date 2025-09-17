@@ -37,6 +37,7 @@ export default class UserController {
       const users = await this.#userDAO.getAll();
       return users;
     } catch (error) {
+      if (error.status) throw error;
       throw new InternalError('Error interno obteniendo usuarios');
     }
   }
