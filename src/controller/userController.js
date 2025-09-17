@@ -1,6 +1,12 @@
 import { Conflict, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../utils.js';
 import bcrypt from 'bcryptjs';
 
+const FIRST_TIMEOUT_TRIES = 3;
+const FIRST_TIMEOUT_MINUTES = 5;
+const SECOND_TIMEOUT_TRIES = 5;
+const SECOND_TIMEOUT_MINUTES = 10;
+const BLOCK_TRIES = 10;
+
 export default class UserController {
   #userDAO;
   #userLogController;
@@ -100,15 +106,41 @@ export default class UserController {
     }
   }
 
-  //// ACCESO
+  async #timeoutUser(username, minutes) {
+    await this.#userDAO.update(username, { active: false});
+      
+    setTimeout(async () => {
+      await this.#userDAO.update(username, { active: true});
+    },minutes*60*1000);
+  }
 
+  //// ACCESO
   async login(user) {
     try {
       const exist = await this.#userDAO.findByID(user.username);
-
+      if (!exist.active) throw new Unauthorized('Usuario no habilitado');
       if (!exist) throw new NotFound('Usuario no existe');
-      if (!(await bcrypt.compare(user.password, exist.password)))
+      
+      if (!(await bcrypt.compare(user.password, exist.password))) {
+        const logs = await this.#userLogController.getLastNMinutes(5, 'Login');
+
+        if (logs.length >= BLOCK_TRIES && logs.slice(0, BLOCK_TRIES-1).every(log => log.level === 'ERROR')) {
+          await this.#userDAO.update(user.username, { active: false});
+          throw new Unauthorized(`Ingreso la contraseña incorrecta demasiadas veces, si cuenta se bloqueo`);
+        }
+
+        if (logs.length >= SECOND_TIMEOUT_TRIES-1 && logs.slice(0, SECOND_TIMEOUT_TRIES-1).every(log => log.level === 'ERROR')) {
+          this.#timeoutUser(user.username, SECOND_TIMEOUT_MINUTES);
+          throw new Unauthorized('Contraseña incorrecta, espere 10 minutos para volver a intentarlo');
+        }
+
+        if (logs.length >= FIRST_TIMEOUT_TRIES-1 && logs.slice(0, FIRST_TIMEOUT_TRIES-1).every(log => log.level === 'ERROR')) {
+          this.#timeoutUser(user.username, FIRST_TIMEOUT_MINUTES);
+          throw new Unauthorized('Contraseña incorrecta, espere 5 minutos para volver a intentarlo');
+        }
+
         throw new Unauthorized('Contraseña incorrecta');
+      }
       const log = await this.#userLogController.addLogin(user.username, 'INFO');
       // obtener el timestamp del nuevo log, pasarlo a UTF y reemplazar T y Z del string
       const timestamp = new Date(log.timestamp).toISOString().replace(/[A-Z]/g, ' ');

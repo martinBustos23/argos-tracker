@@ -72,7 +72,19 @@ export default class UserLogController {
 
   async getLatest(n) {
     try {
-      return this.#userLogDAO.getLatest(n);
+      return await this.#userLogDAO.getLatest(n);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLastNMinutes(n, action, level)
+  {
+    try {
+      let logs = await this.#userLogDAO.getLastNMinutes(n);
+      if (action) logs = logs.filter(log => log.action === action);
+      if (level) logs = logs.filter(log => log.level === level);
+      return logs;
     } catch (error) {
       throw error;
     }
