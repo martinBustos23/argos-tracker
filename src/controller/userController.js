@@ -69,7 +69,6 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addUpdate(username, user, 'ERROR');
       if (error.status) throw error;
-      console.log(error.message);
       throw new InternalError('Error interno actualizando usuario');
     }
   }
