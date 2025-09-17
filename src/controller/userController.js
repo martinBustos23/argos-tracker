@@ -118,6 +118,7 @@ export default class UserController {
   async login(user) {
     try {
       const exist = await this.#userDAO.findByID(user.username);
+      if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
       if (!exist) throw new NotFound('Usuario no existe');
       
