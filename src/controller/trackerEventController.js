@@ -7,18 +7,33 @@ export default class TrackerEventController {
     this.#trackerEventDAO = trackerEventDAO;
   }
 
-  async #addEvent(trackerId, eventDesc, latitude, longitude, batteryLvl) {
+  #validateEvent(event) {
+    const failConditions = [
+      { variable: event.batteryLvl, expression: event.batteryLvl < 0 || event.batteryLvl > 100 },
+      {
+        variable: event.latitude,
+        expression: event.latitude > 90 || event.latitude < -90,
+      },
+      {
+        variable: event.longitude,
+        expression: event.longitude > 180 || event.longitude < -180,
+      },
+    ];
+
+    if (
+      failConditions.some(
+        (condition) => typeof condition.variable !== 'undefined' && condition.expression
+      )
+    )
+      return false;
+    return true;
+  }
+
+  async #addEvent(event) {
     try {
-      const event = this.#trackerEventDAO.create(
-        new TrackerEventDTO({
-          trackerId,
-          eventDesc,
-          latitude,
-          longitude,
-          batteryLvl,
-        })
-      );
-      return event;
+      if (!this.#validateEvent(event)) throw new InternalError('Evento no valido');
+      const result = this.#trackerEventDAO.create(event);
+      return result;
     } catch (error) {
       if (error.status) throw error;
       throw new InternalError(
@@ -29,7 +44,15 @@ export default class TrackerEventController {
 
   async addPosition(trackerId, latitude, longitude) {
     try {
-      return await this.#addEvent(trackerId, 'POSITION', latitude, longitude, null);
+      return await this.#addEvent(
+        new TrackerEventDTO({
+          trackerId,
+          eventDesc: 'POSITION',
+          latitude,
+          longitude,
+          batteryLvl: null,
+        })
+      );
     } catch (error) {
       throw error;
     }
@@ -37,7 +60,15 @@ export default class TrackerEventController {
 
   async addBatteryLvl(trackerId, batteryLvl) {
     try {
-      return await this.#addEvent(trackerId, 'BATTERY_LVL', null, null, batteryLvl);
+      return await this.#addEvent(
+        new TrackerEventDTO({
+          trackerId,
+          eventDesc: 'BATTERY_LVL',
+          latitude: null,
+          longitude: null,
+          batteryLvl,
+        })
+      );
     } catch (error) {
       throw error;
     }
