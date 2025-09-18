@@ -1,4 +1,11 @@
-import { Conflict, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../utils.js';
+import {
+  Conflict,
+  NotFound,
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalError,
+} from '../utils.js';
 import bcrypt from 'bcryptjs';
 
 const FIRST_TIMEOUT_TRIES = 3;
@@ -86,8 +93,9 @@ export default class UserController {
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       const users = await this.getAll();
-      const admins = users.filter(user => user.admin == true);
-      if (admins.length <= 1) throw new Unauthorized('No se puede borrar todos los administradores');
+      const admins = users.filter((user) => user.admin == true);
+      if (admins.length <= 1)
+        throw new Unauthorized('No se puede borrar todos los administradores');
 
       //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
@@ -102,11 +110,14 @@ export default class UserController {
   }
 
   async #timeoutUser(username, minutes) {
-    await this.#userDAO.update(username, { active: false});
-      
-    setTimeout(async () => {
-      await this.#userDAO.update(username, { active: true});
-    },minutes*60*1000);
+    await this.#userDAO.update(username, { active: false });
+
+    setTimeout(
+      async () => {
+        await this.#userDAO.update(username, { active: true });
+      },
+      minutes * 60 * 1000
+    );
   }
 
   //// ACCESO
@@ -115,23 +126,38 @@ export default class UserController {
       const exist = await this.#userDAO.findByID(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
-      
+
       if (!(await bcrypt.compare(user.password, exist.password))) {
         const logs = await this.#userLogController.getLastNMinutes(5, 'Login');
 
-        if (logs.length >= BLOCK_TRIES && logs.slice(0, BLOCK_TRIES-1).every(log => log.level === 'ERROR')) {
-          await this.#userDAO.update(user.username, { active: false});
-          throw new Unauthorized(`Ingreso la contraseña incorrecta demasiadas veces, si cuenta se bloqueo`);
+        if (
+          logs.length >= BLOCK_TRIES &&
+          logs.slice(0, BLOCK_TRIES - 1).every((log) => log.level === 'ERROR')
+        ) {
+          await this.#userDAO.update(user.username, { active: false });
+          throw new Unauthorized(
+            `Ingreso la contraseña incorrecta demasiadas veces, si cuenta se bloqueo`
+          );
         }
 
-        if (logs.length >= SECOND_TIMEOUT_TRIES-1 && logs.slice(0, SECOND_TIMEOUT_TRIES-1).every(log => log.level === 'ERROR')) {
+        if (
+          logs.length >= SECOND_TIMEOUT_TRIES - 1 &&
+          logs.slice(0, SECOND_TIMEOUT_TRIES - 1).every((log) => log.level === 'ERROR')
+        ) {
           this.#timeoutUser(user.username, SECOND_TIMEOUT_MINUTES);
-          throw new Unauthorized('Contraseña incorrecta, espere 10 minutos para volver a intentarlo');
+          throw new Unauthorized(
+            'Contraseña incorrecta, espere 10 minutos para volver a intentarlo'
+          );
         }
 
-        if (logs.length >= FIRST_TIMEOUT_TRIES-1 && logs.slice(0, FIRST_TIMEOUT_TRIES-1).every(log => log.level === 'ERROR')) {
+        if (
+          logs.length >= FIRST_TIMEOUT_TRIES - 1 &&
+          logs.slice(0, FIRST_TIMEOUT_TRIES - 1).every((log) => log.level === 'ERROR')
+        ) {
           this.#timeoutUser(user.username, FIRST_TIMEOUT_MINUTES);
-          throw new Unauthorized('Contraseña incorrecta, espere 5 minutos para volver a intentarlo');
+          throw new Unauthorized(
+            'Contraseña incorrecta, espere 5 minutos para volver a intentarlo'
+          );
         }
 
         throw new Unauthorized('Contraseña incorrecta');
@@ -165,4 +191,3 @@ export default class UserController {
     return hash;
   }
 }
-

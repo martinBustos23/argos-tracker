@@ -94,8 +94,7 @@
         "nullable": true,
         "default": null,
         "extra": null
-      }
-      ,
+      },
       {
         "name": "geofenceRadius",
         "type": "int",

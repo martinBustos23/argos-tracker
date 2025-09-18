@@ -14,10 +14,8 @@ export default function createTrackerEventRouter(trackerEventController, tracker
       const lon = req.query.lon;
       const batt = req.query.batt;
       let event;
-      if (batt)
-        event = await trackerEventController.addBatteryLvl(trackerId, batt);
-      else
-        event = await trackerEventController.addPosition(trackerId, lat, lon);
+      if (batt) event = await trackerEventController.addBatteryLvl(trackerId, batt);
+      else event = await trackerEventController.addPosition(trackerId, lat, lon);
       res.status(200).json(event);
     } catch (error) {
       next(error);
@@ -45,7 +43,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
 
       res.status(200).json(events);
     } catch (error) {
-      next (error);
+      next(error);
     }
   });
 

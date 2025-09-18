@@ -78,12 +78,11 @@ export default class UserLogController {
     }
   }
 
-  async getLastNMinutes(n, action, level)
-  {
+  async getLastNMinutes(n, action, level) {
     try {
       let logs = await this.#userLogDAO.getLastNMinutes(n);
-      if (action) logs = logs.filter(log => log.action === action);
-      if (level) logs = logs.filter(log => log.level === level);
+      if (action) logs = logs.filter((log) => log.action === action);
+      if (level) logs = logs.filter((log) => log.level === level);
       return logs;
     } catch (error) {
       throw error;

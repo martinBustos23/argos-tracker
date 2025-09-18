@@ -20,7 +20,6 @@ body {
   margin-left: 0;
 
   font-family: 'Segoe UI', sans-serif;
-
 }
 
 .main-content {
@@ -113,13 +112,13 @@ body {
   background-color: rgba(105, 28, 50, 0.15);
 }
 
-.user-name{
+.user-name {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.user-name span{
+.user-name span {
   padding: 0 1rem;
   font-size: 1rem;
   font-weight: 400;
@@ -141,10 +140,9 @@ body {
   position: fixed;
   display: flex;
   z-index: 2000;
-  top:0;
+  top: 0;
   flex-direction: column;
   justify-content: space-between;
-
 }
 
 .sidebar .logo {
@@ -202,4 +200,3 @@ body {
 }
 
 /*------------------------------------*/
-

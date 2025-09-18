@@ -1,7 +1,13 @@
 import express from 'express';
 import { authToken, getUserFromToken } from '../../utils.js';
 
-export default (userController, userLogController, trackerController, trackerLogController, trackerEventController) => {
+export default (
+  userController,
+  userLogController,
+  trackerController,
+  trackerLogController,
+  trackerEventController
+) => {
   const router = express.Router();
   router.use(authToken);
 
@@ -20,16 +26,15 @@ export default (userController, userLogController, trackerController, trackerLog
           if (!events[i].timestamp) {
             events[i].timestamp = 'Sin registro';
           } else {
-            events[i].timestamp = new Date(events[i].timestamp + ' UTC').toLocaleString(
-              'es-AR',
-              { hour12: false }
-            );
+            events[i].timestamp = new Date(events[i].timestamp + ' UTC').toLocaleString('es-AR', {
+              hour12: false,
+            });
           }
 
           allEvents.push({
             trackerId: tracker.id,
             trackerName: tracker.petName,
-            ...events[i]
+            ...events[i],
           });
         }
       }
@@ -43,14 +48,12 @@ export default (userController, userLogController, trackerController, trackerLog
       res.render('./dashboard/general', {
         username,
         trackers,
-        events: sortedEvents
+        events: sortedEvents,
       });
-
     } catch (error) {
       res.status(500).send('Error al ingresar a general: ' + error.message);
     }
   });
-
 
   router.get('/devices', async (req, res) => {
     try {
@@ -66,7 +69,6 @@ export default (userController, userLogController, trackerController, trackerLog
     }
   });
 
-
   router.get('/config', async (req, res) => {
     try {
       const token = req.cookies.authorization;
@@ -79,7 +81,9 @@ export default (userController, userLogController, trackerController, trackerLog
           userLogs[i].timestamp = 'Sin registro';
           continue;
         }
-        userLogs[i].timestamp = new Date(userLogs[i].timestamp + ' UTC').toLocaleString('es-AR', { hour12: false });
+        userLogs[i].timestamp = new Date(userLogs[i].timestamp + ' UTC').toLocaleString('es-AR', {
+          hour12: false,
+        });
       }
 
       for (let i = 0; i < trackerLogs.length; i++) {
@@ -87,7 +91,10 @@ export default (userController, userLogController, trackerController, trackerLog
           trackerLogs[i].timestamp = 'Sin registro';
           continue;
         }
-        trackerLogs[i].timestamp = new Date(trackerLogs[i].timestamp + ' UTC').toLocaleString('es-AR', { hour12: false });
+        trackerLogs[i].timestamp = new Date(trackerLogs[i].timestamp + ' UTC').toLocaleString(
+          'es-AR',
+          { hour12: false }
+        );
       }
 
       res.render('./dashboard/config', { username, trackerLogs, userLogs });
@@ -106,7 +113,9 @@ export default (userController, userLogController, trackerController, trackerLog
           continue;
         }
         // converite la hora de UTC a horario argentino (UTC -03:00)
-        users[i].lastLogin = new Date(users[i].lastLogin).toLocaleString('es-AR', { hour12: false });
+        users[i].lastLogin = new Date(users[i].lastLogin).toLocaleString('es-AR', {
+          hour12: false,
+        });
       }
       const token = req.cookies.authorization;
       const username = getUserFromToken(token);
@@ -121,13 +130,11 @@ export default (userController, userLogController, trackerController, trackerLog
     }
   });
 
-
   router.get('/vincular', (req, res) => {
     const token = req.cookies.authorization;
     const username = getUserFromToken(token);
     res.render('./dashboard/vincular', { username });
   });
-
 
   router.get('/devices/:trackerId', async (req, res) => {
     try {
@@ -139,9 +146,11 @@ export default (userController, userLogController, trackerController, trackerLog
       let lastEvents = [];
       if (tracker) {
         lastEvents = await trackerEventController.getAll(tracker.id);
-        lastEvents.forEach(event => {
+        lastEvents.forEach((event) => {
           if (event.timestamp) {
-            event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', { hour12: false });
+            event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', {
+              hour12: false,
+            });
           } else {
             event.timestamp = 'Sin registro';
           }
@@ -153,7 +162,6 @@ export default (userController, userLogController, trackerController, trackerLog
       res.status(500).send('Error al ingresar a devices: ' + error.message);
     }
   });
-
 
   return router;
 };

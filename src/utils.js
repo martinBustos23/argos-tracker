@@ -51,7 +51,7 @@ export class InternalError extends Exception {
   }
 }
 
-export const generateToken = (username ) => {
+export const generateToken = (username) => {
   const token = jwt.sign({ username }, config.JWT_KEY, { expiresIn: '1h' });
   return token;
 };
@@ -80,7 +80,7 @@ export async function createTable(name, structure, db) {
 
   // obtener columnas
   for (const field of structure.fields) {
-    const sentence = `${field.name} ${field.type} ${field.key || ""} ${field.nullable ? "" : "NOT NULL "}${field.default != null ? "DEFAULT " + field.default : ""}${field.extra || ""}`;
+    const sentence = `${field.name} ${field.type} ${field.key || ''} ${field.nullable ? '' : 'NOT NULL '}${field.default != null ? 'DEFAULT ' + field.default : ''}${field.extra || ''}`;
     sentences.push(sentence);
   }
 
@@ -90,8 +90,8 @@ export async function createTable(name, structure, db) {
       const sentence = `CONSTRAINT ${constraint.name} FOREIGN KEY (${constraint.column}) REFERENCES ${constraint.reference_table}(${constraint.reference_column})`;
       sentences.push(sentence);
     }
-  
-  const queryMessage = `CREATE TABLE ${name} (${sentences.join(', ')} )`
+
+  const queryMessage = `CREATE TABLE ${name} (${sentences.join(', ')} )`;
   const [result] = await db.execute(queryMessage);
   if (result) console.log(`Tabla ${name} creada`);
 }
@@ -99,10 +99,9 @@ export async function createTable(name, structure, db) {
 export async function createAdmin(db) {
   const salt = await bcrypt.genSalt(12); // 12 rondas de sason
   const hash = await bcrypt.hash(config.DEFAULT_ADMIN_PASSWORD, salt);
-  const [result] = await db.execute('INSERT INTO users (username, password, admin) VALUES (?, ?, ?)', [
-    'admin',
-    hash,
-    true
-  ]);
+  const [result] = await db.execute(
+    'INSERT INTO users (username, password, admin) VALUES (?, ?, ?)',
+    ['admin', hash, true]
+  );
   if (result) console.log('Administrador creado\nUsername: admin\nPassword: admin');
 }

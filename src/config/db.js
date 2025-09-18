@@ -29,17 +29,17 @@ export async function initDB() {
     // inicializar tablas
     for (const table of tables) {
       let [result] = await db.execute(`SHOW TABLES LIKE '${table.name}'`);
-      if (!result.length)  // si no existe, crear la tabla segun dbSetructure.json
+      if (!result.length)
+        // si no existe, crear la tabla segun dbSetructure.json
         await createTable(table.name, table, db);
     }
     //crear admin
     const [result] = await db.query('SELECT * FROM users WHERE admin = ?', [[1]]);
-    if (!result.length)
-    {
+    if (!result.length) {
       createAdmin(db);
     } else {
-      console.log("Lista de administradores");
-      result.forEach(admin => console.log(admin.username));
+      console.log('Lista de administradores');
+      result.forEach((admin) => console.log(admin.username));
     }
     return db;
   } catch (error) {

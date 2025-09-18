@@ -1,4 +1,11 @@
-import { Conflict, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../utils.js';
+import {
+  Conflict,
+  NotFound,
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalError,
+} from '../utils.js';
 import config from '../config/config.js';
 
 export default class TrackerController {
@@ -53,10 +60,10 @@ export default class TrackerController {
         throw new BadRequest('El o los valores a actualizar no son validos o estan fuera de rango');
 
       const updatedTracker = await this.#trackerDAO.update(id, tracker);
-      await this.#trackerLogController.addUpdate(id, tracker,'INFO');
+      await this.#trackerLogController.addUpdate(id, tracker, 'INFO');
       return updatedTracker;
     } catch (error) {
-      await this.#trackerLogController.addUpdate(id, tracker,'ERROR');
+      await this.#trackerLogController.addUpdate(id, tracker, 'ERROR');
       if (error.status) throw error;
       throw new InternalError('Error interno actualizando tracker');
     }
@@ -66,15 +73,32 @@ export default class TrackerController {
     const failConditions = [
       { variable: tracker.frequency, expression: tracker.frequency <= 0 },
       { variable: tracker.lowBat, expression: tracker.lowBat < 0 || tracker.lowBat > 100 },
-      { variable: tracker.geofenceLat, expression: tracker.geofenceLat > 90 || tracker.geofenceLat < -90 },
-      { variable: tracker.geofenceLon, expression: tracker.geofenceLon > 180 || tracker.geofenceLon < -180 },
-      { variable: tracker.geofenceRadius, expression: tracker.geofenceRadius < 0 || tracker.geofenceRadius > 5000 },
-      { variable: tracker.emergencyFrequency, expression: tracker.emergencyFrequency !== null && tracker.emergencyFrequency <= 0 },
-    ]
+      {
+        variable: tracker.geofenceLat,
+        expression: tracker.geofenceLat > 90 || tracker.geofenceLat < -90,
+      },
+      {
+        variable: tracker.geofenceLon,
+        expression: tracker.geofenceLon > 180 || tracker.geofenceLon < -180,
+      },
+      {
+        variable: tracker.geofenceRadius,
+        expression: tracker.geofenceRadius < 0 || tracker.geofenceRadius > 5000,
+      },
+      {
+        variable: tracker.emergencyFrequency,
+        expression: tracker.emergencyFrequency !== null && tracker.emergencyFrequency <= 0,
+      },
+    ];
 
     console.log(failConditions);
 
-    if (failConditions.some( condition => typeof condition.variable !== 'undefined' && condition.expression )) return false;
+    if (
+      failConditions.some(
+        (condition) => typeof condition.variable !== 'undefined' && condition.expression
+      )
+    )
+      return false;
     return true;
   }
 

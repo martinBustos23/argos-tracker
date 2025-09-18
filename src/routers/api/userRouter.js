@@ -1,5 +1,12 @@
 import express from 'express';
-import { authToken, NotFound, BadRequest, Unauthorized, Forbidden, InternalError } from '../../utils.js';
+import {
+  authToken,
+  NotFound,
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalError,
+} from '../../utils.js';
 
 export default function createUserRouter(UserController) {
   const router = express.Router();

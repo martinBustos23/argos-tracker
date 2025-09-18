@@ -34,16 +34,21 @@ export default async function createApp(db) {
   const userLogController = new UserLogController(userLogDao);
   const userController = new UserController(userDao, userLogController);
   const trackerLogController = new TrackerLogController(trackerLogDao);
-  const trackerEventController = new TrackerEventController(trackerEventDao)
+  const trackerEventController = new TrackerEventController(trackerEventDao);
   const trackerController = new TrackerController(trackerDao, trackerLogController);
   const userRouter = createUserRouter(userController);
   const authRouter = createAuthRouter(userController);
   const userLogRouter = createUserLogRouter(userLogController);
-  const dashboardRouter = createDashboardRouter(userController, userLogController, trackerController, trackerLogController, trackerEventController);
+  const dashboardRouter = createDashboardRouter(
+    userController,
+    userLogController,
+    trackerController,
+    trackerLogController,
+    trackerEventController
+  );
   const trackerRouter = createTrackerRouter(trackerController, userController);
-  const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController)
+  const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController);
   const trackerLogRouter = createTrackerLogRouter(trackerLogController);
-
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname + '/views'));
@@ -63,7 +68,7 @@ export default async function createApp(db) {
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {
-      console.log(error.status + ": " + error.message);
+      console.log(error.status + ': ' + error.message);
       return res.status(error.status).json({ status: 'error', message: error.message });
     } else {
       const message = `Ocurrio un error desconocido: ${error.message}`;

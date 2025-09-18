@@ -15,7 +15,7 @@ export default class LogDAO {
   }
 
   async create(log) {
-    const {level, source, description, action } = log;
+    const { level, source, description, action } = log;
     const [result] = await this.#db.execute(
       `INSERT INTO ${this.#table} (level, source, action, description) VALUES (?, ?, ?, ?)`,
       [level, source, action, description]
@@ -31,12 +31,10 @@ export default class LogDAO {
     return logs.map((log) => new LogDTO(log));
   }
 
-  async getLastNMinutes(n)
-  {
+  async getLastNMinutes(n) {
     const [logs] = await this.#db.execute(
       `SELECT * FROM ${this.#table} WHERE timestamp >= (CURRENT_TIMESTAMP() - ${n * 60}) ORDER BY timestamp DESC`
-    )
+    );
     return logs.map((log) => new LogDTO(log));
   }
-
 }

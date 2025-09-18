@@ -21,7 +21,9 @@ export default class TrackerEventController {
       return event;
     } catch (error) {
       if (error.code) throw error;
-      throw new InternalError(`Error interno al crear evento: '${eventDesc}' para el tracker ${trackerId}`);
+      throw new InternalError(
+        `Error interno al crear evento: '${eventDesc}' para el tracker ${trackerId}`
+      );
     }
   }
 
