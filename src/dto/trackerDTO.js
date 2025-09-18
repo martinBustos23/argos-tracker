@@ -4,10 +4,10 @@ export default class TrackerDTO {
     this.petName = tracker.petName;
     this.frequency = tracker.frequency;
     this.lowBat = tracker.lowBat;
-    this.safeZoneLat = tracker.safeZoneLat;
-    this.safeZoneLon = tracker.safeZoneLon;
-    this.safeZoneRadius = tracker.safeZoneRadius;
-    this.enableSafeZone = tracker.enableSafeZone;
+    this.geofenceLat = tracker.geofenceLat;
+    this.geofenceLon = tracker.geofenceLon;
+    this.geofenceRadius = tracker.geofenceRadius;
+    this.enableGeofence = tracker.enableGeofence;
     this.enableSoundAlert = tracker.enableSoundAlert;
     this.emergencyFrequency = tracker.emergencyFrequency;
     this.active = tracker.active;
