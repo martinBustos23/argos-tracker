@@ -16,7 +16,7 @@ export default class TrackerController {
       return newTracker;
     } catch (error) {
       // await this.#trackerLogController.addLinking(newTracker.id, 'ERROR');
-      if (error.code) throw error;
+      if (error.status) throw error;
       throw new InternalError('Error interno creando tracker');
     }
   }
@@ -26,7 +26,7 @@ export default class TrackerController {
       const trackers = await this.#trackerDAO.getAll();
       return trackers;
     } catch (error) {
-      if (error.code) throw error;
+      if (error.status) throw error;
       throw new InternalError('Error interno obteniendo trackers');
     }
   }
@@ -39,7 +39,7 @@ export default class TrackerController {
       }
       return tracker;
     } catch (error) {
-      if (error.code) throw error;
+      if (error.status) throw error;
       throw new InternalError('Error interno buscando tracker');
     }
   }
@@ -57,7 +57,7 @@ export default class TrackerController {
       return updatedTracker;
     } catch (error) {
       await this.#trackerLogController.addUpdate(id, tracker,'ERROR');
-      if (error.code) throw error;
+      if (error.status) throw error;
       throw new InternalError('Error interno actualizando tracker');
     }
   }
@@ -69,7 +69,7 @@ export default class TrackerController {
 
       return this.#trackerDAO.delete(id);
     } catch (error) {
-      if (error.code) throw error;
+      if (error.status) throw error;
       throw new InternalError('Error interno eliminando tracker');
     }
   }
