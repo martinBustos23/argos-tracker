@@ -34,9 +34,7 @@ export default class TrackerController {
   async findByID(trackerId) {
     try {
       const tracker = await this.#trackerDAO.findById(trackerId);
-      if (!tracker) {
-        throw new NotFound(`El tracker (${tracker.id}) no fue encontrado`);
-      }
+      if (!tracker) throw new NotFound(`El tracker (${tracker.id}) no fue encontrado`);
       return tracker;
     } catch (error) {
       if (error.status) throw error;
@@ -47,7 +45,6 @@ export default class TrackerController {
   async updateTracker(id, tracker) {
     try {
       const exist = await this.#trackerDAO.findById(id); //probable no const
-
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
       //validar datos tracker?
