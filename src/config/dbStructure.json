@@ -121,7 +121,7 @@
         "extra": null
       },
       {
-        "name": "emergencyFrenquency",
+        "name": "emergencyFrequency",
         "type": "int",
         "key": null,
         "nullable": true,
