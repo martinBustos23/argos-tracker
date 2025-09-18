@@ -20,7 +20,7 @@ export default class UserLogController {
       );
       return log;
     } catch (error) {
-      if (error.code) throw error;
+      if (error.status) throw error;
       throw new InternalError(`Error interno al crear log: '${action}'`);
     }
   }
