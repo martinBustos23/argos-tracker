@@ -21,7 +21,7 @@ export default class UserController {
     try {
       const exists = await this.#userDAO.findByID(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
-      newUser.password = this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
+      newUser.password = await this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
       const result = await this.#userDAO.create(newUser);
       await this.#userLogController.addRegistration(newUser.username, 'INFO');
       return result;
@@ -59,8 +59,7 @@ export default class UserController {
       if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
-      if (user.password) user.password = this.#genPasswordHash(user.password);
-
+      if (user.password) user.password = await this.#genPasswordHash(user.password);
       const result = await this.#userDAO.update(username, user);
       await this.#userLogController.addUpdate(username, user, 'INFO');
       return result;
