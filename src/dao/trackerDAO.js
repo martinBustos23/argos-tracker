@@ -54,8 +54,4 @@ export default class TrackerDAO {
     return rows.map((row) => new TrackerDTO(row));
   }
 
-  async countActive() {
-    const [result] = await this.#db.execute('SELECT COUNT(*) FROM trackers WHERE active = true');
-    return result[0]['COUNT(*)'];
-  }
 }
