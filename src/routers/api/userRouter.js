@@ -14,7 +14,7 @@ export default function createUserRouter(UserController) {
 
   router.post('/users', async (req, res, next) => {
     try {
-      const user = await UserController.findByID(req.user);
+      const user = await UserController.find(req.user);
       if (!user.admin) throw new Unauthorized('No autorizado');
       const newUser = await UserController.create(req.body);
 
@@ -30,7 +30,7 @@ export default function createUserRouter(UserController) {
 
   router.get('/users', async (req, res, next) => {
     try {
-      const user = await UserController.findByID(req.user);
+      const user = await UserController.find(req.user);
       if (!user.admin) throw new Unauthorized('No autorizado');
 
       // obtener usuarios inactivos
@@ -55,7 +55,7 @@ export default function createUserRouter(UserController) {
 
   router.get('/users/:uid', async (req, res, next) => {
     try {
-      const user = await UserController.findByID(req.params.uid);
+      const user = await UserController.find(req.params.uid);
 
       console.log('-- Encontrar usuario (username) --');
       console.table(user); //test
@@ -68,7 +68,7 @@ export default function createUserRouter(UserController) {
 
   router.put('/users/:uid', async (req, res, next) => {
     try {
-      const user = await UserController.findByID(req.user);
+      const user = await UserController.find(req.user);
       if (!user.admin) throw new Unauthorized('No autorizado');
       const updatedUser = await UserController.update(req.params.uid, req.body);
 
@@ -85,7 +85,7 @@ export default function createUserRouter(UserController) {
 
   router.delete('/users/:uid', async (req, res, next) => {
     try {
-      const user = await UserController.findByID(req.user);
+      const user = await UserController.find(req.user);
       if (!user.admin) throw new Unauthorized('No autorizado');
       const result = await UserController.disable(req.params.uid);
 

@@ -19,7 +19,7 @@ export default class UserDAO {
       password,
     ]);
 
-    return this.findByID(username);
+    return this.find(username);
   }
 
   async getAll() {
@@ -27,7 +27,7 @@ export default class UserDAO {
     return rows.map((row) => new UserDTO(row));
   }
 
-  async findByID(username) {
+  async find(username) {
     const [result] = await this.#db.query('SELECT * FROM users WHERE username = ?', [[username]]);
     if (result.length === 0) return null;
     return new UserDTO(result[0]);

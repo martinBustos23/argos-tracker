@@ -8,7 +8,7 @@ export default function createTrackerRouter(trackerController, userController) {
   router.post('/trackers', async (req, res, next) => {
     try {
       // console.log(Object.getOwnPropertyNames(req.body));
-      const user = await userController.findByID(req.user);
+      const user = await userController.find(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const tracker = await trackerController.createTracker(req.body);
 
@@ -49,7 +49,7 @@ export default function createTrackerRouter(trackerController, userController) {
 
   router.put('/trackers/:id', async (req, res, next) => {
     try {
-      const user = await userController.findByID(req.user);
+      const user = await userController.find(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const updatedTracker = await trackerController.updateTracker(req.params.id, req.body);
 
@@ -66,7 +66,7 @@ export default function createTrackerRouter(trackerController, userController) {
 
   router.delete('/trackers/:id', async (req, res, next) => {
     try {
-      const user = await userController.findByID(req.user);
+      const user = await userController.find(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
       const result = await trackerController.disable(req.params.id);
 

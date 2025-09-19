@@ -120,7 +120,7 @@ export default (
       const token = req.cookies.authorization;
       const username = getUserFromToken(token);
 
-      const user = await userController.findByID(req.user);
+      const user = await userController.find(req.user);
       let admin = false;
       if (user.admin) admin = true;
 

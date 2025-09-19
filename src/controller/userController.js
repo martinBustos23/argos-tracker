@@ -19,7 +19,7 @@ export default class UserController {
 
   async create(newUser) {
     try {
-      const exists = await this.#userDAO.findByID(newUser.username);
+      const exists = await this.#userDAO.find(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
       newUser.password = await this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
       const result = await this.#userDAO.create(newUser);
@@ -42,9 +42,9 @@ export default class UserController {
     }
   }
 
-  async findByID(username) {
+  async find(username) {
     try {
-      const user = await this.#userDAO.findByID(username);
+      const user = await this.#userDAO.find(username);
       if (!user) throw new NotFound(`El usuario (${username}) no fue encontrado`);
       return user;
     } catch (error) {
@@ -55,7 +55,7 @@ export default class UserController {
 
   async update(username, user) {
     try {
-      const updatedUser = await this.#userDAO.findByID(username); //probable no const
+      const updatedUser = await this.#userDAO.find(username); //probable no const
       if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
@@ -82,7 +82,7 @@ export default class UserController {
 
   async disable(username) {
     try {
-      const exist = await this.#userDAO.findByID(username);
+      const exist = await this.#userDAO.find(username);
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       const result = await this.update(username, { active: false });
@@ -97,7 +97,7 @@ export default class UserController {
 
   async delete(username) {
     try {
-      const exist = await this.#userDAO.findByID(username); //probable no const
+      const exist = await this.#userDAO.find(username); //probable no const
 
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
@@ -132,7 +132,7 @@ export default class UserController {
   //// ACCESO
   async login(user) {
     try {
-      const exist = await this.#userDAO.findByID(user.username);
+      const exist = await this.#userDAO.find(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
       if (exist.timeout && Date.now() >= exist.timeout) {
