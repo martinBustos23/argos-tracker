@@ -45,6 +45,14 @@ export default class UserLogController {
     }
   }
 
+  async addDisable(source, level) {
+    try {
+      return await this.#addLog(level, source, 'Disable', null);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async addUnlinking(source, level) {
     try {
       return await this.#addLog(level, source, 'Unlink', null);

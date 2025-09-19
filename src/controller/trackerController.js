@@ -102,6 +102,21 @@ export default class TrackerController {
     return true;
   }
 
+  async disable(id) {
+    try {
+      const exist = await this.#trackerDAO.findById(id);
+      if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
+
+      const result = await this.updateTracker(id, { active: false });
+      await this.#trackerLogController.addDisable(id, 'INFO');
+      return result;
+    } catch (error) {
+      await this.#trackerLogController.addDisable(id, 'ERROR');
+      if (error.status) throw error;
+      throw new InternalError('Error interno desabilitando tracker');
+    }
+  }
+
   async deleteTracker(id) {
     try {
       const exist = await this.#trackerDAO.findById(id);

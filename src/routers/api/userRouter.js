@@ -87,9 +87,9 @@ export default function createUserRouter(UserController) {
     try {
       const user = await UserController.findByID(req.user);
       if (!user.admin) throw new Unauthorized('No autorizado');
-      const result = await UserController.delete(req.params.uid);
+      const result = await UserController.disable(req.params.uid);
 
-      console.log('-- Eliminar usuario --');
+      console.log('-- Deshabilitar usuario --');
       console.log(req.params.uid);
       console.table(result);
 

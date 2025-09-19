@@ -62,6 +62,14 @@ export default class UserLogController {
     }
   }
 
+  async addDisable(source, level) {
+    try {
+      return await this.#addLog(level, source, 'Disable', null);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async addDeletion(username, level) {
     try {
       return await this.#addLog(level, username, 'Deletion', null);

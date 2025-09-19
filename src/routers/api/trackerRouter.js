@@ -68,10 +68,9 @@ export default function createTrackerRouter(trackerController, userController) {
     try {
       const user = await userController.findByID(req.user);
       if (!user.admin) return res.status(401).json({ error: 'No autorizado' });
-      const result = await trackerController.deleteTracker(req.params.id);
+      const result = await trackerController.disable(req.params.id);
 
-      console.log('-- Eliminar tracker --');
-      console.log(req.params.id);
+      console.log('-- Deshabilitar tracker --');
       console.table(result);
 
       res.status(200).json(result);

@@ -81,6 +81,21 @@ export default class UserController {
     }
   }
 
+  async disable(username) {
+    try {
+      const exist = await this.#userDAO.findByID(username);
+      if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+
+      const result = await this.update(username, { active: false });
+      await this.#userLogController.addDisable(username, 'INFO');
+      return result;
+    } catch (error) {
+      await this.#userLogController.addDisable(username, 'ERROR');
+      if (error.status) throw error;
+      throw new InternalError('Error interno desabilitando usuario');
+    }
+  }
+
   async delete(username) {
     try {
       const exist = await this.#userDAO.findByID(username); //probable no const
