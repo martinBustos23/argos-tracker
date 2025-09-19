@@ -70,7 +70,7 @@ export default class UserController {
     }
   }
 
-  async getInactiveUsers() {
+  async getAllInactive() {
     try {
       const users = await this.#userDAO.getAllInactive();
       return users;

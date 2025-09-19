@@ -36,7 +36,7 @@ export default function createUserRouter(UserController) {
       // obtener usuarios inactivos
       const active = req.query.active === 'true'; // convertir a bool
       if (!active) {
-        const users = await UserController.getInactiveUsers();
+        const users = await UserController.getAllInactive();
         console.log('-- Encontrar usuario/s inactivos --');
         console.table(users); //test
         return res.status(200).json(users);
