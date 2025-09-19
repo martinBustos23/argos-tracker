@@ -36,7 +36,7 @@ export default function createTrackerRouter(trackerController, userController) {
 
   router.get('/trackers/:id', async (req, res, next) => {
     try {
-      const tracker = await trackerController.findByID(req.params.id);
+      const tracker = await trackerController.find(req.params.id);
 
       console.log('-- Encontrar traker (id) --');
       console.table(tracker); //test

@@ -19,10 +19,10 @@ export default class TrackerDAO {
     const queryMsg = `INSERT INTO trackers (${descriptor}) VALUES (${placeHolders})`;
     const [result] = await this.#db.execute(queryMsg, values);
 
-    return this.findById(result.insertId);
+    return this.find(result.insertId);
   }
 
-  async findById(id) {
+  async find(id) {
     const [result] = await this.#db.execute('SELECT * FROM trackers WHERE id = ?', [id]);
     if (result.length === 0) return null;
     return new TrackerDTO(result[0]);

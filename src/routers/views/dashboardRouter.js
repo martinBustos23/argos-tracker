@@ -141,7 +141,7 @@ export default (
       const token = req.cookies.authorization;
       const username = getUserFromToken(token);
       const trackers = await trackerController.getAll();
-      const tracker = await trackerController.findByID(req.params.trackerId);
+      const tracker = await trackerController.find(req.params.trackerId);
 
       let lastEvents = [];
       if (tracker) {

@@ -40,9 +40,9 @@ export default class TrackerController {
     }
   }
 
-  async findByID(trackerId) {
+  async find(trackerId) {
     try {
-      const tracker = await this.#trackerDAO.findById(trackerId);
+      const tracker = await this.#trackerDAO.find(trackerId);
       if (!tracker) throw new NotFound(`El tracker (${tracker.id}) no fue encontrado`);
       return tracker;
     } catch (error) {
@@ -53,7 +53,7 @@ export default class TrackerController {
 
   async updateTracker(id, tracker) {
     try {
-      const exist = await this.#trackerDAO.findById(id); //probable no const
+      const exist = await this.#trackerDAO.find(id); //probable no const
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
       if (!this.#validarTracker(tracker))
@@ -103,7 +103,7 @@ export default class TrackerController {
 
   async disable(id) {
     try {
-      const exist = await this.#trackerDAO.findById(id);
+      const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
       const result = await this.updateTracker(id, { active: false });
@@ -118,7 +118,7 @@ export default class TrackerController {
 
   async deleteTracker(id) {
     try {
-      const exist = await this.#trackerDAO.findById(id);
+      const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
       return this.#trackerDAO.delete(id);

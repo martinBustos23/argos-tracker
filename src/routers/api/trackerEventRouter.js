@@ -8,7 +8,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
   router.post('/trackerEvents/:id', async (req, res, next) => {
     try {
       const trackerId = req.params.id;
-      const tracker = await trackerController.findByID(trackerId);
+      const tracker = await trackerController.find(trackerId);
       if (!tracker) throw new NotFound(`No existe el tracker ${trackerId}`);
       const lat = req.query.lat;
       const lon = req.query.lon;
@@ -25,7 +25,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
   router.get('/trackerEvents/:id', async (req, res, next) => {
     try {
       const trackerId = req.params.id;
-      const tracker = await trackerController.findByID(trackerId);
+      const tracker = await trackerController.find(trackerId);
       if (!tracker) throw new NotFound(`No existe el tracker ${trackerId}`);
       if (!req.query.n) throw new BadRequest('No se indico cantidad de eventos');
       const n = req.query.n;
