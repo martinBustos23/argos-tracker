@@ -91,7 +91,6 @@ export default class TrackerController {
       },
     ];
 
-    console.log(failConditions);
 
     if (
       failConditions.some(
