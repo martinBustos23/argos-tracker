@@ -41,6 +41,14 @@
         "nullable": true,
         "default": null,
         "extra": null
+      },
+      {
+        "name": "timeout",
+        "type": "datetime",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
       }
     ]
   },

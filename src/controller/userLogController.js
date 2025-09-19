@@ -70,6 +70,27 @@ export default class UserLogController {
     }
   }
 
+  async addTimeout(username, minutes) {
+    try {
+      return await this.#addLog(
+        'INFO',
+        username,
+        'Disable',
+        `Disabled ${minutes} minutes after many login attempts`
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addBlock(username) {
+    try {
+      return await this.#addLog('INFO', username, 'Disable', `Disabled after many login attempts`);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getLatest(n) {
     try {
       return await this.#userLogDAO.getLatest(n);

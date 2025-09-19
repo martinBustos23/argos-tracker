@@ -7,12 +7,7 @@ import {
   InternalError,
 } from '../utils.js';
 import bcrypt from 'bcryptjs';
-
-const FIRST_TIMEOUT_TRIES = 3;
-const FIRST_TIMEOUT_MINUTES = 5;
-const SECOND_TIMEOUT_TRIES = 5;
-const SECOND_TIMEOUT_MINUTES = 10;
-const BLOCK_TRIES = 10;
+import config from '../config/config.js';
 
 export default class UserController {
   #userDAO;
@@ -110,14 +105,14 @@ export default class UserController {
   }
 
   async #timeoutUser(username, minutes) {
-    await this.#userDAO.update(username, { active: false });
+    const timeout = new Date(Date.now() + minutes * 60 * 1000).toISOString().replace(/[A-Z]/g, ' ');
+    await this.#userDAO.update(username, { timeout });
+    this.#userLogController.addTimeout(username, minutes);
+  }
 
-    setTimeout(
-      async () => {
-        await this.#userDAO.update(username, { active: true });
-      },
-      minutes * 60 * 1000
-    );
+  async #blockUser(username) {
+    await this.#userDAO.update(username, { active: false });
+    this.#userLogController.addBlock(username);
   }
 
   //// ACCESO
@@ -126,35 +121,55 @@ export default class UserController {
       const exist = await this.#userDAO.findByID(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
+      if (exist.timeout && Date.now() >= exist.timeout) {
+        // si tiene timeout y el mismo termino
+        this.#userDAO.update(exist.username, { timeout: null });
+      } else if (exist.timeout) {
+        throw new Unauthorized('Esperar');
+      }
 
       if (!(await bcrypt.compare(user.password, exist.password))) {
-        const logs = await this.#userLogController.getLastNMinutes(5, 'Login');
+        const loginLogs = await this.#userLogController
+          .getLastNMinutes(10, 'Login')
+          .then((result) => {
+            return result.filter((log) => log.source == user.username);
+          });
+          
+
+        const lastTimeout = await this.#userLogController
+          .getLastNMinutes(10, 'Disable')
+          .then((result) => {
+            return result.filter((log) => log.source == user.username);
+          });
 
         if (
-          logs.length >= BLOCK_TRIES &&
-          logs.slice(0, BLOCK_TRIES - 1).every((log) => log.level === 'ERROR')
+          loginLogs.length >= config.BLOCK_TRIES &&
+          lastTimeout.length == 2 &&
+          loginLogs.slice(0, config.BLOCK_TRIES).every((log) => log.level === 'ERROR')
         ) {
-          await this.#userDAO.update(user.username, { active: false });
+          this.#blockUser(user.username);
           throw new Unauthorized(
             `Ingreso la contraseña incorrecta demasiadas veces, si cuenta se bloqueo`
           );
         }
 
         if (
-          logs.length >= SECOND_TIMEOUT_TRIES - 1 &&
-          logs.slice(0, SECOND_TIMEOUT_TRIES - 1).every((log) => log.level === 'ERROR')
+          loginLogs.length >= config.SECOND_TIMEOUT_TRIES &&
+          lastTimeout.length == 1 &&
+          loginLogs.slice(0, config.SECOND_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
         ) {
-          this.#timeoutUser(user.username, SECOND_TIMEOUT_MINUTES);
+          this.#timeoutUser(user.username, config.SECOND_TIMEOUT_MINUTES);
           throw new Unauthorized(
-            'Contraseña incorrecta, espere 10 minutos para volver a intentarlo'
+            `Ingreso la contraseña incorrecta demasiadas veces, su cuenta se bloqueo`
           );
         }
 
         if (
-          logs.length >= FIRST_TIMEOUT_TRIES - 1 &&
-          logs.slice(0, FIRST_TIMEOUT_TRIES - 1).every((log) => log.level === 'ERROR')
+          loginLogs.length >= config.FIRST_TIMEOUT_TRIES &&
+          lastTimeout.length == 0 &&
+          loginLogs.slice(0, config.FIRST_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
         ) {
-          this.#timeoutUser(user.username, FIRST_TIMEOUT_MINUTES);
+          this.#timeoutUser(user.username, config.FIRST_TIMEOUT_MINUTES);
           throw new Unauthorized(
             'Contraseña incorrecta, espere 5 minutos para volver a intentarlo'
           );
