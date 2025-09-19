@@ -53,7 +53,7 @@ export default class TrackerController {
 
   async updateTracker(id, tracker) {
     try {
-      const exist = await this.#trackerDAO.find(id); //probable no const
+      const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
       if (!this.#validarTracker(tracker))

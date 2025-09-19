@@ -55,7 +55,7 @@ export default class UserController {
 
   async update(username, user) {
     try {
-      const updatedUser = await this.#userDAO.find(username); //probable no const
+      const updatedUser = await this.#userDAO.find(username);
       if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
@@ -97,7 +97,7 @@ export default class UserController {
 
   async delete(username) {
     try {
-      const exist = await this.#userDAO.find(username); //probable no const
+      const exist = await this.#userDAO.find(username);
 
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
@@ -105,8 +105,6 @@ export default class UserController {
       const admins = users.filter((user) => user.admin == true);
       if (admins.length <= 1)
         throw new Unauthorized('No se puede borrar todos los administradores');
-
-      //probable, cambiar estado no elminar? en caso de no eliminar a la hora de crear y verificar si existe tambien comprobar si tiene estado activo...
 
       const result = await this.#userDAO.delete(username);
       await this.#userLogController.addDeletion(username, 'INFO');
@@ -215,7 +213,7 @@ export default class UserController {
   }
 
   async #genPasswordHash(password) {
-    const salt = await bcrypt.genSalt(12); // 12 rondas de sason
+    const salt = await bcrypt.genSalt(12);
     const hash = await bcrypt.hash(password, salt);
     return hash;
   }

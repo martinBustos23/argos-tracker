@@ -1,8 +1,3 @@
-/*
-  las query probablemente esten mal
-  cambiar id a username
-*/
-
 import UserDTO from '../dto/userDTO.js';
 
 export default class UserDAO {

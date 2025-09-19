@@ -29,9 +29,6 @@ export default class TrackerDAO {
   }
 
   async update(id, tracker) {
-    // let { id, petName, frequency, lowBat, safeZoneLat, safeZoneLon, safeZoneRadius, active } =
-    //   tracker;
-
     const columns = Object.getOwnPropertyNames(tracker);
 
     // extraer descriptor y placeholders del mensaje del query
