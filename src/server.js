@@ -15,7 +15,10 @@ async function startServer() {
     const wss = new WebSocketServer({ server, path: '/ws' }); // crear servidor websocket
     
     wss.on('connection', (ws) => {
-      webSocketClients.push(ws);  // cuando se conecta un cliente lo agrega a la lista
+
+      ws.on('message', (data) => {
+        webSocketClients.push({ conn: ws, tracker: JSON.parse(data) });  // cuando se conecta un cliente lo agrega a la lista
+      });
 
       ws.on('close', () => {
           // elimina el cliente de la lista cuando se desconecta

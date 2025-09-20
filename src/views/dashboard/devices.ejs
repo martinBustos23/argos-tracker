@@ -755,8 +755,14 @@
         });
       }
 
-      const { hostname, port } = new URL(window.location.href);
+      const { hostname, port, pathname } = new URL(window.location.href);
       const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+      socket.addEventListener('open', (event) => {
+        const trackerId = pathname.split('/').pop();
+        console.log(trackerId);
+        socket.send(JSON.stringify(trackerId));
+      });
 
       socket.addEventListener('message', (event) => {
         const { latitude, longitude } = JSON.parse(event.data);
