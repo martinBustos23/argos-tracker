@@ -108,7 +108,7 @@ export async function createAdmin(db) {
 
 export function broadcastWSEvent(trackerid, clients, data) {
   clients.forEach(client => {
-    if (client.conn.readyState === WebSocket.OPEN && client.tracker == trackerid) {
+    if (client.conn.readyState === WebSocket.OPEN && client.tracker == trackerid || client.tracker == '*') {
         client.conn.send(JSON.stringify(data));
     }
   });

@@ -14,7 +14,7 @@ export default function createTrackerEventRouter(trackerEventController, tracker
       const { eventDesc, lat, lon, bat } = req.query;
       // primero agrega el evento
       const event = await trackerEventController.addPosition(trackerId, lat, lon, bat);      
-      if (eventDesc == 'POSITION') broadcastWSEvent(trackerId, webSocketclients, event);
+      if (eventDesc == 'POSITION') broadcastWSEvent(trackerId, webSocketclients, {...event, petName: tracker.petName});
       
       res.status(200).json(event);
     } catch (error) {

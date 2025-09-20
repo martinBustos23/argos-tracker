@@ -337,6 +337,34 @@
       L.marker([-34.6037, -58.3816]).addTo(map)
         .bindPopup('se te perdio el perrubi!!!')
         .openPopup();
+
+      const markers = [];
+      const { hostname, port, pathname } = new URL(window.location.href);
+      const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+      socket.addEventListener('open', (event) => {
+        socket.send(JSON.stringify('*'));
+      });
+
+      socket.addEventListener('message', (event) => {
+        const { latitude, longitude, trackerId, petName } = JSON.parse(event.data);
+
+        // limpiar todos los markers
+        for (let i = 0; i < markers.length; i++) {
+          if (markers[i].marker._popup._content == petName) {
+            map.removeLayer(markers[i].marker);
+            markers.splice(i, 1);
+          }
+        }
+
+        const marker = L.marker([latitude, longitude]).addTo(map)
+          .bindPopup(`${petName}`)
+          .openPopup();
+
+        markers.push({ marker, petName });
+
+        map.setView([latitude, longitude], 15);
+      });
     </script>
 
     <%- include('../layouts/footer'); %>
