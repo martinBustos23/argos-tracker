@@ -680,20 +680,27 @@
     </style>
 
     <script>
-      let map = L.map('map').setView([-34.6037, -58.3816], 15);
+      const [latitude, longitude] = document.querySelector('.tracker-pos > h2')
+        .nextElementSibling
+        .textContent
+        .split(':')[1]
+        .split('\n')[0]
+        .trim()
+        .split(',').map(data => Number(data.trim()));
+
+      const markers = [];
+
+      let map = L.map('map').setView([latitude, longitude], 15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 
-      L.marker([-34.6037, -58.3816]).addTo(map)
-        .bindPopup('se te perdio el perrubi!!!')
-        .openPopup();
-
-      let geomap = L.map('geo-map').setView([-34.6037, -58.3816], 19);
+      const marker = L.marker([latitude, longitude]).addTo(map);
+      markers.push(marker);
+      let geomap = L.map('geo-map').setView([latitude, longitude], 19);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
       }).addTo(geomap);
 
-
-      let circle = L.circle([-34.6037, -58.3816], {
+      let circle = L.circle([latitude, longitude], {
         radius: 20,
         color: "#691c32",
         fillColor: "#f03",
@@ -747,6 +754,24 @@
           }
         });
       }
+
+      const { hostname, port } = new URL(window.location.href);
+      const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+      socket.addEventListener('message', (event) => {
+        const { latitude, longitude } = JSON.parse(event.data);
+
+        // limpiar todos los markers
+        for (let i = 0; i < markers.length; i++) {
+          map.removeLayer(markers[i]);
+          markers.splice(i, 1);
+        }
+
+        const marker = L.marker([latitude, longitude]).addTo(map);
+        markers.push(marker);
+
+        map.setView([latitude, longitude], 15);
+      });
 
     </script>
 

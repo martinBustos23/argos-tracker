@@ -105,3 +105,12 @@ export async function createAdmin(db) {
   );
   if (result) console.log('Administrador creado\nUsername: admin\nPassword: admin');
 }
+
+export function broadcastWSEvent(clients, data) {
+  clients.forEach(client => {
+    console.log('Enviando dato a cliente...');
+    if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(data));
+    }
+  });
+}

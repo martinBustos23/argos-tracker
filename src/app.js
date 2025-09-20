@@ -23,7 +23,7 @@ import createDashboardRouter from './routers/views/dashboardRouter.js';
 import createTrackerRouter from './routers/api/trackerRouter.js';
 import { __dirname, Exception } from './utils.js';
 
-export default async function createApp(db) {
+export default async function createApp(db, webSocketclients) {
   const app = express();
 
   const userDao = new UserDAO(db);
@@ -47,7 +47,7 @@ export default async function createApp(db) {
     trackerEventController
   );
   const trackerRouter = createTrackerRouter(trackerController, userController);
-  const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController);
+  const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController, webSocketclients);
   const trackerLogRouter = createTrackerLogRouter(trackerLogController);
 
   app.set('view engine', 'ejs');

@@ -1,7 +1,7 @@
 import express from 'express';
-import { authToken, BadRequest, Conflict, NotFound } from '../../utils.js';
+import { authToken, BadRequest, Conflict, NotFound, broadcastWSEvent } from '../../utils.js';
 
-export default function createTrackerEventRouter(trackerEventController, trackerController) {
+export default function createTrackerEventRouter(trackerEventController, trackerController, webSocketclients) {
   const router = express.Router();
   router.use(authToken);
 
@@ -10,12 +10,12 @@ export default function createTrackerEventRouter(trackerEventController, tracker
       const trackerId = req.params.id;
       const tracker = await trackerController.find(trackerId);
       if (!tracker) throw new NotFound(`No existe el tracker ${trackerId}`);
-      const lat = req.query.lat;
-      const lon = req.query.lon;
-      const batt = req.query.batt;
-      let event;
-      if (batt) event = await trackerEventController.addBatteryLvl(trackerId, batt);
-      else event = await trackerEventController.addPosition(trackerId, lat, lon);
+
+      const { eventDesc, lat, lon, bat } = req.query;
+      // primero agrega el evento
+      const event = await trackerEventController.addPosition(trackerId, lat, lon, bat);      
+      if (eventDesc == 'POSITION') broadcastWSEvent(webSocketclients, event);
+      
       res.status(200).json(event);
     } catch (error) {
       next(error);
