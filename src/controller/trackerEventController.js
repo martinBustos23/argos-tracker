@@ -42,7 +42,7 @@ export default class TrackerEventController {
     }
   }
 
-  async addPosition(trackerId, latitude, longitude) {
+  async addPosition(trackerId, latitude, longitude, batteryLvl) {
     try {
       return await this.#addEvent(
         new TrackerEventDTO({
@@ -50,23 +50,7 @@ export default class TrackerEventController {
           eventDesc: 'POSITION',
           latitude,
           longitude,
-          batteryLvl: null,
-        })
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async addBatteryLvl(trackerId, batteryLvl) {
-    try {
-      return await this.#addEvent(
-        new TrackerEventDTO({
-          trackerId,
-          eventDesc: 'BATTERY_LVL',
-          latitude: null,
-          longitude: null,
-          batteryLvl,
+          batteryLvl
         })
       );
     } catch (error) {
