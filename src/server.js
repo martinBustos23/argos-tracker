@@ -1,8 +1,11 @@
 import createApp from './app.js';
 import config from './config/config.js';
 import { initDB } from './config/db.js';
-import { createServer } from 'http';
+import { createServer } from 'https';
 import { WebSocketServer } from 'ws';
+import { readFileSync } from "fs";
+import path from "path";
+import { __dirname } from './utils.js';
 
 async function startServer() {
   try {
@@ -11,7 +14,12 @@ async function startServer() {
     const app = await createApp(db, webSocketClients);
     const PORT = config.PORT || 8080;
 
-    const server = createServer(app);
+    const options = {
+      key: readFileSync(path.join(__dirname, '../cert/server.key')),
+      cert: readFileSync(path.join(__dirname, '../cert/server.cert')),
+    };
+
+    const server = createServer(options, app);
     const wss = new WebSocketServer({ server, path: '/ws' }); // crear servidor websocket
     
     wss.on('connection', (ws) => {
@@ -28,7 +36,7 @@ async function startServer() {
     });
 
     server.listen(PORT, () => {
-      console.log(`Servidor iniciado en http://localhost:${PORT}`);
+      console.log(`Servidor iniciado en https://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Error iniciando servidor:', error);
