@@ -50,5 +50,4 @@ export default class TrackerDAO {
     const [rows] = await this.#db.execute('SELECT * FROM trackers');
     return rows.map((row) => new TrackerDTO(row));
   }
-
 }

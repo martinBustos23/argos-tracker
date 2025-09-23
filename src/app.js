@@ -47,7 +47,11 @@ export default async function createApp(db, webSocketclients) {
     trackerEventController
   );
   const trackerRouter = createTrackerRouter(trackerController, userController);
-  const trackerEventRouter = createTrackerEventRouter(trackerEventController, trackerController, webSocketclients);
+  const trackerEventRouter = createTrackerEventRouter(
+    trackerEventController,
+    trackerController,
+    webSocketclients
+  );
   const trackerLogRouter = createTrackerLogRouter(trackerLogController);
 
   app.set('view engine', 'ejs');

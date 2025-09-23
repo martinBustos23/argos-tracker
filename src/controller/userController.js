@@ -146,7 +146,6 @@ export default class UserController {
           .then((result) => {
             return result.filter((log) => log.source == user.username);
           });
-          
 
         const lastTimeout = await this.#userLogController
           .getLastNMinutes(10, 'Disable')

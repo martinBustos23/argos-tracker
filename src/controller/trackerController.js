@@ -91,7 +91,6 @@ export default class TrackerController {
       },
     ];
 
-
     if (
       failConditions.some(
         (condition) => typeof condition.variable !== 'undefined' && condition.expression

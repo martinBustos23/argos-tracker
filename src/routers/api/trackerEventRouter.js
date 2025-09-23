@@ -1,7 +1,11 @@
 import express from 'express';
 import { authToken, BadRequest, Conflict, NotFound, broadcastWSEvent } from '../../utils.js';
 
-export default function createTrackerEventRouter(trackerEventController, trackerController, webSocketclients) {
+export default function createTrackerEventRouter(
+  trackerEventController,
+  trackerController,
+  webSocketclients
+) {
   const router = express.Router();
   router.use(authToken);
 
@@ -13,9 +17,10 @@ export default function createTrackerEventRouter(trackerEventController, tracker
 
       const { eventDesc, lat, lon, bat } = req.query;
       // primero agrega el evento
-      const event = await trackerEventController.addPosition(trackerId, lat, lon, bat);      
-      if (eventDesc == 'POSITION') broadcastWSEvent(trackerId, webSocketclients, {...event, petName: tracker.petName});
-      
+      const event = await trackerEventController.addPosition(trackerId, lat, lon, bat);
+      if (eventDesc == 'POSITION')
+        broadcastWSEvent(trackerId, webSocketclients, { ...event, petName: tracker.petName });
+
       res.status(200).json(event);
     } catch (error) {
       next(error);

@@ -50,7 +50,7 @@ export default class TrackerEventController {
           eventDesc: 'POSITION',
           latitude,
           longitude,
-          batteryLvl
+          batteryLvl,
         })
       );
     } catch (error) {
