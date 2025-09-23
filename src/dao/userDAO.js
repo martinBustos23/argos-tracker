@@ -39,12 +39,13 @@ export default class UserDAO {
       ...values,
       username,
     ]);
-    return { username, ...user };
+    return this.find(username);
   }
 
   async delete(username) {
+    const userToDelete = await this.find(username);
     await this.#db.execute('DELETE FROM users WHERE username = ?', [username]);
-    return { message: `Usuario ${username} eliminado` };
+    return userToDelete;
   }
 
   async getAllInactive() {
