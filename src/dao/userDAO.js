@@ -35,8 +35,6 @@ export default class UserDAO {
     const descriptor = columns.join(' = ?,').concat(' = ?');
     const values = columns.map((column) => user[column]);
 
-    console.log(descriptor);
-    console.log(values);
     await this.#db.execute(`UPDATE users SET ${descriptor} WHERE username = ?`, [
       ...values,
       username,
