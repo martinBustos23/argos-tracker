@@ -2,9 +2,11 @@ export default class UserDTO {
   constructor(user) {
     this.username = user.username;
     this.password = user.password;
-    this.admin = user.admin;
-    this.active = user.active;
-    this.lastLogin = new Date(user.lastLogin + 'UTC');
-    this.timeout = user.timeout && new Date(user.timeout + 'UTC');
+    this.admin = user.admin ? true : false;
+    this.active = user.active ? true : false;
+    if (user.lastLogin)
+      this.lastLogin = new Date(user.lastLogin + 'UTC');
+    if (user.timeout)
+      this.timeout = new Date(user.timeout + 'UTC');
   }
 }
