@@ -7,14 +7,17 @@ export default class UserDAO {
   }
 
   async create(user) {
-    let { username, password } = user;
+    const columns = Object.getOwnPropertyNames(user);
 
-    await this.#db.execute('INSERT INTO users (username, password) VALUES (?, ?)', [
-      username,
-      password,
-    ]);
+    // extraer descriptor y placeholders del mensaje del query
+    const descriptor = columns.toString();
+    const placeHolders = columns.map((column) => '?').toString();
+    const values = columns.map((column) => user[column]);
 
-    return this.find(username);
+    const queryMsg = `INSERT INTO users (${descriptor}) VALUES (${placeHolders})`;
+    const [result] = await this.#db.execute(queryMsg, values);
+
+    return this.find(user.username);
   }
 
   async getAll() {
