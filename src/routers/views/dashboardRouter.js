@@ -6,7 +6,8 @@ export default (
   userLogController,
   trackerController,
   trackerLogController,
-  trackerEventController
+  trackerEventController,
+  systemLogController
 ) => {
   const router = express.Router();
   router.use(authToken);
@@ -20,7 +21,7 @@ export default (
       const allEvents = [];
 
       for (const tracker of trackers) {
-        const events = await trackerEventController.getLatest(tracker.id, 5);
+        const events = await trackerEventController.getAll(tracker.id);
 
         for (let i = 0; i < events.length; i++) {
           if (!events[i].timestamp) {
@@ -62,6 +63,9 @@ export default (
 
       const trackers = await trackerController.getAll();
       //prob se tilde si no hay trackers je
+      if (trackers.length == 0) {
+        return res.redirect(`/dashboard/vincular`);
+      }
       const firstTracker = trackers[0];
       return res.redirect(`/dashboard/devices/${firstTracker.id}`);
     } catch (error) {
@@ -69,37 +73,30 @@ export default (
     }
   });
 
-  router.get('/config', async (req, res) => {
+  router.get('/devices/:trackerId', async (req, res) => {
     try {
       const token = req.cookies.authorization;
       const username = getUserFromToken(token);
-      const trackerLogs = await trackerLogController.getLatest(20);
-      const userLogs = await userLogController.getLatest(20);
+      const trackers = await trackerController.getAll();
+      const tracker = await trackerController.find(req.params.trackerId);
 
-      for (let i = 0; i < userLogs.length; i++) {
-        if (!userLogs[i].timestamp) {
-          userLogs[i].timestamp = 'Sin registro';
-          continue;
-        }
-        userLogs[i].timestamp = new Date(userLogs[i].timestamp + ' UTC').toLocaleString('es-AR', {
-          hour12: false,
+      let lastEvents = [];
+      if (tracker) {
+        lastEvents = await trackerEventController.getAll(tracker.id);
+        lastEvents.forEach((event) => {
+          if (event.timestamp) {
+            event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', {
+              hour12: false,
+            });
+          } else {
+            event.timestamp = 'Sin registro';
+          }
         });
       }
 
-      for (let i = 0; i < trackerLogs.length; i++) {
-        if (!trackerLogs[i].timestamp) {
-          trackerLogs[i].timestamp = 'Sin registro';
-          continue;
-        }
-        trackerLogs[i].timestamp = new Date(trackerLogs[i].timestamp + ' UTC').toLocaleString(
-          'es-AR',
-          { hour12: false }
-        );
-      }
-
-      res.render('./dashboard/config', { username, trackerLogs, userLogs });
+      res.render('./dashboard/devices', { username, trackers, tracker, lastEvents });
     } catch (error) {
-      res.status(500).send('Error al ingresar a configuracion' + error.message);
+      res.status(500).send('Error al ingresar a devices: ' + error.message);
     }
   });
 
@@ -130,37 +127,56 @@ export default (
     }
   });
 
+  router.get('/config', async (req, res) => {
+    try {
+      const token = req.cookies.authorization;
+      const username = getUserFromToken(token);
+      const trackerLogs = await trackerLogController.getLatest(20);
+      const userLogs = await userLogController.getLatest(20);
+      const systemLogs = await systemLogController.getLatest(20);
+
+      for (let i = 0; i < userLogs.length; i++) {
+        if (!userLogs[i].timestamp) {
+          userLogs[i].timestamp = 'Sin registro';
+          continue;
+        }
+        userLogs[i].timestamp = new Date(userLogs[i].timestamp + ' UTC').toLocaleString('es-AR', {
+          hour12: false,
+        });
+      }
+
+      for (let i = 0; i < trackerLogs.length; i++) {
+        if (!trackerLogs[i].timestamp) {
+          trackerLogs[i].timestamp = 'Sin registro';
+          continue;
+        }
+        trackerLogs[i].timestamp = new Date(trackerLogs[i].timestamp + ' UTC').toLocaleString(
+          'es-AR',
+          { hour12: false }
+        );
+      }
+
+      for (let i = 0; i < systemLogs.length; i++) {
+        if (!systemLogs[i].timestamp) {
+          systemLogs[i].timestamp = 'Sin registro';
+          continue;
+        }
+        systemLogs[i].timestamp = new Date(systemLogs[i].timestamp + ' UTC').toLocaleString(
+          'es-AR',
+          { hour12: false }
+        );
+      }
+
+      res.render('./dashboard/config', { username, trackerLogs, userLogs, systemLogs });
+    } catch (error) {
+      res.status(500).send('Error al ingresar a configuracion' + error.message);
+    }
+  });
+
   router.get('/vincular', (req, res) => {
     const token = req.cookies.authorization;
     const username = getUserFromToken(token);
     res.render('./dashboard/vincular', { username });
-  });
-
-  router.get('/devices/:trackerId', async (req, res) => {
-    try {
-      const token = req.cookies.authorization;
-      const username = getUserFromToken(token);
-      const trackers = await trackerController.getAll();
-      const tracker = await trackerController.find(req.params.trackerId);
-
-      let lastEvents = [];
-      if (tracker) {
-        lastEvents = await trackerEventController.getAll(tracker.id);
-        lastEvents.forEach((event) => {
-          if (event.timestamp) {
-            event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', {
-              hour12: false,
-            });
-          } else {
-            event.timestamp = 'Sin registro';
-          }
-        });
-      }
-
-      res.render('./dashboard/devices', { username, trackers, tracker, lastEvents });
-    } catch (error) {
-      res.status(500).send('Error al ingresar a devices: ' + error.message);
-    }
   });
 
   return router;

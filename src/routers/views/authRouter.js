@@ -10,19 +10,11 @@ export default (UserController) => {
     res.render('login');
   });
 
-  router.get('/register', (req, res) => {
-    res.render('register');
-  });
-
   router.post('/login', async (req, res, next) => {
     try {
       await UserController.login(req.body);
 
-      console.log('-- Login --');
-      console.log(req.body); //test
-
       const token = generateToken(req.body.username);
-
       res
         .cookie('authorization', token, {
           httpOnly: true, // la cookie solo puede ser obtenida por nuestro servidor
@@ -30,7 +22,7 @@ export default (UserController) => {
         })
         .redirect('dashboard');
     } catch (error) {
-      next(error);
+      res.render('login', { errorMessage: 'Usuario o contraseña incorrectos' });
     }
   });
 

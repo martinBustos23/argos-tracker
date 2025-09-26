@@ -1,5 +1,5 @@
-import { InternalError, NotFound } from '../utils.js';
-import TrackerEventDTO from '../dto/trackerEventDTO.js';
+import { InternalError, NotFound } from '../../utils.js';
+import TrackerEventDTO from '../../dto/trackerEventDTO.js';
 
 export default class TrackerEventController {
   #trackerEventDAO;

@@ -19,6 +19,14 @@
         "extra": null
       },
       {
+        "name": "image",
+        "type": "varchar(256)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
         "name": "admin",
         "type": "bool",
         "key": null,
@@ -68,6 +76,30 @@
         "type": "varchar(32)",
         "key": null,
         "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "model",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "image",
+        "type": "varchar(256)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "state",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": true,
         "default": null,
         "extra": null
       },
@@ -146,7 +178,7 @@
     ]
   },
   {
-    "name": "usersLog",
+    "name": "logUsers",
     "fields": [
       {
         "name": "id",
@@ -276,7 +308,7 @@
     ]
   },
   {
-    "name": "trackersLog",
+    "name": "logTrackers",
     "fields": [
       {
         "name": "id",
@@ -333,6 +365,59 @@
         "column": "source",
         "reference_table": "trackers",
         "reference_column": "id"
+      }
+    ]
+  },
+  {
+    "name": "logSystem",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "key": null,
+        "nullable": false,
+        "default": "current_timestamp()",
+        "extra": null
+      },
+      {
+        "name": "level",
+        "type": "varchar(10)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "source",
+        "type": "varchar(64)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "action",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "description",
+        "type": "varchar(128)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
       }
     ]
   }

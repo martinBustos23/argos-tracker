@@ -1,158 +1,704 @@
 <%- include('../layouts/header', {title: 'vincular-title' }); %>
 
-    <%- include('../layouts/sidebar'); %>
+<%- include('../layouts/sidebar'); %>
 
-        <div class="main-content">
+<div class="main-content">
 
-            <%- include('../layouts/navbar', { title: 'Vincular dispositivo' ,
-                subtitle: 'Complete el formulario para crear nuevo vinculo' }); %>
+    <%- include('../layouts/navbar', { title: 'Vincular dispositivo' ,
+        subtitle: 'Complete el formulario para crear nuevo vinculo' }); %>
 
-                <div class="main-content__body">
-                    <form class="vincular-form" id="vincularForm">
-                        <h2>Completar formulario...</h2>
+        <div class="main-content__body">
 
-                        <div class="vincular-form__div">
-                            <label>ID</label>
-                            <input type="text" name="id" disabled placeholder="Se asigna automáticamente">
+            <form class="vincular-form" id="vincularForm">
+                <h2>Registrar dispositivo</h2>
+                <div class="vincular-form__tab">
+
+                    <div class="vincular-form__config">
+
+                        <img id="img-button" class="img-tracker helper1" src="/img/petIcons/default.jpg" alt="img"
+                            data-content='{"title": "Imagen", 
+                                            "data": "Esta opción permite elegir una imagen de stock para identificar a la mascota"}'
+                        >
+
+                        <input class="input-petname helper1" type="text" name="petName"
+                            placeholder="Nombre de mascota..." required 
+                            data-content='{"title": "Nombre", 
+                                            "data": "Esta opción permite ingresar un nombre vinculado a la mascota que utilizará el dispositivo"}'>
+
+                        <div class="option helper1"
+                            data-content='{"title": "ID", 
+                                            "data": "Este ID se asigna automáticamente por el sistema y actúa como un identificador único para el dispositivo. No es necesario modificarlo"}'>
+                            <label>ID:</label>
+                            <input class="input-text" type="text" name="id" disabled
+                                placeholder="Se asigna automáticamente">
                         </div>
 
-                        <div class="vincular-form__div">
-                            <label for="petName">Nombre de la mascota</label>
-                            <input type="text" name="petName" required>
+                        <div class="option helper1" 
+                            data-content='{"title": "Modelo", 
+                                            "data": "Selecciona el modelo del dispositivo que estás utilizando. Cada modelo puede tener características y funcionalidades diferentes"}'>
+                            <label for="model">Modelo:</label>
+                            <select class="input-text" id="model">
+                                <option value="1">verLoRa</option>
+                                <option value="2">verGSM</option>
+                                <option value="3">verGSM-LoRa</option>
+                            </select>
                         </div>
 
-                        <div class="vincular-form__div">
-                            <label for="frequency">Frecuencia</label>
-                            <input type="number" name="frequency" value="5" min="1">
+                        <div class="option helper1" 
+                            data-content='{"title": "Frecuencia", 
+                                            "data": "Ajusta la frecuencia con la que la estación recibe eventos del dispositivo activo. Un valor más bajo significa más actualizaciones a costa de un mayor consumo de batería"}'>
+                            <label for="frequency">Frecuencia:</label>
+                            <input type="range" id="frequency" name="frequency" min="5" max="30" value="10"
+                            oninput="document.getElementById('freqValue').textContent=this.value + 'min'">
+                            <span id="freqValue">5min</span>
                         </div>
 
-                        <div class="vincular-form__div">
-                            <label for="lowBat">Umbral batería (%)</label>
-                            <input type="number" name="lowBat" value="15" min="1" max="100">
+                        <div class="option helper1" 
+                            data-content='{"title": "Frecuencia emergencia", 
+                                            "data": "Ajusta la frecuencia de emergencia que se activa si el dispositivo detecta alguna anomalía. Esto determina cuán rápido se notificará el problema"}'>
+                            <label for="frequency-emergency">Frecuencia emergencia:</label>
+                            <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency" min="1" max="10" value="3"
+                                oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
+                            <span id="freqEmergValue">3min</span>
                         </div>
 
-                        <button type="submit" class="confirm-btn">Crear tracker</button>
-                    </form>
+                        <div class="option helper1" 
+                            data-content='{"title": "Umbral de bateria", 
+                                            "data": "Ajusta el umbral de nivel de batería para recibir notificaciones sobre el estado del dispositivo"}'>
+                            <label for="battery">Umbral de bateria:</label>
+                            <input type="range" id="battery" name="lowBat" min="5" max="80" value="20"
+                                oninput="document.getElementById('batValue').textContent=this.value + '%'">
+                            <span id="batValue">20%</span>
+                        </div>
+
+                        <div class="option helper1" 
+                            data-content='{"title": "Alerta de sonido", 
+                                            "data": "Esta opción permite elegir si activar las notificaciones importantes por sonido"}'>
+                            <label for="alert">Alerta de sonido: </label>
+                            <div class="option-radio">
+                                <label><input type="radio" name="alertSound" value="si" checked>Sí</label>
+                                <label><input type="radio" name="alertSound" value="no">No</label>
+                            </div>
+                        </div>
+
+                        <div class="option helper1" 
+                            data-content='{"title": "Geo-fencing", 
+                                            "data": "Delimita un área segura. Si el dispositivo se encuentra fuera de esta área, se activa el modo de emergencia. Asegúrate de configurar correctamente los límites"}'>
+                            <label for="geofencing">Geo-fencing: </label>
+                            <div class="option-radio">
+                                <label><input type="radio" name="geoEnable" value="si" checked>Sí</label>
+                                <label><input type="radio" name="geoEnable" value="no" >No</label>
+                            </div>
+                        </div>
+
+                        <button class="crear-tracker-btn helper1" type="submit">Crear</button>
+
+                    </div>
+
+                    <div class="vincular-form__geofencing">
+                        <h3>Geo-fencing</h3>
+
+                        <div class="option-geo helper2" 
+                            data-content='{"title": "Latitud", 
+                                            "data": "La latitud es la medida angular que indica la posición de un punto al norte o al sur del ecuador. Esta opción permite delimitar un área segura; si el dispositivo se encuentra fuera de esta, se activa el modo de emergencia"}'>
+                            <label for="latitud">Latitud:</label>
+                            <input class="input-text" type="text" id="latitud" name="latitud" placeholder="-34.6037">
+                        </div>
+                        <div class="option-geo helper2" 
+                            data-content='{"title": "Longitud", 
+                                            "data": "La longitud es la medida angular que indica la posición de un punto al este o al oeste del meridiano de Greenwich. Esta opción permite delimitar un área segura; si el dispositivo se encuentra fuera de esta, se activa el modo de emergencia"}'>
+                            <label for="latitud">Longitud:</label>
+                            <input class="input-text" type="text" id="longitud" name="longitud" placeholder="-58.3816">
+                        </div>
+                        <div class="option-geo helper2"  
+                            data-content='{"title": "Radio", 
+                                            "data": "Esta opción permite definir el radio del área segura en metros. Un radio más grande significa que el dispositivo puede moverse más lejos de la ubicación central antes de activar el modo de emergencia. Ajusta el control deslizante para establecer el radio deseado"}'>
+                            <label for="radio">Radio:</label>
+                            <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150" value="20"
+                                oninput=updateRadio(this)>
+                            <span id="radioValue">10m</span>
+                        </div>
+
+                        <div id="geo-map" class="geozone__map helper2"></div>
+                    </div>
+                </div>
+            </form>
+
+
+            <div id="helper" class="helper">
+                <button class="helper-btn" id="helper-close">X</button>
+                <div id="content-helper">
 
                 </div>
+            </div>
+            <div id="helper-left" class="helper-left">
+                <button class="helper-btn" id="helper-left-close">X</button>
+                <div id="content-helper-left">
 
+                </div>
+            </div>
+
+            <div id="img-selector" class="img-selector">
+                <div class="img-options">
+                    <img class="img" src="/img/petIcons/perro1.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro2.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro3.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro4.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro5.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato1.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato2.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato3.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato4.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato5.jpg" alt="img">
+                    <button class="close-btn" id="img-selector-close">X</button>
+                </div>
+            </div>
         </div>
 
-        <style>
-            .main-content__body {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                flex: 1;
-                padding: .5rem 0rem 0rem;
-                background-color: rgba(170, 170, 170, 0.2);
-            }
+</div>
 
-            .vincular-form {
-                display: flex;
-                flex-direction: column;
-                width: 80%;
-                flex: .95;
-                background-color: white;
-                color: #691c32;
-                box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-                padding: 1rem;
-                border-radius: 5px;
-            }
+<style>
+    #geo-map {
+        height: 45vh;
+        width: 95%;
+        border-radius: 4px;
+        margin: auto;
+        border: 1px solid #aaa;
+        transition: all .5s ease-in;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
 
-            .vincular-form h2 {
-                font-size: 1.5rem;
-                padding: .5rem 0rem .5rem;
-                margin-bottom: .5rem;
-                width: 100%;
-                border-bottom: 2px solid #691c32;
-            }
+    #geo-map:hover {
+        border: 1px solid rgba(69, 19, 33, 0.6);
+    }
 
-            .vincular-form__div {
-                padding: .5rem 0rem;
-                margin: .25rem 1rem;
-                display: flex;
-                flex-direction: column;
-                width: 50%;
-                border-bottom: 1px solid #691c32;
-            }
+    .main-content__body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background-color: rgba(170, 170, 170, 0.2);
 
-            .vincular-form__div label {
-                font-size: 1rem;
-                font-weight: 400;
-                margin: .15rem 0rem;
-            }
+    }
 
-            .vincular-form__div input {
-                outline: none;
-                border: 1px solid #ddd;
-                padding: .25rem .75rem;
-                box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-                border-radius: 25px;
-                width: 80%;
-            }
+    .helper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        position: absolute;
+        right: 0;
+        opacity: 0;
+        visibility: hidden;
+        padding: 3rem;
+        width: 35%;
+        height: 90%;
+        z-index: 2000;
+        /* background-color: rgba(105, 28, 50, 0.8); */
+        background-color: rgba(69, 19, 33, 0.8);
+        transition: all 1s ease-in-out;
+    }
 
-            .confirm-btn {
-                width: 50%;
-                max-height: 3rem;
+    .helper-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        position: absolute;
+        left: 250px;
+        opacity: 0;
+        visibility: hidden;
+        padding: 3rem;
+        width: 35%;
+        height: 90%;
+        z-index: 2000;
+        /* background-color: rgba(105, 28, 50, 0.8); */
+        background-color: rgba(69, 19, 33, 0.8);
+        transition: all 1s ease-in-out;
+    }
 
-                margin: 1rem 25% 0;
-                padding: .5rem 2rem;
+    .vincular-form {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        flex: 1;
+        background-color: rgba(255, 255, 255, 0.6);
+        color: #691c32;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        padding: .5rem;
+        margin: .5rem;
+        border-radius: 5px;
+    }
 
-                font-weight: 400;
+    .vincular-form h2 {
+        font-size: 1.5rem;
+        padding: .5rem;
+        margin: .25rem;
+        border-bottom: 1px solid #691c32;
+    }
 
-                background-color: #691c32;
-                color: white;
+    .vincular-form__tab {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        flex: 1;
+    }
 
-                border: none;
-                border-radius: 15px;
+    .vincular-form__config {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        background-color: white;
+        border-radius: 5px;
+        margin: .25rem 0;
+        padding: .5rem 1rem 0rem;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
 
-                cursor: pointer;
+    .vincular-form__identify {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
 
-                transition: all 0.25s ease-in-out;
-            }
+    .img-tracker {
+        display: flex;
+        align-self: center;
+        width: 150px;
+        height: 150px;
+        margin: .5rem 0rem .5rem;
+        border-radius: 50%;
+        border: 1px solid #451321;
+        color: white;
+    }
 
-            .confirm-btn:hover {
-                background-color: #451321;
-            }
-        </style>
+    .petName-tracker {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .petName-tracker div {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .confirm-btn {
+        width: 50%;
+        max-height: 3rem;
+
+        margin: 1rem 25% 0;
+        padding: .5rem 2rem;
+
+        font-weight: 400;
+
+        background-color: #691c32;
+        color: white;
+
+        border: none;
+        border-radius: 15px;
+
+        cursor: pointer;
+
+        transition: all 0.25s ease-in-out;
+    }
+
+    .confirm-btn:hover {
+        background-color: #451321;
+    }
+
+    .option {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: calc(100% + 2rem);
+        padding: 0rem 1rem;
+        margin: .15rem 0rem;
+        min-height: 2rem;
+        transition: all .35s ease-in-out;
+    }
+
+    .option:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .option label {
+        text-align: right;
+        width: 35%;
+        white-space: nowrap;
+    }
+
+    .option select {
+        width: 50%;
+        margin: 0rem 1rem;
+    }
+
+    .option input {
+        width: 50%;
+        margin: 0rem 1rem;
+    }
+
+    .option-radio {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 50%;
+        white-space: nowrap;
         
-        <script>
-            const vincularForm = document.getElementById("vincularForm");
+    }
 
-            vincularForm.addEventListener("submit", async (event) => {
-                event.preventDefault();
+    .input-petname {
+        display: flex;
+        flex-direction: row;
+        align-self: center;
+        justify-content: space-between;
+        width: 50%;
+        padding: 0rem 1rem;
+        margin: .15rem 0rem 1.5rem;
+        min-height: 2rem;
+        outline: none;
+        border: 1px solid #ddd;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 25px;
+        padding: 0rem 1rem;
+        transition: all .35s ease-in-out;
+    }
 
-                const payload = {
-                    petName: vincularForm.petName.value,
-                    frequency: vincularForm.frequency.value,
-                    lowBat: vincularForm.lowBat.value
-                };
+    .option:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
 
-                try {
-                    const response = await fetch("/api/trackers", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
+    .input-text {
+        outline: none;
+        border: 1px solid #ddd;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 25px;
+        padding: 0rem 1rem;
+    }
 
-                    const result = await response.json();
+    .input-range {
+        box-shadow: none;
+    }
 
-                    if (response.ok) {
-                        alert("Dispositivo creado correctamente");
+    .crear-tracker-btn {
+        display: flex;
+        align-self: center;
+        justify-content: center;
+        width: calc(100% + 2rem);
+        margin: auto 0rem 0rem;
+        padding: 1rem 1.5rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+        background-color: white;
+        color: #451321;
+        border-radius: 0px 0px 5px 5px;
+        border: 1px solid rgba(69, 19, 33, .2);
+        transition: all .5s ease-in-out;
+    }
 
-                    } else {
-                        alert("Error: " + result.error);
-                    }
-                } catch (error) {
-                    console.log("Error al crear dispositivo", error);
-                    alert("Error al crear dispositivo");
-                }
+    .crear-tracker-btn:hover {
+        background-color: rgba(69, 19, 33, .05);
+        border: 1px solid #451321;
+    }
+
+    .vincular-form__geofencing {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        flex: 1;
+        background-color: white;
+        border-radius: 5px;
+        margin: .25rem .25rem .25rem 1rem;
+        padding: .5rem 1rem;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .option-geo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: calc(100% + 2rem);
+        padding: 0rem 1rem;
+        margin: .15rem 0rem;
+        min-height: 2rem;
+        transition: all .35s ease-in-out;
+    }
+
+    .option-geo:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .option-geo label {
+        text-align: right;
+        width: 25%;
+        white-space: nowrap;
+    }
+
+    .option-geo input {
+        width: 50%;
+        margin: 0rem 2rem;
+        align-self: center;
+    }
+
+    .option-geo-btn {
+        width: 45px;
+        height: 40px;
+        font-size: 1rem;
+        margin: 0 auto;
+        background-color: rgba(119, 51, 68, .1);
+        color: #451321;
+        border: none;
+        border-radius: 40px;
+        transition: all .5s ease-in-out;
+    }
+
+    .option-geo-btn:hover {
+        background-color: rgba(119, 51, 68, .2);
+    }
+    
+    .img-selector{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        position:absolute;
+        opacity: 0;
+        visibility: hidden;
+
+        width: calc(100% - 250px);
+        height: calc(100% - 10vh);
+        z-index: 2000;
+
+        background-color: rgba(0, 0, 0, 0.6);
+        /* background-color: rgba(0, 0, 0, 0.8); */
+        transition: all 1s ease-in-out;
+    }
+
+    .img-options{
+        display: grid;
+        grid-template-columns: auto auto auto auto auto;
+        grid-template-rows: auto;
+        position: relative;
+        width: auto;
+        height: auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .img{
+        display: flex;
+        align-self: center;
+        overflow: hidden;
+        width: 100px;
+        height: 100px;
+        border-radius: none;
+        margin: 1rem;
+        border-radius: 50%;
+        border: 1px solid rgba(105, 28, 50, .1);
+        background-color: #451321;
+        color: white;
+        transition: all .25s ease-in-out;
+    }
+
+    .img:hover{
+        border: 1px solid rgba(105, 28, 50, 1);
+        scale: 1.1;
+    }
+
+    .close-btn{
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 20px;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        font-weight: bold;
+        border: none;
+        background-color: rgba(105, 28, 50, .15);
+        transition: all .15s ease-in-out;
+    }
+
+    .close-btn:hover{
+        background-color: rgba(105, 28, 50, .3);
+    }
+
+    .helper-btn{
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 20px;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        font-weight: bold;
+        color: white;
+        background-color: transparent;
+        transition: all .15s ease-in-out;
+    }
+
+    .helper-btn:hover{
+        background-color: rgba(105, 28, 50, 1);
+    }
+</style>
+
+<script>
+    let geomap = L.map('geo-map').setView([-32.747711, -60.734190], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(geomap);
+
+    let circle = L.circle([-32.747711, -60.734190], {
+        radius: 0,
+        color: "#691c32",
+        fillColor: "#f03",
+        fillOpacity: 0.15
+    }).addTo(geomap).bindPopup("Zona Segura");
+
+    function updateRadio(event) {
+        const radius = event.value;
+        document.getElementById('radioValue').textContent = radius + 'm';
+        circle.setRadius(radius);
+    }
+
+    geomap.on('click', (picker) => {
+        vincularForm.latitud.value = picker.latlng.lat;
+        vincularForm.longitud.value = picker.latlng.lng;
+        geomap.setView(picker.latlng);
+        circle.setLatLng(picker.latlng); 
+    });
+
+
+    const vincularForm = document.getElementById("vincularForm");
+    const imgButton = document.getElementById("img-button");
+
+    vincularForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const imgSrc = imgButton.getAttribute("src");
+        const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
+
+        const modelSelect = vincularForm.model;
+        const modelName = modelSelect.options[modelSelect.selectedIndex].text;
+
+        const enableGeofence = vincularForm.geoEnable.value === "si" ? 1 : 0;
+        const enableSoundAlert = vincularForm.alertSound.value === "si" ? 1 : 0;
+        
+        const payload = {
+            petName: vincularForm.petName.value,
+            model: modelName,
+            image: imageName,
+            state: "active",
+            frequency: vincularForm.frequency.value,
+            lowBat: vincularForm.lowBat.value,
+            geofenceLat: vincularForm.latitud.value,
+            geofenceLon: vincularForm.longitud.value,
+            geofenceRadius: vincularForm.geoRadio.value,
+            active: 1,
+            enableGeofence: enableGeofence, 
+            emergencyFrequency: vincularForm.frequencyEmergency.value,
+            enableSoundAlert: enableSoundAlert
+        };
+
+        try {
+            const response = await fetch("/api/trackers", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
             });
 
+            const result = await response.json();
 
-        </script>
+            if (response.ok) {
+                alert("Dispositivo creado correctamente");
 
-        <%- include('../layouts/footer'); %>
+            } else {
+                alert("Error: " + result.error);
+            }
+        } catch (error) {
+            console.log("Error al crear dispositivo", error);
+            alert("Error al crear dispositivo");
+        }
+    });
+
+    document.querySelectorAll('.helper1').forEach(helper => {
+        helper.addEventListener('mouseenter', function () {
+            const content = JSON.parse(this.getAttribute('data-content'));
+            document.getElementById('content-helper').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+            document.getElementById('helper').style.opacity = '1';
+            document.getElementById('helper').style.visibility = 'visible';
+
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+        });
+
+        helper.addEventListener('mouseleave', function () {
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+        });
+        document.getElementById('helper-close').addEventListener('click', function () {
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+
+        });
+    });
+
+    document.querySelectorAll('.helper2').forEach(helper => {
+        helper.addEventListener('mouseenter', function () {
+            const content = JSON.parse(this.getAttribute('data-content'));
+            document.getElementById('content-helper-left').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+            document.getElementById('helper-left').style.opacity = '1';
+            document.getElementById('helper-left').style.visibility = 'visible';
+
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+        });
+
+        helper.addEventListener('mouseleave', function () {
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+        });
+        document.getElementById('helper-left-close').addEventListener('click', function () {
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+
+        });
+    });
+
+    document.getElementById('img-button').addEventListener('click', function () {
+            document.getElementById('img-selector').style.opacity = '1';
+            document.getElementById('img-selector').style.visibility = 'visible';
+
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+    });
+
+    document.getElementById('img-selector-close').addEventListener('click', function () {
+            document.getElementById('img-selector').style.opacity = '0';
+            document.getElementById('img-selector').style.visibility = 'hidden';
+    });
+
+
+    const imgSelector = document.getElementById("img-selector");
+
+    imgSelector.addEventListener("click", (event) => {
+    if (event.target.classList.contains("img")) {
+        const newSrc = event.target.getAttribute("src");
+        imgButton.setAttribute("src", newSrc);
+        document.getElementById('img-selector').style.opacity = '0';
+        document.getElementById('img-selector').style.visibility = 'hidden';
+    }
+    });
+
+</script>
+
+<%- include('../layouts/footer'); %>

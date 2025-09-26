@@ -5,8 +5,9 @@ import {
   Unauthorized,
   Forbidden,
   InternalError,
-} from '../utils.js';
-import config from '../config/config.js';
+} from '../../utils.js';
+import config from '../../config/config.js';
+import { LEVEL, TRACKER_ACTIONS } from '../../config/constants.js';
 
 export default class TrackerController {
   #trackerDAO;
@@ -21,10 +22,20 @@ export default class TrackerController {
       if (!this.#validarTracker(tracker))
         throw new BadRequest('Uno de los valores ingresados es invalido o esta fuera de rango');
       const newTracker = await this.#trackerDAO.create(tracker);
-      await this.#trackerLogController.addLinking(newTracker.id, 'INFO');
+      await this.#trackerLogController.addLog(
+        LEVEL.INFO,
+        newTracker.id,
+        TRACKER_ACTIONS.CREATE,
+        'Se creo un nuevo dispositivo'
+      );
       return newTracker;
     } catch (error) {
-      // await this.#trackerLogController.addLinking(newTracker.id, 'ERROR');
+      await this.#trackerLogController.addLog(
+        LEVEL.ERROR,
+        tracker.id,
+        TRACKER_ACTIONS.CREATE,
+        'Error al crear el dispositivo'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno creando tracker');
     }
@@ -60,10 +71,20 @@ export default class TrackerController {
         throw new BadRequest('El o los valores a actualizar no son validos o estan fuera de rango');
 
       const updatedTracker = await this.#trackerDAO.update(id, tracker);
-      await this.#trackerLogController.addUpdate(id, tracker, 'INFO');
+      await this.#trackerLogController.addLog(
+        LEVEL.INFO,
+        updatedTracker.id,
+        TRACKER_ACTIONS.UPDATE,
+        'Se actualizo el dispositivo'
+      );
       return updatedTracker;
     } catch (error) {
-      await this.#trackerLogController.addUpdate(id, tracker, 'ERROR');
+      await this.#trackerLogController.addLog(
+        LEVEL.ERROR,
+        id,
+        TRACKER_ACTIONS.UPDATE,
+        'Error al actualizar el dispositivo'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno actualizando tracker');
     }
@@ -106,10 +127,20 @@ export default class TrackerController {
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
       const result = await this.updateTracker(id, { active: false });
-      await this.#trackerLogController.addDisable(id, 'INFO');
+      await this.#trackerLogController.addLog(
+        LEVEL.INFO,
+        id,
+        TRACKER_ACTIONS.DISABLED,
+        'Se deshabilito el dispositivo'
+      );
       return result;
     } catch (error) {
-      await this.#trackerLogController.addDisable(id, 'ERROR');
+      await this.#trackerLogController.addLog(
+        LEVEL.ERROR,
+        id,
+        TRACKER_ACTIONS.DISABLED,
+        'Error al deshabilitar el dispositivo'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno desabilitando tracker');
     }
@@ -120,8 +151,20 @@ export default class TrackerController {
       const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
+      await this.#trackerLogController.addLog(
+        LEVEL.INFO,
+        id,
+        TRACKER_ACTIONS.DELETE,
+        'Se elimino el dispositivo'
+      );
       return this.#trackerDAO.delete(id);
     } catch (error) {
+      await this.#trackerLogController.addLog(
+        LEVEL.ERROR,
+        id,
+        TRACKER_ACTIONS.DELETE,
+        'Error al eliminar el dispositivo'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno eliminando tracker');
     }

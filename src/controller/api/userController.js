@@ -5,9 +5,10 @@ import {
   Unauthorized,
   Forbidden,
   InternalError,
-} from '../utils.js';
+} from '../../utils.js';
 import bcrypt from 'bcryptjs';
-import config from '../config/config.js';
+import config from '../../config/config.js';
+import { LEVEL, USER_ACTIONS, USER_TRIES } from '../../config/constants.js';
 
 export default class UserController {
   #userDAO;
@@ -21,12 +22,24 @@ export default class UserController {
     try {
       const exists = await this.#userDAO.find(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
+
       newUser.password = await this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
+
       const result = await this.#userDAO.create(newUser);
-      await this.#userLogController.addRegistration(newUser.username, 'INFO');
+      await this.#userLogController.addLog(
+        LEVEL.INFO,
+        newUser.username,
+        USER_ACTIONS.CREATE,
+        'Se creo el usuario'
+      );
       return result;
     } catch (error) {
-      await this.#userLogController.addRegistration(newUser.username, 'ERROR');
+      await this.#userLogController.addLog(
+        LEVEL.ERROR,
+        newUser.username,
+        USER_ACTIONS.DELETE,
+        'Error al crear el usuario'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno creando usuario');
     }
@@ -60,11 +73,22 @@ export default class UserController {
 
       // si se actualiza la contrasenia hashearla
       if (user.password) user.password = await this.#genPasswordHash(user.password);
+
       const result = await this.#userDAO.update(username, user);
-      await this.#userLogController.addUpdate(username, user, 'INFO');
+      await this.#userLogController.addLog(
+        LEVEL.INFO,
+        username,
+        USER_ACTIONS.UPDATE,
+        'Se actualizo el usuario'
+      );
       return result;
     } catch (error) {
-      await this.#userLogController.addUpdate(username, user, 'ERROR');
+      await this.#userLogController.addLog(
+        LEVEL.ERROR,
+        username,
+        USER_ACTIONS.UPDATE,
+        'Erro al actualizar el usuario'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno actualizando usuario');
     }
@@ -86,10 +110,20 @@ export default class UserController {
       if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
 
       const result = await this.update(username, { active: false });
-      await this.#userLogController.addDisable(username, 'INFO');
+      await this.#userLogController.addLog(
+        LEVEL.INFO,
+        username,
+        USER_ACTIONS.DISABLED,
+        'Se deshabilito usuario'
+      );
       return result;
     } catch (error) {
-      await this.#userLogController.addDisable(username, 'ERROR');
+      await this.#userLogController.addLog(
+        LEVEL.ERROR,
+        username,
+        USER_ACTIONS.DISABLED,
+        'Error al deshabilito usuario'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno desabilitando usuario');
     }
@@ -107,32 +141,31 @@ export default class UserController {
         throw new Unauthorized('No se puede borrar todos los administradores');
 
       const result = await this.#userDAO.delete(username);
-      await this.#userLogController.addDeletion(username, 'INFO');
+      await this.#userLogController.addLog(
+        LEVEL.INFO,
+        username,
+        USER_ACTIONS.DELETE,
+        'Se elimino usuario'
+      );
       return result;
     } catch (error) {
-      await this.#userLogController.addDeletion(username, 'ERROR');
+      await this.#userLogController.addLog(
+        LEVEL.ERROR,
+        username,
+        USER_ACTIONS.DELETE,
+        'Error al eliminar usuario'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno eliminando usuario');
     }
   }
 
-  async #timeoutUser(username, minutes) {
-    const timeout = new Date(Date.now() + minutes * 60 * 1000).toISOString().replace(/[A-Z]/g, ' ');
-    await this.#userDAO.update(username, { timeout });
-    this.#userLogController.addTimeout(username, minutes);
-  }
-
-  async #blockUser(username) {
-    await this.#userDAO.update(username, { active: false });
-    this.#userLogController.addBlock(username);
-  }
-
-  //// ACCESO
   async login(user) {
     try {
       const exist = await this.#userDAO.find(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
+
       if (exist.timeout && Date.now() >= exist.timeout) {
         // si tiene timeout y el mismo termino
         this.#userDAO.update(exist.username, { timeout: null });
@@ -154,9 +187,9 @@ export default class UserController {
           });
 
         if (
-          loginLogs.length >= config.BLOCK_TRIES &&
+          loginLogs.length >= USER_TRIES.BLOCK_TRIES &&
           lastTimeout.length == 2 &&
-          loginLogs.slice(0, config.BLOCK_TRIES).every((log) => log.level === 'ERROR')
+          loginLogs.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === 'ERROR')
         ) {
           this.#blockUser(user.username);
           throw new Unauthorized(
@@ -165,22 +198,22 @@ export default class UserController {
         }
 
         if (
-          loginLogs.length >= config.SECOND_TIMEOUT_TRIES &&
+          loginLogs.length >= USER_TRIES.SECOND_TIMEOUT_TRIES &&
           lastTimeout.length == 1 &&
-          loginLogs.slice(0, config.SECOND_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
+          loginLogs.slice(0, USER_TRIES.SECOND_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
         ) {
-          this.#timeoutUser(user.username, config.SECOND_TIMEOUT_MINUTES);
+          this.#timeoutUser(user.username, USER_TRIES.SECOND_TIMEOUT_MINUTES);
           throw new Unauthorized(
             `Ingreso la contraseña incorrecta demasiadas veces, su cuenta se bloqueo`
           );
         }
 
         if (
-          loginLogs.length >= config.FIRST_TIMEOUT_TRIES &&
+          loginLogs.length >= USER_TRIES.FIRST_TIMEOUT_TRIES &&
           lastTimeout.length == 0 &&
-          loginLogs.slice(0, config.FIRST_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
+          loginLogs.slice(0, USER_TRIES.FIRST_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
         ) {
-          this.#timeoutUser(user.username, config.FIRST_TIMEOUT_MINUTES);
+          this.#timeoutUser(user.username, USER_TRIES.FIRST_TIMEOUT_MINUTES);
           throw new Unauthorized(
             'Contraseña incorrecta, espere 5 minutos para volver a intentarlo'
           );
@@ -188,14 +221,24 @@ export default class UserController {
 
         throw new Unauthorized('Contraseña incorrecta');
       }
-      const log = await this.#userLogController.addLogin(user.username, 'INFO');
+      const log = await this.#userLogController.addLog(
+        LEVEL.INFO,
+        user.username,
+        USER_ACTIONS.LOGIN,
+        'Inicio de sesion con exito'
+      );
       // obtener el timestamp del nuevo log, pasarlo a UTF y reemplazar T y Z del string
       const timestamp = new Date(log.timestamp).toISOString().replace(/[A-Z]/g, ' ');
       // actualizar el atributo lastLogin del usuario
       await this.update(user.username, { lastLogin: timestamp });
       return;
     } catch (error) {
-      await this.#userLogController.addLogin(user.username, 'ERROR');
+      await this.#userLogController.addLog(
+        LEVEL.ERROR,
+        user.username,
+        USER_ACTIONS.LOGIN,
+        'Error al iniciar sesion'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno al autenticar usuario');
     }
@@ -203,9 +246,19 @@ export default class UserController {
 
   async logout(username) {
     try {
-      await this.#userLogController.addLogout(username, 'INFO');
+      await this.#userLogController.addLog(
+        LEVEL.INFO,
+        username,
+        USER_ACTIONS.LOGOUT,
+        'Cerrar sesion con exito'
+      );
     } catch (error) {
-      await this.#userLogController.addLogout(username, 'ERROR');
+      await this.#userLogController.addLog(
+        LEVEL.ERROR,
+        username,
+        USER_ACTIONS.LOGOUT,
+        'Error al cerrar sesion'
+      );
       if (error.status) throw error;
       throw new InternalError('Error interno cerrar sesion');
     }
@@ -215,5 +268,21 @@ export default class UserController {
     const salt = await bcrypt.genSalt(12);
     const hash = await bcrypt.hash(password, salt);
     return hash;
+  }
+
+  async #timeoutUser(username, minutes) {
+    const timeout = new Date(Date.now() + minutes * 60 * 1000).toISOString().replace(/[A-Z]/g, ' ');
+    await this.#userDAO.update(username, { timeout });
+    this.#userLogController.addTimeout(username, minutes);
+  }
+
+  async #blockUser(username) {
+    await this.#userDAO.update(username, { active: false });
+    await this.#userLogController.addLog(
+      LEVEL.INFO,
+      system,
+      USER_ACTIONS.BLOCK,
+      `Se bloque el usuario: ${username}`
+    ); //esta bien esto?
   }
 }

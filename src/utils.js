@@ -7,50 +7,6 @@ import config from './config/config.js';
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
-//Manejo de errores
-export class Exception extends Error {
-  constructor(message, status) {
-    super(message);
-    this.status = status;
-  }
-}
-
-export class NotFound extends Exception {
-  constructor(message) {
-    super(message, 404);
-  }
-}
-
-export class BadRequest extends Exception {
-  constructor(message) {
-    super(message, 404);
-  }
-}
-
-export class Unauthorized extends Exception {
-  constructor(message) {
-    super(message, 401);
-  }
-}
-
-export class Forbidden extends Exception {
-  constructor(message) {
-    super(message, 403);
-  }
-}
-
-export class Conflict extends Exception {
-  constructor(message) {
-    super(message, 409);
-  }
-}
-
-export class InternalError extends Exception {
-  constructor(message) {
-    super(message, 500);
-  }
-}
-
 export const generateToken = (username) => {
   const token = jwt.sign({ username }, config.JWT_KEY, { expiresIn: '1h' });
   return token;
@@ -64,6 +20,19 @@ export const authToken = (req, res, next) => {
     req.user = credentials.username;
     next();
   });
+};
+
+export const isAdmin = (UserController) => {
+  return async (req, res, next) => {
+    try {
+      const user = await UserController.find(req.user);
+      if (!user || !user.admin) throw new Forbidden('Acceso solo para administrador');
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
 };
 
 export const getUserFromToken = (token) => {
@@ -115,4 +84,48 @@ export function broadcastWSEvent(trackerid, clients, data) {
       client.conn.send(JSON.stringify(data));
     }
   });
+}
+
+//Manejo de errores
+export class Exception extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+  }
+}
+
+export class NotFound extends Exception {
+  constructor(message) {
+    super(message, 404);
+  }
+}
+
+export class BadRequest extends Exception {
+  constructor(message) {
+    super(message, 400);
+  }
+}
+
+export class Unauthorized extends Exception {
+  constructor(message) {
+    super(message, 401);
+  }
+}
+
+export class Forbidden extends Exception {
+  constructor(message) {
+    super(message, 403);
+  }
+}
+
+export class Conflict extends Exception {
+  constructor(message) {
+    super(message, 409);
+  }
+}
+
+export class InternalError extends Exception {
+  constructor(message) {
+    super(message, 500);
+  }
 }

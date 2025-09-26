@@ -2,8 +2,10 @@ import mysql from 'mysql2/promise';
 import config from './config.js';
 import tables from './dbStructure.json' with { type: 'json' };
 import { createTable, createAdmin } from '../utils.js';
+import { LEVEL, SYSTEM_ACTIONS } from '../config/constants.js';
 
 let db = null;
+let events = [];
 
 export async function initDB() {
   if (db) return db;
@@ -24,24 +26,43 @@ export async function initDB() {
       keepAliveInitialDelay: 0,
     });
     console.log('Conexión establecida con la base de datos');
+    events.push({
+      level: LEVEL.INFO,
+      source: 'system',
+      action: SYSTEM_ACTIONS.CONNECT,
+      description: 'Conexión establecida con la base de datos',
+    });
     // configurar timezone en utc
     await db.execute(`SET @@session.time_zone='+00:00'`);
     // inicializar tablas
     for (const table of tables) {
       let [result] = await db.execute(`SHOW TABLES LIKE '${table.name}'`);
-      if (!result.length)
+      if (!result.length) {
         // si no existe, crear la tabla segun dbSetructure.json
         await createTable(table.name, table, db);
+        events.push({
+          level: LEVEL.INFO,
+          source: 'system',
+          action: SYSTEM_ACTIONS.CREATE,
+          description: 'Se creo una tabla en la base de datos',
+        });
+      }
     }
     //crear admin
     const [result] = await db.query('SELECT * FROM users WHERE admin = ?', [[1]]);
     if (!result.length) {
       createAdmin(db);
+      events.push({
+        level: LEVEL.INFO,
+        source: 'system',
+        action: SYSTEM_ACTIONS.CREATE,
+        description: 'Se creo usuario admin',
+      });
     } else {
       console.log('Lista de administradores');
       result.forEach((admin) => console.log(admin.username));
     }
-    return db;
+    return { db, events };
   } catch (error) {
     console.error('', error.message);
     throw error;

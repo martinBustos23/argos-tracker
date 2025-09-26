@@ -1,784 +1,1265 @@
 <%- include('../layouts/header', {title: 'devices-title' }); %>
 
-  <%- include('../layouts/sidebar'); %>
+<%- include('../layouts/sidebar'); %>
 
-    <div class="main-content">
+<div class="main-content">
 
-      <%- include('../layouts/navbar', {title: 'Gestion de dispositivos' ,
-        subtitle: 'Lista de los dispositivos vinculados' }); %>
+  <%- include('../layouts/navbar', {title: 'Gestion de dispositivos' ,
+    subtitle: 'Lista de los dispositivos vinculados' }); %>
 
-        <div class="body-content">
-          <!-- <div class="tabs-container" id="tabs"></div> -->
-          <div class="tabs-container">
-            <% trackers.forEach(Tracker=> { %>
-              <a href="/dashboard/devices/<%= Tracker.id %>"
-                class="tab <%= tracker.id === Tracker.id ? 'active' : '' %>">
-                <%= Tracker.petName %>
-              </a>
-              <% }) %>
-          </div>
+    <div class="body-content">
+      <!-- <div class="tabs-container" id="tabs"></div> -->
+      <div class="tabs-container">
+        <% trackers.forEach(Tracker=> { %>
+          <a href="/dashboard/devices/<%= Tracker.id %>"
+            class="tab <%= tracker.id === Tracker.id ? 'active' : '' %>">
+            <%= Tracker.petName %>
+          </a>
+          <% }) %>
+      </div>
 
-          <div class="content1-container">
+      <div class="content1-container">
 
-            <div class="button-container">
-              <div class="tab-btn" data-target="tab-configg"><i class="bi bi-gear"></i></div>
-              <div class="tab-btn active" data-target="tab-tracker"><i class="bi bi-house"></i></div>
-              <div class="tab-btn" data-target="tab-log"><i class="bi bi-geo-alt"></i></div>
-            </div>
-
-            <div id="tab-tracker" class="tab-tracker tab-content active">
-
-              <div class="tracker-info">
-
-                <div class="tracker-info__div">
-                  <div class="tracker-info__pet">
-                    <div class="tracker-pet__img">img</div>
-                    <div class="tracker-pet__name">
-                      <h2>
-                        <%= tracker.petName %>
-                      </h2>
-                      <span>Gran mascota</span>
-                    </div>
-                  </div>
-                  <div class="tracker-info__data">
-                    <p>Tracker: activo</p>
-                    <p>Alerta sonido: activo</p>
-                    <p>Ultimo estado: perdido</p>
-                    <p>Geo-fencing: activo</p>
-                  </div>
-                </div>
-                <div id="map" class="data-container__map"></div>
-
-              </div>
-
-              <div class="tracker-pos">
-                <h2>Últimas posiciones</h2>
-
-                <% const positionEvents=lastEvents.filter(e=> e.eventDesc === 'POSITION').slice(0, 5); %>
-                  <% positionEvents.forEach(event=> { %>
-                    <div>
-                      <p>Posición: <%= event.latitude %>, <%= event.longitude %>
-                      </p>
-                      <p>Fecha: <%= event.timestamp %>
-                      </p>
-                    </div>
-                    <% }) %>
-
-              </div>
-
-            </div>
-
-            <div id="tab-configg" class="tab-configg tab-content">
-              <div class="tab-config">
-                <div class="tab-config__options">
-                  <div class="tab-config__identify">
-                    <h2>Identificación</h2>
-                    <p><strong>ID:</strong> 001</p>
-                    <p><strong>Nombre:</strong> Toto</p>
-                    <button id="delete-tracker-btn">
-                      Eliminar Tracker
-                    </button>
-                  </div>
-
-                  <div class="tab-config__alerts">
-                    <h2>Alertas</h2>
-                    <div>
-                      <h3>Batería baja</h3>
-                      <button>Activar</button>
-                    </div>
-                    <div>
-                      <h3>Salida de zona</h3>
-                      <button>Activar</button>
-                    </div>
-                    <div>
-                      <h3>Sin conexión</h3>
-                      <button>Activar</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="tab-config__geozone">
-                  <div class="geozone__config">
-                    <h2>Geo-fencing</h2>
-                    <p><strong>LAT:</strong> -34.6201</p>
-                    <p><strong>LONG:</strong> -58.4334</p>
-                  </div>
-
-                  <div id="geo-map" class="geozone__map"></div>
-                </div>
-
-              </div>
-
-
-            </div>
-
-            <div id="tab-log" class="tab-log tab-content">
-              <div class="tab-log__nav">
-                <div class="tab-log__buscador">
-                  <input type="text" name="" id="" placeholder="Buscar...">
-                  <button><i class="bi bi-search"></i></button>
-                </div>
-                <button><i class="bi bi-download"></i></button>
-              </div>
-              <table class="log-container__table">
-                <thead>
-                  <tr>
-                    <th>Evento</th>
-                    <th>Bateria</th>
-                    <th>Latitud</th>
-                    <th>Longitud</th>
-                    <th>Fecha</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% if (lastEvents && lastEvents.length> 0) { %>
-                    <% lastEvents.forEach(event=> { %>
-                      <tr>
-                        <td>
-                          <%= event.eventDesc %>
-                        </td>
-                        <td>
-                          <% if (event.batteryLvl) { %>
-                            <%= event.batteryLvl %>%
-                              <% } else { %>
-                                -
-                                <% } %>
-                        </td>
-                        <td>
-                          <% if (event.latitude) { %>
-                            <%= event.latitude %>
-                              <% } else { %>
-                                -
-                                <% } %>
-                        <td>
-                          <% if (event.longitude) { %>
-                            <%= event.longitude %>
-                              <% } else { %>
-                                -
-                                <% } %>
-                        </td>
-                        <td>
-                          <%= event.timestamp %>
-                        </td>
-                      </tr>
-                      <% }) %>
-                        <% } else { %>
-                          <tr>
-                            <td colspan="5" style="text-align:center;">No hay registros recientes.</td>
-                          </tr>
-                          <% } %>
-                </tbody>
-              </table>
-            </div>
-
-          </div>
+        <div class="button-container">
+          <div class="tab-btn" data-target="tab-configg"><i class="bi bi-gear"></i></div>
+          <div class="tab-btn active" data-target="tab-tracker"><i class="bi bi-house"></i></div>
+          <div class="tab-btn" data-target="tab-log"><i class="bi bi-geo-alt"></i></div>
         </div>
 
+        <div id="tab-tracker" class="tab-tracker tab-content active">
+
+          <div class="tracker-info">
+
+            <div class="tracker-info__div">
+              <div class="tracker-info__pet">
+
+                <img class="tracker-pet__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                <div class="tracker-pet__name">
+                  <h2>
+                    <%= tracker.petName %>
+                  </h2>
+                  <span>ID: <%= tracker.id %></span>
+                </div>
+              </div>
+              <div class="tracker-info__data">
+                <p>Estado: <%= tracker.state %>
+                </p>
+                <p>Modelo: <%= tracker.model %>
+                </p>
+                <p>Ultima posición: perdido</p>
+                <p>Comunicación: bipbip</p>
+              </div>
+            </div>
+            <div id="map" class="data-container__map"></div>
+
+          </div>
+
+          <div class="tracker-pos">
+            <h2>Últimas posiciones</h2>
+            <% const positionEvents=lastEvents.filter(e=> e.eventDesc === 'POSITION').slice(0, 5); %>
+              <% positionEvents.forEach(event=> { %>
+                <div class="tracker-pos__info" data-lat="<%= event.latitude %>" data-lon="<%= event.longitude %>">
+                  <div>
+                    <%= event.timestamp %>
+                  </div>
+                  <div class="tracker-pos__latlon" data-latt="<%= event.latitude %>" data-lonn="<%= event.longitude %>">
+                    <p>Lat: <%= event.latitude %>
+                    </p>
+                    <p>Lon: <%= event.longitude %>
+                    </p>
+                  </div>
+                </div>
+                <% }) %>
+          </div>
+
+        </div>
+
+        <div id="tab-configg" class="tab-configg tab-content">
+          <form class="tab-config" id="updateConfig">
+            <div class="tab-config__options">
+
+              <div class="tab-config__configuration">
+                <h2>Configuración</h2>
+                <div class="tab-config__identify">
+                  <img id="img-button" class="tracker-pet__img helper1" src="/img/petIcons/<%= tracker.image %>.jpg"
+                    alt="img"
+                    data-content='{"title": "Imagen", 
+                                                "data": "Esta opción permite elegir una imagen de stock para identificar a la mascota"}'>
+                  <div class="identify-name">
+                    <div>
+                      <input type="text" id="petName" name="petName" placeholder="Nombre: <%=tracker.petName %>">
+                      <input type="text" id="trackerId" placeholder="ID: <%= tracker.id %>" disabled>
+                      <span></span>
+                    </div>
+                  </div>
+                  <button class="delete-tracker-btn" id="delete-tracker-btn" type="button">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+
+                <div class="tab-config__optionss">
+                  <div class="option helper1"
+                    data-content='{"title": "Frecuencia", 
+                                      "data": "Esta opción permite ajustar con que frecuencia la estacion recibe eventos del dispositivos activo"}'>
+                    <label for="frequency">Frecuencia:</label>
+                    <input type="range" id="frequency" name="frequency" min="5" max="30"
+                      value="<%= tracker.frequency %>"
+                      oninput="document.getElementById('freqValue').textContent=this.value + 'min'">
+                    <span id="freqValue">
+                      <%= tracker.frequency %>min
+                    </span>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Frecuencia emergencia", 
+                                                "data": "Esta opcion permite ajustar la frecuencia de emergencia que se activa si el dispositivo detecta alguna anomalia"}'>
+                    <label for="frequency-emergency">Frecuencia emergencia:</label>
+                    <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency"
+                      min="1" max="10" value="<%= tracker.emergencyFrequency %>"
+                      oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
+                    <span id="freqEmergValue">
+                      <%= tracker.emergencyFrequency %>min
+                    </span>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Umbral de bateria", 
+                                                "data": "Esta opción permite ajustar el umbral de nivel de bateria para informar el estado del dispositivo"}'>
+                    <label for="battery">Umbral de bateria:</label>
+                    <input type="range" id="battery" name="lowBat" min="5" max="80" value="<%= tracker.lowBat %>"
+                      oninput="document.getElementById('batValue').textContent=this.value + '%'">
+                    <span id="batValue">
+                      <%= tracker.lowBat %>%
+                    </span>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Alerta de sonido", 
+                                                "data": "Esta opción permite elegir si activar las notificaciones importantes por sonido"}'>
+                    <label for="alert">Alerta de sonido: </label>
+                    <div class="option-radio">
+                      <label><input type="radio" name="alertSound" value="si" checked>Sí</label>
+                      <label><input type="radio" name="alertSound" value="no">No</label>
+                    </div>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Geo-fencing", 
+                                                "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
+                    <label for="geofencing">Geo-fencing: </label>
+                    <div class="option-radio">
+                      <label><input type="radio" name="geoEnable" value="si" checked>Sí</label>
+                      <label><input type="radio" name="geoEnable" value="no">No</label>
+                    </div>
+                  </div>
+
+                  <div class="option-btn">
+                    <button class="cargar-tracker-btn" type="submit">Confirmar</button>
+                  </div>
+                </div>
+
+              </div>
+
+
+
+            </div>
+
+            <div class="tab-config__geozone">
+              <div class="geozone__config">
+                <h2>Geo-fencing</h2>
+                <div class="tab-config__geo">
+                  <div class="geo-config">
+                    <div class="option-geo helper2"
+                      data-content='{"title": "Latitud", 
+                                                "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
+                      <label for="latitud">Latitud:</label>
+                      <input class="input-text" type="text" id="latitud" name="latitud"
+                        placeholder="<%= tracker.geofenceLat %>">
+                    </div>
+                    <div class="option-geo helper2"
+                      data-content='{"title": "Longitud", 
+                                                "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
+                      <label for="latitud">Longitud:</label>
+                      <input class="input-text" type="text" id="longitud" name="longitud"
+                        placeholder="<%= tracker.geofenceLon %>">
+                    </div>
+                    <div class="option-geo helper2" data-content='{"title": "Radio", 
+                                                "data": "Esta opción permite definir el radio del area segura"}'>
+                      <label for="radio">Radio:</label>
+                      <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150"
+                        value="<%= tracker.geofenceRadius %>" oninput=updateRadio(this)>
+                      <span id="radioValue">
+                        <%= tracker.geofenceRadius %>m
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div id="geo-map" class="geozone__map"></div>
+              </div>
+
+            </div>
+
+            <div id="helper" class="helper">
+              <button class="helper-btn" id="helper-close">X</button>
+              <div id="content-helper">
+
+              </div>
+            </div>
+            <div id="helper-left" class="helper-left">
+              <button class="helper-btn" id="helper-left-close">X</button>
+              <div id="content-helper-left">
+
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="tab-log" class="tab-log tab-content">
+          <div class="tab-log__nav">
+            <div class="tab-log__buscador">
+              <input type="text" name="" id="" placeholder="Buscar...">
+              <button><i class="bi bi-search"></i></button>
+            </div>
+            <button><i class="bi bi-download"></i></button>
+          </div>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>Evento</th>
+                <th>Bateria</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (lastEvents && lastEvents.length> 0) { %>
+                <% lastEvents.forEach(event=> { %>
+                  <tr>
+                    <td>
+                      <%= event.eventDesc %>
+                    </td>
+                    <td>
+                      <% if (event.batteryLvl) { %>
+                        <%= event.batteryLvl %>%
+                          <% } else { %>
+                            -
+                            <% } %>
+                    </td>
+                    <td>
+                      <% if (event.latitude) { %>
+                        <%= event.latitude %>
+                          <% } else { %>
+                            -
+                            <% } %>
+                    <td>
+                      <% if (event.longitude) { %>
+                        <%= event.longitude %>
+                          <% } else { %>
+                            -
+                            <% } %>
+                    </td>
+                    <td>
+                      <%= event.timestamp %>
+                    </td>
+                  </tr>
+                  <% }) %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="5" style="text-align:center;">No hay registros recientes.</td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
     </div>
-    
-    <style>
-      .tab-log {
-        display: none;
-        flex-direction: column;
-        flex: 1;
-        align-items: center;
-        width: 100%;
-        background-color: rgba(170, 170, 170, 0.2);
-      }
-
-      .tab-log.active {
-        display: flex;
-      }
-
-      .tab-log__nav {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        padding: 1rem 2rem;
-        justify-content: space-between;
-        border: 1px solid #aaa;
-      }
-
-      .tab-log__nav button {
-        height: 2rem;
-        width: 2rem;
-        margin-left: .5rem;
-        border-radius: 50%;
-        border: none;
-        transition: all .25s ease;
-      }
-
-      .tab-log__nav button:hover {
-        background-color: rgba(69, 19, 33, 0.15);
-      }
-
-      .tab-log__buscador input {
-        width: 250px;
-        height: 2rem;
-        padding: 0rem 1rem;
-        border-radius: 15px;
-        border: 1px solid #aaa;
-        font-size: 1rem;
-        font-weight: 400;
-      }
-
-      .tab-log__buscador input:focus {
-        border: none;
-      }
-
-      .log-container__table {
-        width: 100%;
-        font-size: .9rem;
-        font-family: sans-serif;
-      }
-
-      .log-container__table thead tr {
-        background-color: white;
-        text-align: left;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .log-container__table th,
-      .log-container__tabletd {
-        padding: .5rem 1rem;
-        white-space: nowrap;
-      }
-
-      .log-container__table td {
-        padding: .5rem 1.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .log-container__table tbody tr {
-        transition: all .25s ease;
-      }
-
-      .log-container__table tbody tr:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-
-      /*  */
-
-      .tab-configg {
-        display: none;
-        flex-direction: column;
-        flex: 1;
-        align-items: center;
-        width: 100%;
-
-        background-color: rgba(170, 170, 170, 0.2);
-      }
-
-      .tab-configg.active {
-        display: flex;
-      }
-
-      .tab-config {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        flex: 1;
-        width: 100%;
-      }
-
-      .tab-config h2 {
-        align-self: center;
-        text-align: center;
-        font-size: 1.25rem;
-        padding: .25rem 0rem;
-        margin-bottom: .5rem;
-        width: 50%;
-        min-width: fit-content;
-
-        border-bottom: 1px solid #451321;
-        transition: all .25s ease-out;
-      }
-
-      .tab-config__options {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 50%;
-      }
-
-      .tab-config__identify:hover h2 {
-        width: 100%;
-        border-bottom: 1px solid #451321;
-      }
-
-      .tab-config__geozone:hover h2 {
-        width: 90%;
-        border-bottom: 1px solid #451321;
-      }
-
-      .tab-config__alerts:hover h2 {
-        width: 100%;
-        border-bottom: 1px solid #451321;
-      }
-
-      .tab-config__identify {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 95%;
-        min-height: 30%;
-        margin: .5rem 0rem;
-        padding: 0rem 2rem;
-        border-radius: 4px;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
-        background-color: white;
-        color: #451321;
-      }
-
-      .tab-config__identify button {
-        margin: 1rem;
-        align-self: center;
-        background-color: #691c32;
-        color: white;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all .25s ease-out;
-      }
-
-      .tab-config__identify button:hover {
-        background-color: #451321;
-      }
-
-      .tab-config__div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 80%;
-        flex: 1;
-      }
-
-      .tab-config__geozone {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 50%;
-        box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.15);
-
-      }
-
-      .geozone__config {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        align-self: center;
-        flex: 1;
-        width: 90%;
-        margin: .5rem 0rem;
-        border-radius: 4px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        background-color: white;
-        color: #451321;
-      }
-
-      #geo-map {
-        height: 50vh;
-        width: 90%;
-        border-radius: 4px;
-        margin: .5rem 0rem;
-        border: 1px solid #aaa;
-        transition: all .5s ease-in;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      #geo-map:hover {
-        border: 1px solid rgba(69, 19, 33, 0.6);
-      }
-
-      .tab-config__alerts {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 95%;
-        flex: 1;
-        margin: .5rem 0rem;
-        padding: 0rem 2rem;
-        border-radius: 4px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        background-color: white;
-        color: #451321;
-      }
-
-      .tab-config__alerts div {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        margin: .25rem 0rem;
-      }
-
-      .tab-config__alerts h3 {
-        font-size: 1rem;
-        font-weight: 400;
-        padding: 0rem;
-        margin: 0rem;
-      }
-
-      .tab-config__alerts button {
-        height: fit-content;
-        width: fit-content;
-        padding: 0rem 1.5rem;
-        background-color: white;
-        border: 1px solid #451321;
-        border-radius: 15px;
-        transition: all .15s ease;
-      }
-
-      .tab-config__alerts button:hover {
-        background-color: rgba(69, 19, 33, 0.2);
-      }
-
-
-      /*  */
-      #map {
-        height: 50vh;
-        width: 70%;
-        border-radius: 4px;
-        margin: .5rem 0rem;
-        border: 1px solid #aaa;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        transition: all .5s ease-in;
-      }
-
-      #map:hover {
-        border: 1px solid rgba(69, 19, 33, 0.6);
-      }
-
-      .tab-tracker {
-        display: none;
-        flex-direction: row;
-        flex: 1;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(170, 170, 170, 0.2);
-      }
-
-      .tab-tracker.active {
-        display: flex;
-      }
-
-      .tracker-info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 70%;
-
-      }
-
-      .tracker-info__div {
-        display: flex;
-        flex-direction: column;
-        width: 70%;
-        margin: 1rem 0rem 0rem;
-        border-radius: 4px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        background-color: white;
-        color: #451321;
-      }
-
-      .tracker-info__div p {
-        margin-bottom: 0;
-      }
-
-      .tracker-info__pet {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: .5rem 1rem;
-      }
-
-      .tracker-pet__img {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 75px;
-        height: 75px;
-        border-radius: 50%;
-        background-color: #451321;
-        color: white;
-      }
-
-      .tracker-pet__name {
-        display: flex;
-        flex-direction: column;
-        margin-left: 1rem;
-        width: fit-content;
-
-      }
-
-      .tracker-info__pet h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0;
-      }
-
-      .tracker-info__data {
-        display: grid;
-        grid-template-columns: 200px 200px;
-        align-items: center;
-        justify-content: space-evenly;
-        padding: .5rem 1rem;
-        border-top: 1px solid #451321;
-        width: 90%;
-        align-self: center;
-      }
-
-
-      .tracker-pos {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 30%;
-        background-color: white;
-        color: #451321;
-        box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .tracker-pos h2 {
-        align-self: center;
-        text-align: center;
-        font-size: 1.25rem;
-        padding: .75rem 0rem 0.25rem;
-        margin-bottom: .5rem;
-        width: 20%;
-        min-width: fit-content;
-
-        border-bottom: 1px solid #451321;
-        transition: all .25s ease-out;
-      }
-
-      .tracker-pos:hover h2 {
-        width: 80%;
-      }
 
-      .tracker-pos div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        width: 80%;
-        min-height: 50px;
-        margin: .5rem;
-        background-color: white;
-        padding-left: 1rem;
-        border-radius: 4px;
-        transition: all .3s ease;
-        box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.6);
-      }
-
-      .tracker-pos p {
-        margin: 0;
-      }
-
-      .tracker-pos div:hover {
-        background-color: rgba(69, 19, 33, 0.15);
-
-      }
-
-      /*  */
-
-
-      .button-container {
-        display: flex;
-        background-color: #773344;
-
-      }
-
-      .tab-btn {
-        min-width: calc(100%/3);
-        position: relative;
-        padding: 0.4rem .25rem 0.8rem;
-        text-align: center;
-        font-size: 1rem;
-        /* font-style: italic; */
-        /* line-height: 1.5px; */
-        /* font-weight: bold; */
-        background-color: #773344;
-        color: white;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-      }
-
-      .tab-btn:hover {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-
-      .tab-btn::after {
-        content: "";
-        position: absolute;
-        bottom: 15%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 5%;
-        height: 2px;
-        background-color: white;
-        border-radius: 2px;
-        transition: width 0.3s ease-in-out;
-      }
-
-      .tab-btn:hover::after {
-        width: 50%;
-      }
-
-      .tab-btn.active::after {
-        width: 50%;
-      }
-
-      .body-content {
-        display: flex;
-        flex-direction: column;
-        min-height: 90vh;
-      }
-
-      .tabs-container {
-        display: flex;
-        align-items: center;
-        padding-top: 10px;
-        padding-left: 10px;
-        overflow-x: auto;
-      }
-
-      .tab {
-        background: #451321;
-        color: white;
-        padding: 8px 25px;
-        margin-right: 10px;
-        border-radius: 8px 8px 0 0;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s;
-        text-decoration: none;
-      }
-
-      .tab.active {
-        background: #691c32;
-      }
-
-      .tab:hover {
-        background: #691c32;
-        color: white;
-      }
-
-
-      .content1-container {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        box-shadow: 2px -2px 8px 2px rgba(0, 0, 0, 0.2);
-        background-color: #ffffff;
-
-        margin-top: -2px;
-      }
-    </style>
-
-    <script>
-      const [latitude, longitude] = document.querySelector('.tracker-pos > h2')
-        .nextElementSibling
-        .textContent
-        .split(':')[1]
-        .split('\n')[0]
-        .trim()
-        .split(',').map(data => Number(data.trim()));
-
-      const markers = [];
-
-      let map = L.map('map').setView([latitude, longitude], 15);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
-
-      const marker = L.marker([latitude, longitude]).addTo(map);
-      markers.push(marker);
-      let geomap = L.map('geo-map').setView([latitude, longitude], 19);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
-      }).addTo(geomap);
-
-      let circle = L.circle([latitude, longitude], {
-        radius: 20,
-        color: "#691c32",
-        fillColor: "#f03",
-        fillOpacity: 0.15
-      }).addTo(geomap)
-        .bindPopup("Zona Segura");
-
-      const tabBtns = document.querySelectorAll(".tab-btn");
-      const tabContents = document.querySelectorAll(".tab-content");
-
-      tabBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-          tabBtns.forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-
-          tabContents.forEach(c => c.classList.remove("active"));
-          const targetId = btn.getAttribute("data-target");
-          const targetEl = document.getElementById(targetId);
-          if (targetEl) targetEl.classList.add("active");
-
-          if (targetId === "tab-tracker") {
-            map.invalidateSize();
-          }
-          if (targetId === "tab-configg") {
-            geomap.invalidateSize();
-          }
-        });
+</div>
+
+<style>
+  .tab-log {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    align-items: center;
+    width: 100%;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .tab-log.active {
+    display: flex;
+  }
+
+  .tab-log__nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 1rem 2rem;
+    justify-content: space-between;
+    border: 1px solid #aaa;
+  }
+
+  .tab-log__nav button {
+    height: 2rem;
+    width: 2rem;
+    margin-left: .5rem;
+    border-radius: 50%;
+    border: none;
+    transition: all .25s ease;
+  }
+
+  .tab-log__nav button:hover {
+    background-color: rgba(69, 19, 33, 0.15);
+  }
+
+  .tab-log__buscador input {
+    width: 250px;
+    height: 2rem;
+    padding: 0rem 1rem;
+    border-radius: 15px;
+    border: 1px solid #aaa;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .tab-log__buscador input:focus {
+    border: none;
+  }
+
+  .log-container__table {
+    width: 100%;
+    font-size: .9rem;
+    font-family: sans-serif;
+  }
+
+  .log-container__table thead tr {
+    background-color: white;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table th,
+  .log-container__tabletd {
+    padding: .5rem 1rem;
+    white-space: nowrap;
+  }
+
+  .log-container__table td {
+    padding: .5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table tbody tr {
+    transition: all .25s ease;
+  }
+
+  .log-container__table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /*  */
+
+  .tab-configg {
+    display: none;
+    position: relative;
+    flex-direction: column;
+    flex: 1;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .tab-configg.active {
+    display: flex;
+  }
+
+  .tab-config {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+  }
+
+  .tab-config h2 {
+    align-self: center;
+    text-align: center;
+    font-size: 1.25rem;
+    padding: .25rem 0rem;
+    margin-bottom: .5rem;
+    width: 50%;
+    min-width: fit-content;
+
+    border-bottom: 1px solid #451321;
+    transition: all .25s ease-out;
+  }
+
+  .tab-config__options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+  }
+
+  .tab-config__options:hover h2 {
+    width: 100%;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__geozone:hover h2 {
+    width: 90%;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__alerts:hover h2 {
+    width: 100%;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__configuration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin: .15rem 0rem;
+    padding: 0rem 1rem;
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #451321;
+  }
+
+  .tab-config__div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    flex: 1;
+  }
+
+  .tab-config__geozone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.15);
+
+  }
+
+  .geozone__config {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    flex: 1;
+    width: 90%;
+    margin: .65rem 0rem;
+    border-radius: 4px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #451321;
+  }
+
+  .tab-config__geo {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    margin: .15rem 0rem;
+    border-radius: 4px;
+
+
+    color: #451321;
+  }
+
+  .geo-config {
+    width: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-geo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% + 0rem);
+    padding: 0rem 1rem;
+    margin: .15rem 0rem;
+    min-height: 2rem;
+    transition: all .35s ease-in-out;
+  }
+
+  .option-geo:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .option-geo label {
+    text-align: right;
+    width: 25%;
+    white-space: nowrap;
+  }
+
+  .option-geo input {
+    width: 50%;
+    margin: 0rem 2rem;
+    align-self: center;
+  }
+
+  .option-geo-btn {
+    width: 45px;
+    height: 40px;
+    font-size: 1rem;
+    background-color: rgba(119, 51, 68, .1);
+    color: #451321;
+    border: none;
+    border-radius: 40px;
+    transition: all .5s ease-in-out;
+  }
+
+  .option-geo-btn:hover {
+    background-color: rgba(119, 51, 68, .2);
+  }
+
+  .input-text {
+    outline: none;
+    border: 1px solid #ddd;
+    padding: 0rem 1rem;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+  }
+
+  .input-range {
+    box-shadow: none;
+  }
+
+  #geo-map {
+    height: 45vh;
+    width: 85%;
+    margin: auto;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    transition: all .5s ease-in;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  #geo-map:hover {
+    border: 1px solid rgba(69, 19, 33, 0.6);
+  }
+
+  .tab-config__identify {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: .5rem .5rem 1rem;
+    margin-bottom: .5rem;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__identify input {
+    outline: none;
+    border: 1px solid #ddd;
+    padding: .25rem .75rem;
+    margin: .25rem;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    width: 100%;
+  }
+
+  .identify-name {
+    display: flex;
+    flex-direction: column;
+    padding: 0rem 2rem;
+  }
+
+  .tab-config__options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    margin: .5rem 0rem;
+    padding: 0rem 1rem;
+    border-radius: 4px;
+
+
+    color: #451321;
+  }
+
+  .tab-config__optionss {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+
+  }
+
+
+  .option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% + 2rem);
+    padding: 0rem 1rem;
+    margin: .15rem 0rem;
+    min-height: 2rem;
+    transition: all .35s ease-in-out;
+  }
+
+  .option:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .option label {
+    text-align: right;
+    width: 35%;
+    white-space: nowrap;
+  }
+
+  .option select {
+    width: 50%;
+    margin: 0rem 1rem;
+  }
+
+  .option input {
+    width: 50%;
+    margin: 0rem 1rem;
+  }
+
+
+
+  .option-radio {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 50%;
+    white-space: nowrap;
+
+  }
+
+  .option-btn {
+    display: flex;
+    flex-direction: column;
+    height: stretch;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+  }
+
+  .delete-tracker-btn {
+    align-self: flex-start;
+    width: 50px;
+    height: 40px;
+    margin: .25rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    background-color: rgba(119, 51, 68, .1);
+    color: #451321;
+    border-radius: 40px;
+    border: none;
+    transition: all .5s ease-in-out;
+  }
+
+  .delete-tracker-btn:hover {
+    background-color: rgba(119, 51, 68, .2);
+  }
+
+  .cargar-tracker-btn {
+    width: calc(100% + 2rem);
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    background-color: white;
+    color: #451321;
+    border: 1px solid rgba(69, 19, 33, .2);
+    transition: all .5s ease-in-out;
+  }
+
+  .cargar-tracker-btn:hover {
+    background-color: rgba(69, 19, 33, .05);
+    border: 1px solid #451321;
+  }
+
+
+  /*  */
+  #map {
+    height: 50vh;
+    width: 70%;
+    border-radius: 4px;
+    margin: .5rem 0rem;
+    border: 1px solid #aaa;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    transition: all .5s ease-in;
+  }
+
+  #map:hover {
+    border: 1px solid rgba(69, 19, 33, 0.6);
+  }
+
+  .tab-tracker {
+    display: none;
+    flex-direction: row;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .tab-tracker.active {
+    display: flex;
+  }
+
+  .tracker-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+
+  }
+
+  .tracker-info__div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+    margin: 1rem 0rem 0rem;
+    border-radius: 4px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #451321;
+  }
+
+  .tracker-info__div p {
+    margin-bottom: 0;
+  }
+
+  .tracker-info__pet {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: .5rem 1rem;
+    width: 90%;
+  }
+
+  .tracker-pet__img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 1px solid #451321;
+    background-color: #451321;
+    color: white;
+  }
+
+  .tracker-pet__name {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+    width: fit-content;
+
+  }
+
+  .tracker-info__pet h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  .tracker-info__data {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: .5rem 1rem;
+    border-top: 1px solid #451321;
+    width: 90%;
+    align-self: center;
+  }
+
+
+  .tracker-pos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    background-color: white;
+    color: #451321;
+    box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .tracker-pos h2 {
+    align-self: center;
+    text-align: center;
+    font-size: 1.25rem;
+    padding: .75rem 0rem 0.25rem;
+    margin-bottom: .5rem;
+    width: 20%;
+    min-width: fit-content;
+
+    border-bottom: 1px solid #451321;
+    transition: all .25s ease-out;
+  }
+
+  .tracker-pos:hover h2 {
+    width: 80%;
+  }
+
+  .tracker-pos__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 80%;
+    min-height: 50px;
+    margin: .5rem;
+    padding: .5rem 1rem;
+    border-radius: 4px;
+    transition: all .3s ease;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.6);
+  }
+
+  .tracker-pos__info:hover {
+    background-color: rgba(69, 19, 33, 0.05);
+  }
+
+  .tracker-pos__latlon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    margin: 0;
+  }
+
+  .tracker-pos__latlon p {
+    text-align: center;
+    width: 80%;
+    overflow: hidden;
+    font-size: .8rem;
+
+    border-radius: 15px;
+    background-color: #451321;
+    color: white;
+    margin: .15rem;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  /*  */
+
+
+  .button-container {
+    display: flex;
+    background-color: #773344;
+
+  }
+
+  .tab-btn {
+    min-width: calc(100%/3);
+    position: relative;
+    padding: 0.4rem .25rem 0.8rem;
+    text-align: center;
+    font-size: 1rem;
+    /* font-style: italic; */
+    /* line-height: 1.5px; */
+    /* font-weight: bold; */
+    background-color: #773344;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .tab-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .tab-btn::after {
+    content: "";
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5%;
+    height: 2px;
+    background-color: white;
+    border-radius: 2px;
+    transition: width 0.3s ease-in-out;
+  }
+
+  .tab-btn:hover::after {
+    width: 50%;
+  }
+
+  .tab-btn.active::after {
+    width: 50%;
+  }
+
+  .body-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+  }
+
+  .tabs-container {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+    padding-left: 10px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    background: #451321;
+    color: white;
+    padding: 8px 25px;
+    margin-right: 10px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .tab.active {
+    background: #691c32;
+  }
+
+  .tab:hover {
+    background: #691c32;
+    color: white;
+  }
+
+
+  .content1-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    box-shadow: 2px -2px 8px 2px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+
+    margin-top: -2px;
+  }
+
+  /*  */
+  .helper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding: 3rem;
+    width: 35%;
+    flex: 1;
+    height: 100%;
+    z-index: 2000;
+    /* background-color: rgba(105, 28, 50, 0.8); */
+    background-color: rgba(69, 19, 33, 0.8);
+    transition: all 1s ease-in-out;
+  }
+
+  .helper-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding: 3rem;
+    width: 35%;
+    flex: 1;
+    height: 100%;
+    z-index: 2000;
+    /* background-color: rgba(105, 28, 50, 0.8); */
+    background-color: rgba(69, 19, 33, 0.8);
+    transition: all 1s ease-in-out;
+  }
+
+  .helper-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 20px;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    font-weight: bold;
+    color: white;
+    background-color: transparent;
+    transition: all .15s ease-in-out;
+  }
+
+  .helper-btn:hover {
+    background-color: rgba(105, 28, 50, 1);
+  }
+</style>
+
+<script>
+  const tracker = JSON.parse('<%- JSON.stringify(tracker) %>');
+
+  const tracker_info = document.querySelectorAll('.tracker-pos__info');
+  const tracker_latlon = document.querySelectorAll('.tracker-pos__latlon');
+
+  let latitude = tracker.geofenceLat;
+  let longitude = tracker.geofenceLon;
+
+  if (tracker_latlon.length > 0) {
+    try {
+      const lastLatLon = tracker_latlon[0];
+      const latAttr = lastLatLon.getAttribute('data-latt');
+      const lonAttr = lastLatLon.getAttribute('data-lonn');
+
+      const lat = parseFloat(latAttr);
+      const lon = parseFloat(lonAttr);
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        latitude = lat;
+        longitude = lon;
+      }
+    } catch (err) {
+      console.warn("No se pudo obtener la última posición, usando geofence:", err);
+    }
+  }
+
+  const markers = [];
+  let map = L.map('map').setView([latitude, longitude], 17);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+  let pin = L.marker([latitude, longitude]).addTo(map)
+    .bindPopup(tracker.petName)
+    .openPopup();
+
+  tracker_info.forEach(infoDiv => {
+    infoDiv.addEventListener('click', function () {
+      const lat = parseFloat(this.querySelector('.tracker-pos__latlon').getAttribute('data-latt'));
+      const lon = parseFloat(this.querySelector('.tracker-pos__latlon').getAttribute('data-lonn'));
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        pin.setLatLng([lat, lon]);
+        map.setView([lat, lon], 17);
+      } else {
+        console.warn('Posición inválida en este div');
+      }
+    });
+  });
+
+  const marker = L.marker([latitude, longitude]).addTo(map);
+  markers.push(marker);
+
+
+  let geomap = L.map('geo-map').setView([tracker.geofenceLat, tracker.geofenceLon], 19);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(geomap);
+
+  let circle = L.circle([tracker.geofenceLat, tracker.geofenceLon], {
+    radius: tracker.geofenceRadius, 
+    color: "#691c32",
+    fillColor: "#f03",
+    fillOpacity: 0.15
+  }).addTo(geomap).bindPopup("Zona Segura");
+
+  function updateRadio(event) {
+    const radius = event.value;
+    document.getElementById('radioValue').textContent = radius + 'm';
+    circle.setRadius(radius);
+  }
+
+  geomap.on('click', (picker) => {
+    updateConfig.latitud.value = picker.latlng.lat;
+    updateConfig.longitud.value = picker.latlng.lng;
+    geomap.setView(picker.latlng);
+    circle.setLatLng(picker.latlng);
+  });
+
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      tabContents.forEach(c => c.classList.remove("active"));
+      const targetId = btn.getAttribute("data-target");
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.classList.add("active");
+
+      if (targetId === "tab-tracker") {
+        map.invalidateSize();
+      }
+      if (targetId === "tab-configg") {
+        geomap.invalidateSize();
+      }
+    });
+  });
+
+
+  const deleteBtn = document.getElementById('delete-tracker-btn');
+
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm('¿Seguro que quieres eliminar este tracker?')) return;
+
+    try {
+      alert(tracker.id);
+      const response = await fetch(`/api/trackers/${tracker.id}`, {
+        method: 'DELETE'
       });
 
+      if (response.ok) {
+        alert('Tracker eliminado correctamente');
+        location.reload();
+      } else {
+        const data = await response.json();
+        alert('Error al eliminar tracker: ' + (data.message || 'Error desconocido'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error al conectar con el servidor');
+    }
+  });
 
-      const deleteBtn = document.getElementById('delete-tracker-btn');
-      if (deleteBtn) {
-        deleteBtn.addEventListener('click', async () => {
-          if (!confirm('¿Seguro que quieres eliminar este tracker?')) return;
+  const updateConfig = document.getElementById("updateConfig");
+  const imgButton = document.getElementById("img-button");
 
-          try {
-            const response = await fetch(`/api/trackers/${tracker.id}`, {
-              method: 'DELETE'
-            });
+  updateConfig.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-            if (response.ok) {
-              alert('Tracker eliminado correctamente');
-              location.reload();
-            } else {
-              const data = await response.json();
-              alert('Error al eliminar tracker: ' + (data.message || 'Error desconocido'));
-            }
-          } catch (err) {
-            console.error(err);
-            alert('Error al conectar con el servidor');
-          }
-        });
+    const imgSrc = imgButton.getAttribute("src");
+    const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
+
+    const enableGeofence = updateConfig.geoEnable.value === "si" ? 1 : 0;
+    const enableSoundAlert = updateConfig.alertSound.value === "si" ? 1 : 0;
+
+    const payload = {
+      petName: updateConfig.petName.value || tracker.petName,
+      model: tracker.model,
+      image: imageName || tracker.image,
+      state: tracker.state,
+      frequency: updateConfig.frequency.value || tracker.frequency,
+      lowBat: updateConfig.lowBat.value || tracker.lowBat,
+      geofenceLat: updateConfig.latitud.value || tracker.geofenceLat,
+      geofenceLon: updateConfig.longitud.value || tracker.geofenceLon,
+      geofenceRadius: updateConfig.geoRadio.value || tracker.geofenceRadius,
+      active: 1,
+      enableGeofence: enableGeofence || tracker.enableGeofence,
+      emergencyFrequency: updateConfig.frequencyEmergency.value || tracker.emergencyFrequency,
+      enableSoundAlert: enableSoundAlert || tracker.enableSoundAlert
+    };
+
+    try {
+      const response = await fetch(`/api/trackers/${tracker.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Dispositivo actualizado correctamente");
+
+      } else {
+        alert("Error: " + result.error);
       }
 
-      const { hostname, port, pathname } = new URL(window.location.href);
-      const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+      location.reload();
+    } catch (error) {
+      console.log("Error al actualizar dispositivo", error);
+      alert("Error al actualizar dispositivo");
+    }
+  });
 
-      socket.addEventListener('open', (event) => {
-        const trackerId = pathname.split('/').pop();
-        console.log(trackerId);
-        socket.send(JSON.stringify(trackerId));
-      });
+  document.querySelectorAll('.helper1').forEach(helper => {
+    helper.addEventListener('mouseenter', function () {
+      const content = JSON.parse(this.getAttribute('data-content'));
+      document.getElementById('content-helper').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+      document.getElementById('helper').style.opacity = '1';
+      document.getElementById('helper').style.visibility = 'visible';
 
-      socket.addEventListener('message', (event) => {
-        const { latitude, longitude } = JSON.parse(event.data);
+      document.getElementById('helper-left').style.opacity = '0';
+      document.getElementById('helper-left').style.visibility = 'hidden';
+    });
 
-        // limpiar todos los markers
-        for (let i = 0; i < markers.length; i++) {
-          map.removeLayer(markers[i]);
-          markers.splice(i, 1);
-        }
+    helper.addEventListener('mouseleave', function () {
+      document.getElementById('helper').style.opacity = '0';
+      document.getElementById('helper').style.visibility = 'hidden';
+    });
+    document.getElementById('helper-close').addEventListener('click', function () {
+      document.getElementById('helper').style.opacity = '0';
+      document.getElementById('helper').style.visibility = 'hidden';
 
-        const marker = L.marker([latitude, longitude]).addTo(map);
-        markers.push(marker);
+    });
+  });
 
-        map.setView([latitude, longitude], 15);
-      });
+  document.querySelectorAll('.helper2').forEach(helper => {
+    helper.addEventListener('mouseenter', function () {
+      const content = JSON.parse(this.getAttribute('data-content'));
+      document.getElementById('content-helper-left').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+      document.getElementById('helper-left').style.opacity = '1';
+      document.getElementById('helper-left').style.visibility = 'visible';
 
-    </script>
+      document.getElementById('helper').style.opacity = '0';
+      document.getElementById('helper').style.visibility = 'hidden';
+    });
 
-    <%- include('../layouts/footer'); %>
+    helper.addEventListener('mouseleave', function () {
+      document.getElementById('helper-left').style.opacity = '0';
+      document.getElementById('helper-left').style.visibility = 'hidden';
+    });
+    document.getElementById('helper-left-close').addEventListener('click', function () {
+      document.getElementById('helper-left').style.opacity = '0';
+      document.getElementById('helper-left').style.visibility = 'hidden';
+
+    });
+  });
+
+  const { hostname, port, pathname } = new URL(window.location.href);
+  const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+  socket.addEventListener('open', (event) => {
+    const trackerId = pathname.split('/').pop();
+    console.log(trackerId);
+    socket.send(JSON.stringify(trackerId));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const { latitude, longitude } = JSON.parse(event.data);
+
+    // limpiar todos los markers
+    for (let i = 0; i < markers.length; i++) {
+      map.removeLayer(markers[i]);
+      markers.splice(i, 1);
+    }
+
+    const marker = L.marker([latitude, longitude]).addTo(map);
+    markers.push(marker);
+
+    map.setView([latitude, longitude], 15);
+  });
+
+</script>
+
+<%- include('../layouts/footer'); %>

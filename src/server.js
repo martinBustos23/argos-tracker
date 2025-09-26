@@ -7,9 +7,13 @@ import { WebSocketServer } from 'ws';
 async function startServer() {
   try {
     const webSocketClients = []; // array que contiene todos los clientes activos de websocket
-    const db = await initDB();
-    const app = await createApp(db, webSocketClients);
+    const { db, events } = await initDB();
+    const { app, systemLogController } = await createApp(db, webSocketClients);
     const PORT = config.PORT || 8080;
+
+    for (const event of events) {
+      await systemLogController.addLog(event.level, event.source, event.action, event.description);
+    }
 
     const server = createServer(app);
     const wss = new WebSocketServer({ server, path: '/ws' }); // crear servidor websocket

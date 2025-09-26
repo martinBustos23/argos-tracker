@@ -1,314 +1,500 @@
 <%- include('../layouts/header', {title: 'config-title' }); %>
 
-  <%- include('../layouts/sidebar'); %>
+<%- include('../layouts/sidebar'); %>
 
-    <div class="main-content">
+<div class="main-content">
 
-      <%- include('../layouts/navbar', {title: 'Configuración del sistema' ,
-        subtitle: 'Opciones, registros, restauración...' }); %>
+  <%- include('../layouts/navbar', {title: 'Configuración del sistema' ,
+    subtitle: 'Opciones, registros, restauración...' }); %>
 
-        <div class="body-content">
+    <div class="body-content">
 
-          <div class="config-sidebar">
-            <div class="config-sidebar__option active" data-target="configuracion">
-              <h2>Configuración</h2>
-            </div>
-            <div class="config-sidebar__option" data-target="sistema">
-              <h2>Auditoría Sistema</h2>
-            </div>
-            <div class="config-sidebar__option" data-target="trackers">
-              <h2>Auditoría Trackers</h2>
-            </div>
-            <div class="config-sidebar__option" data-target="usuarios">
-              <h2>Auditoría Usuarios</h2>
-            </div>
-            <div class="config-sidebar__option" data-target="ayuda">
-              <h2>Ayuda</h2>
-            </div>
-            <div class="config-sidebar__option ultimo">
-              <h2>Restaurar de fábrica</h2>
-            </div>
-          </div>
+      <div class="config-sidebar">
+        <div class="config-sidebar__option active" data-target="configuracion">
+          <h2>Configuración</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="sistema">
+          <h2>Registro del Sistema</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="trackers">
+          <h2>Registro de Dispositivos</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="usuarios">
+          <h2>Registro de Usuarios</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="ayuda">
+          <h2>Ayuda</h2>
+        </div>
+        <div class="config-sidebar__option ultimo">
+          <h2>Restaurar de fábrica</h2>
+        </div>
+      </div>
 
-          <div class="config-content">
+      <div class="config-content">
 
-            <div class="log-container" id="configuracion" style="display: block;">
-              <h2>Configuración del sistema</h2>
-              <table class="log-container__table">
-                <thead>
-                  <tr>
+        <div class="log-container" id="configuracion" style="display: block;">
+          <h2>Configuración del sistema</h2>
+          <form id="configForm">
+            <table class="log-container__table">
+              <thead>
+                <tr>
+                  <th>Opción</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody>
 
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Activar wifi</td>
-                    <td>Sí</td>
-                  </tr>
-                  <tr>
-                    <td>Activar alertas</td>
-                    <td>No</td>
-                  </tr>
-                  <tr>
-                    <td>Volumen de alerta</td>
-                    <td>50%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
 
-            <div class="log-container" id="sistema">
-              <h2>Registro de auditoría del sistema</h2>
-              <table class="log-container__table">
-                <thead>
-                  <tr>
-                    <th>Evento</th>
-                    <th>Fecha</th>
-                    <th>Usuario</th>
-                    <th>Resultado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Encendido del servidor</td>
-                    <td>2023-04-15 08:00:00</td>
-                    <td>sysadmin</td>
-                    <td>OK</td>
-                  </tr>
-                  <tr>
-                    <td>Actualización de software</td>
-                    <td>2023-04-15 10:00:00</td>
-                    <td>sysadmin</td>
-                    <td>OK</td>
-                  </tr>
-                  <tr>
-                    <td>Error de red</td>
-                    <td>2023-04-15 10:15:00</td>
-                    <td>-</td>
-                    <td>Fallo</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <tr>
+                  <td colspan="2"><strong>General</strong></td>
+                </tr>
+                <tr>
+                  <td>Idioma del sistema</td>
+                  <td>
+                    <select class="input-default" name="idioma">
+                      <option value="es">Español</option>
+                      <option value="en">Inglés</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Zona horaria</td>
+                  <td><input class="input-default" type="text" name="zonaHoraria" value="GMT-3"></td>
+                </tr>
+                <tr>
+                  <td>Formato de hora</td>
+                  <td>
+                    <select class="input-default" name="formatoHora">
+                      <option value="24h">24h</option>
+                      <option value="12h">12h</option>
+                    </select>
+                  </td>
+                </tr>
 
-            <div class="log-container" id="trackers">
-              <h2>Registro de auditoría de dispositivos</h2>
-              <table class="log-container__table">
-                <thead>
+
+                <tr>
+                  <td colspan="2"><strong>Dispositivos</strong></td>
+                </tr>
+                <tr>
+                  <td>Dispositivos conectados</td>
+                  <td><span id="dispositivosActivos">3 activos</span></td>
+                </tr>
+                <tr>
+                  <td>Ver dispositivos deshabilitados</td>
+                  <td><input type="checkbox" name="verDeshabilitados"></td>
+                </tr>
+                
+
+                <tr>
+                  <td colspan="2"><strong>Ubicación</strong></td>
+                </tr>
+                <tr>
+                  <td>Localidad/Zona</td>
+                  <td><input class="input-default" type="text" name="zona" placeholder="San lorenzo..."></td>
+                </tr>
+                <tr>
+                  <td>Geocerca (zoom)</td>
+                  <td><input class="input-default" type="number" name="geocerca" value="19"></td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Red y Conexión</strong></td>
+                </tr>
+                <tr>
+                  <td>Estado de conexión</td>
+                  <td><span id="estadoConexion">Online</span></td>
+                </tr>
+                <tr>
+                  <td>WiFi Local (Local)</td>
+                  <td>
+                    <input class="input-default" type="text" name="wifi" placeholder="Nombre de red">
+                    <input class="input-default" type="password" name="wifiClave" placeholder="Contraseña">
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Modo de red</td>
+                  <td>
+                    <select class="input-default" name="modoRed" id="modoRed">
+                      <option value="ap">Crear red local (AP)</option>
+                      <option value="passthrough">Usar red existente</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr id="redSecundaria">
+                  <td>WiFi (Passthrough)</td>
+                  <td>
+                    <input class="input-default" type="text" name="wifiSecundaria" placeholder="Nombre de red">
+                    <input class="input-default" type="password" name="wifiClaveSecundaria" placeholder="Contraseña">
+                  </td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Alertas</strong></td>
+                </tr>
+                <tr>
+                  <td>Activar alertas</td>
+                  <td><input type="checkbox" name="alertas" checked></td>
+                </tr>
+                <tr>
+                  <td>Alertas de sonido</td>
+                  <td><input type="checkbox" name="alertasSonido"></td>
+                </tr>
+                <tr>
+                  <td>Volumen de alerta</td>
+                  <td>
+                    <input type="range" name="volumen" min="0" max="100" value="50" 
+                          oninput="volumenValor.textContent=this.value+'%'">
+                    <span id="volumenValor">50%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Duración alerta sonora</td>
+                  <td><input class="input-default" type="number" name="duracionSonido" value="5"> s</td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Seguridad</strong></td>
+                </tr>
+                <tr>
+                  <td>Contraseña administrador</td>
+                  <td><input class="input-default" type="password" name="adminPass"></td>
+                </tr>
+                <tr>
+                  <td>Expiración de sesión</td>
+                  <td><input class="input-default" type="number" name="expSesion" value="60"> min</td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Sistema</strong></td>
+                </tr>
+                <tr>
+                  <td>Espacio libre en disco</td>
+                  <td><span id="espacioDisco">2.5 GB</span></td>
+                </tr>
+                <tr>
+                  <td>Actualizar software</td>
+                  <td><button class="input-btn" type="button">Actualizar</button></td>
+                </tr>
+                <tr>
+                  <td>Respaldo configuración</td>
+                  <td><button class="input-btn" type="button">Generar</button></td>
+                </tr>
+
+              </tbody>
+            </table>
+
+            <button class="input-btn sumbit-btn" type="submit">Guardar configuración</button>
+          </form>
+        </div>
+
+        <div class="log-container" id="sistema">
+          <h2>Registro de auditoría del sistema</h2>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (systemLogs && systemLogs.length> 0) { %>
+                <% systemLogs.forEach(log=> { %>
                   <tr>
-                    <th>ID Tracker</th>
-                    <th>Timestamp</th>
-                    <th>Level</th>
-                    <th>Source</th>
-                    <th>Action</th>
-                    <th>Description</th>
+                    <td>
+                      <%= log.id %>
+                    </td>
+                    <td>
+                      <%= log.timestamp %>
+                    </td>
+                    <td>
+                      <%= log.level %>
+                    </td>
+                    <td>
+                      <%= log.source %>
+                    </td>
+                    <td>
+                      <%= log.action %>
+                    </td>
+                    <td>
+                      <%= log.description %>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <% if (trackerLogs && trackerLogs.length> 0) { %>
-                    <% trackerLogs.forEach(log=> { %>
+                  <% }) %>
+                    <% } else { %>
                       <tr>
-                        <td>
-                          <%= log.id %>
-                        </td>
-                        <td>
-                          <%= log.timestamp %>
-                        </td>
-                        <td>
-                          <%= log.level %>
-                        </td>
-                        <td>
-                          <%= log.source %>
-                        </td>
-                        <td>
-                          <%= log.action %>
-                        </td>
-                        <td>
-                          <%= log.description %>
-                        </td>
+                        <td colspan="6">No hay registros disponibles</td>
                       </tr>
-                      <% }) %>
-                        <% } else { %>
-                          <tr>
-                            <td colspan="6">No hay registros disponibles</td>
-                          </tr>
-                          <% } %>
-                </tbody>
-              </table>
-            </div>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
 
-            <div class="log-container" id="usuarios">
-              <h2>Registro de auditoría de usuarios</h2>
-              <table class="log-container__table">
-                <thead>
+        <div class="log-container" id="trackers">
+          <h2>Registro de auditoría de dispositivos</h2>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (trackerLogs && trackerLogs.length> 0) { %>
+                <% trackerLogs.forEach(log=> { %>
                   <tr>
-                    <th>ID</th>
-                    <th>Timestamp</th>
-                    <th>Level</th>
-                    <th>Source</th>
-                    <th>Action</th>
-                    <th>Description</th>
+                    <td>
+                      <%= log.id %>
+                    </td>
+                    <td>
+                      <%= log.timestamp %>
+                    </td>
+                    <td>
+                      <%= log.level %>
+                    </td>
+                    <td>
+                      <%= log.source %>
+                    </td>
+                    <td>
+                      <%= log.action %>
+                    </td>
+                    <td>
+                      <%= log.description %>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <% if (userLogs && userLogs.length> 0) { %>
-                    <% userLogs.forEach(log=> { %>
+                  <% }) %>
+                    <% } else { %>
                       <tr>
-                        <td>
-                          <%= log.id %>
-                        </td>
-                        <td>
-                          <%= log.timestamp %>
-                        </td>
-                        <td>
-                          <%= log.level %>
-                        </td>
-                        <td>
-                          <%= log.source %>
-                        </td>
-                        <td>
-                          <%= log.action %>
-                        </td>
-                        <td>
-                          <%= log.description %>
-                        </td>
+                        <td colspan="6">No hay registros disponibles</td>
                       </tr>
-                      <% }) %>
-                        <% } else { %>
-                          <tr>
-                            <td colspan="6">No hay registros disponibles</td>
-                          </tr>
-                          <% } %>
-                </tbody>
-              </table>
-            </div>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
 
-            <div class="log-container" id="ayuda" style="display:none;">
-              <h2>Ayudin</h2>
-              <div style="width:60%; margin:auto; text-align: center;">
-                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"> Ir a la pagina web de
-                  ayuda!!!</a>
+        <div class="log-container" id="usuarios">
+          <h2>Registro de auditoría de usuarios</h2>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (userLogs && userLogs.length> 0) { %>
+                <% userLogs.forEach(log=> { %>
+                  <tr>
+                    <td>
+                      <%= log.id %>
+                    </td>
+                    <td>
+                      <%= log.timestamp %>
+                    </td>
+                    <td>
+                      <%= log.level %>
+                    </td>
+                    <td>
+                      <%= log.source %>
+                    </td>
+                    <td>
+                      <%= log.action %>
+                    </td>
+                    <td>
+                      <%= log.description %>
+                    </td>
+                  </tr>
+                  <% }) %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="6">No hay registros disponibles</td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
 
-              </div>
-            </div>
+        <div class="log-container" id="ayuda" style="display:none;">
+          <h2>Ayudin</h2>
+          <div style="width:60%; margin:auto; text-align: center;">
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"> Ir a la pagina web de
+              ayuda!!!</a>
 
           </div>
         </div>
+
+      </div>
     </div>
+</div>
 
-    <style>
-      .body-content {
-        display: flex;
-        flex-direction: row;
-        min-height: 90vh;
-      }
+<style>
+  .body-content {
+    display: flex;
+    flex-direction: row;
+    min-height: 90vh;
+    overflow: hidden;
+  }
 
-      .config-sidebar {
-        display: flex;
-        flex-direction: column;
-        background-color: white;
-        box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
-        z-index: 500;
-        width: 20%;
-      }
+  .config-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
+    z-index: 500;
+    width: 20%;
+    max-height:90vh;
+  }
 
-      .config-sidebar__option {
-        width: 100%;
-        padding: .8rem 1rem;
-        cursor: pointer;
-        transition: all 0.25s ease;
+  .config-sidebar__option {
+    width: 100%;
+    padding: .8rem 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
 
-        border-right: 5px solid transparent;
-      }
+    border-right: 5px solid transparent;
+  }
 
-      .config-sidebar__option:hover {
-        background-color: rgba(0, 0, 0, 0.08);
-      }
+  .config-sidebar__option:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
 
-      .config-sidebar__option.active {
-        background-color: rgba(0, 0, 0, 0.1);
-        border-left: 5px solid #691c32;
-      }
+  .config-sidebar__option.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #691c32;
+  }
 
-      .config-sidebar__option h2 {
-        font-size: 1rem;
-        font-weight: 400;
-        margin: 0;
-      }
+  .config-sidebar__option h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+  }
 
-      .ultimo {
-        margin-top: auto;
-      }
+  .ultimo {
+    margin-top: auto;
+  }
 
-      .config-content {
-        left: 20%;
-        display: flex;
-        flex-direction: column;
-        width: 80%;
-        background-color: rgba(170, 170, 170, 0.2);
-      }
+  .config-content {
+    left: 20%;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    max-height:90vh;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
 
-      .log-container {
-        display: none;
-        align-self: center;
-        justify-self: center;
-        width: 100%;
-        height: 100%;
-        padding: 1rem 0rem;
-      }
+  .log-container {
+    display: none;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem 0rem 0rem 0rem;
+    overflow: auto;
+  }
 
-      .log-container h2 {
-        text-align: center;
-        font-weight: bold;
-        padding: .5rem 1rem;
-        font-size: 1.25rem;
-      }
+  .log-container h2 {
+    text-align: center;
+    font-weight: bold;
+    padding: .5rem 1rem;
+    font-size: 1.25rem;
+  }
 
-      .log-container__table {
-        width: 100%;
-        font-size: .9rem;
-        font-family: sans-serif;
-      }
+  .log-container__table {
+    width: 100%;
+    font-size: .9rem;
+    font-family: sans-serif;
+  }
 
-      .log-container__table thead tr {
-        background-color: white;
-        text-align: left;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-      }
+  .log-container__table thead tr {
+    background-color: white;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
 
-      .log-container__table th,
-      .log-container__table td {
-        padding: .5rem 1rem;
-        white-space: nowrap;
-      }
+  .log-container__table th,
+  .log-container__table td {
+    padding: .5rem 1rem;
+    white-space: nowrap;
+  }
 
-      .log-container__table td {
-        padding: .5rem 1.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      }
+  .log-container__table td {
+    padding: .5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
 
-      .log-container__table tbody tr {
-        transition: all .25s ease;
-      }
+  .log-container__table tbody tr {
+    transition: all .25s ease;
+  }
 
-      .log-container__table tbody tr:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    </style>
+  .log-container__table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
 
-    <script>
-      const sidebarOptions = document.querySelectorAll(".config-sidebar__option");
-      const sections = document.querySelectorAll(".log-container");
 
-      sidebarOptions.forEach(opt => {
-        opt.addEventListener("click", () => {
-          sidebarOptions.forEach(option => option.classList.remove("active"));
-          sections.forEach(section => section.style.display = "none");
+  .input-default{
+    padding: 0rem 1rem;
 
-          opt.classList.add("active");
-          document.getElementById(opt.dataset.target).style.display = "block";
-        });
-      });
-    </script>
+    min-height: 2rem;
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
+    transition: all .35s ease-in-out;
+  }
+  .input-btn{
+    padding: 0rem 1rem;
+    background-color: white;
+    min-height: 2rem;
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
+    transition: all .35s ease-in-out;
+  }
+  .input-btn:hover{
+    border: 1px solid #691c32;
+  }
 
-    <%- include('../layouts/footer'); %>
+  .sumbit-btn{
+    display: flex; 
+    align-items: center;
+    justify-self: center;
+    margin: 1rem;
+
+  }
+</style>
+
+<script>
+  const sidebarOptions = document.querySelectorAll(".config-sidebar__option");
+  const sections = document.querySelectorAll(".log-container");
+
+  sidebarOptions.forEach(opt => {
+    opt.addEventListener("click", () => {
+      sidebarOptions.forEach(option => option.classList.remove("active"));
+      sections.forEach(section => section.style.display = "none");
+
+      opt.classList.add("active");
+      document.getElementById(opt.dataset.target).style.display = "block";
+    });
+  });
+</script>
+
+<%- include('../layouts/footer'); %>

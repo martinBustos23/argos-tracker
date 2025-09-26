@@ -1,553 +1,552 @@
 <%- include('../layouts/header', {title: 'users-title' }); %>
 
-  <%- include('../layouts/sidebar'); %>
+<%- include('../layouts/sidebar'); %>
 
-    <div class="main-content">
+<div class="main-content">
 
-      <%- include('../layouts/navbar', { title: 'Gestión de Usuarios' ,
-        subtitle: 'Lista de todos los usuarios registrados' }); %>
+  <%- include('../layouts/navbar', { title: 'Gestión de Usuarios' ,
+    subtitle: 'Lista de todos los usuarios registrados' }); %>
 
-        <div class="main-content__body">
+    <div class="main-content__body">
 
-          <% if (admin===true) { %>
-            <div class="register-container" id="registerContainer">
-              <div class="register-modal__btn" id="registerBtn">
-                <span>Crear nuevo usuario</span><i class="bi bi-arrow-down"></i>
+      <% if (admin===true) { %>
+        <div class="register-container" id="registerContainer">
+          <div class="register-modal__btn" id="registerBtn">
+            <span>Crear nuevo usuario</span><i class="bi bi-arrow-down"></i>
+          </div>
+
+          <h2 class="form-title__h2">Registro</h2>
+
+
+          <form class="register-form" id="registerForm">
+            <div class="register-form__div">
+              <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Escribir usuario" required />
               </div>
+              <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Escribir contraseña" required />
+              </div>
+              <button type="submit" class="confirm-btn">Confirmar</button>
+            </div>
+          </form>
 
-              <h2 class="form-title__h2">Registro</h2>
 
+        </div>
+        <% } %>
 
-              <form class="register-form" id="registerForm">
-                <div class="register-form__div">
+          <div class="user-container">
+            <% users.forEach(user=> { %>
+              <div class="user-container__div">
+                <div class="img-placeholder">
+                  <i><i class="bi bi-person-fill "></i></i>
+                </div>
+                <div class="user-info">
+                  <div>
+                    <p>
+                      <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
+                    </p>
+                    <span>Activo: <%= user.active ? "Sí" : "No" %></span>
+
+                  </div>
+
+                  <p class="last">Última conexión: <%= user.lastLogin %>
+                  </p>
+                </div>
+                <button class="open-edit-btn" data-username="<%= user.username %>">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              </div>
+              <% }) %>
+          </div>
+
+          <div id="edit-user-modal" class="edit-user-modal">
+            <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
+            <div class="edit-user">
+              <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
+
+              <h2 id="edit-username-title" class="modal-title">Editar usuario</h2>
+              <form class="edit-user__form" id="editForm">
+
+                <div class="edit-user__div">
                   <div class="form-group">
                     <label for="username">Usuario</label>
-                    <input type="text" id="username" name="username" placeholder="Escribir usuario" required />
+                    <input type="text" id="username_input" name="username" />
                   </div>
                   <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" placeholder="Escribir contraseña" required />
+                    <input type="password" id="password" name="password" placeholder="Editar contraseña" />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="rol">Rol</label>
+                    <select id="rol" name="rol">
+                      <option value="" selected></option>
+                      <option value="0">Usuario</option>
+                      <option value="1">Admin</option>
+                    </select>
                   </div>
                   <button type="submit" class="confirm-btn">Confirmar</button>
                 </div>
+
+              </form>
+              <!-- formulario eliminar usuario en base uid -->
+              <form class="delete-user-form" id="deleteForm">
+                <h2 id="delete-username-title" class="modal-title delete">Eliminar usuario</h2>
+                <button class="delete-btn" type="submit">Eliminar</button>
               </form>
 
-
             </div>
-            <% } %>
 
-              <div class="user-container">
-                <% users.forEach(user=> { %>
-                  <div class="user-container__div">
-                    <div class="img-placeholder">
-                      <i><i class="bi bi-person-fill "></i></i>
-                    </div>
-                    <div class="user-info">
-                      <div>
-                        <p>
-                          <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
-                        </p>
-                        <span>Activo: <%= user.active ? "Sí" : "No" %></span>
+          </div>
 
-                      </div>
-
-                      <p class="last">Última conexión: <%= user.lastLogin %>
-                      </p>
-                    </div>
-                    <button class="open-edit-btn" data-username="<%= user.username %>">
-                      <i class="bi bi-pencil-square"></i>
-                    </button>
-                  </div>
-                  <% }) %>
-              </div>
-
-              <div id="edit-user-modal" class="edit-user-modal">
-                <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
-                <div class="edit-user">
-                  <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
-
-                  <h2 id="edit-username-title" class="modal-title">Editar usuario</h2>
-                  <form class="edit-user__form" id="editForm">
-
-                    <div class="edit-user__div">
-                      <div class="form-group">
-                        <label for="username">Usuario</label>
-                        <input type="text" id="username_input" name="username" />
-                      </div>
-                      <div class="form-group">
-                        <label for="password">Contraseña</label>
-                        <input type="password" id="password" name="password" placeholder="Editar contraseña" />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="rol">Rol</label>
-                        <select id="rol" name="rol">
-                          <option value="" selected></option>
-                          <option value="0">Usuario</option>
-                          <option value="1">Admin</option>
-                        </select>
-                      </div>
-                      <button type="submit" class="confirm-btn">Confirmar</button>
-                    </div>
-
-                  </form>
-                  <!-- formulario eliminar usuario en base uid -->
-                  <form class="delete-user-form" id="deleteForm">
-                    <h2 id="delete-username-title" class="modal-title delete">Eliminar usuario</h2>
-                    <button class="delete-btn" type="submit">Eliminar</button>
-                  </form>
-
-                </div>
-
-              </div>
-
-        </div>
     </div>
+</div>
+
+<style>
+  .register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+    max-height: 2.5rem;
+    margin: 1rem;
+    background-color: white;
+    color: #691c32;
+    border-radius: 15px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transition: all 0.5s ease;
+  }
+
+  .register-container:hover {
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  }
+
+  .register-container.active {
+    max-height: 500px;
+  }
+
+  .register-container i {
+    rotate: 0deg;
+    transition: all 0.25s ease;
+  }
+
+  .register-container.active i {
+    rotate: -180deg;
+  }
+
+  .register-modal__btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 2.5rem;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    background-color: #691c32;
+    color: white;
+  }
+
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 90%;
+    padding: .5rem 0 2rem;
+  }
+
+  .form-title__h2 {
+    width: 90%;
+    margin: .5rem 0rem 0rem;
+    padding-bottom: 5px;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #691c32;
+  }
+
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .form-group label {
+    margin: 0.25rem 0;
+
+    font-weight: 450;
+    font-size: large;
+  }
+
+  .form-group input {
+    padding: 0.25rem;
+
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+
+    outline: none;
+  }
+
+  .form-group input:focus {
+    border-color: #691c32;
+    box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
+  }
+
+  .confirm-btn {
+    width: 50%;
+    max-height: 3rem;
+
+    margin: 1rem 25% 0;
+    padding: .5rem 2rem;
+
+    font-weight: 400;
+
+    background-color: #691c32;
+    color: white;
+
+    border: none;
+    border-radius: 15px;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease-in-out;
+  }
+
+  .confirm-btn:hover {
+    background-color: #451321;
+  }
+
+  /* -----tabla de usuarios----- */
+  .user-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+
+    width: auto;
+    height: auto;
+    padding: 1rem;
+    margin: auto 1rem;
 
-    <style>
-      .register-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 45%;
-        max-height: 2.5rem;
-        margin: 1rem;
-        background-color: white;
-        color: #691c32;
-        border-radius: 15px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-        overflow: hidden;
-        transition: all 0.5s ease;
-      }
-
-      .register-container:hover {
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
-      }
-
-      .register-container.active {
-        max-height: 500px;
-      }
-
-      .register-container i {
-        rotate: 0deg;
-        transition: all 0.25s ease;
-      }
-
-      .register-container.active i {
-        rotate: -180deg;
-      }
-
-      .register-modal__btn {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 100%;
-        min-height: 2.5rem;
-        padding: .5rem 1rem;
-        font-size: 1rem;
-        background-color: #691c32;
-        color: white;
-      }
-
-      .register-form {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: 90%;
-        padding: .5rem 0 2rem;
-      }
-
-      .form-title__h2 {
-        width: 90%;
-        margin: .5rem 0rem 0rem;
-        padding-bottom: 5px;
-        font-size: 1.5rem;
-        border-bottom: 1px solid #691c32;
-      }
-
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-      }
-
-      .form-group label {
-        margin: 0.25rem 0;
-
-        font-weight: 450;
-        font-size: large;
-      }
-
-      .form-group input {
-        padding: 0.25rem;
-
-        border: 1px solid #ced4da;
-        border-radius: 10px;
-
-        outline: none;
-      }
-
-      .form-group input:focus {
-        border-color: #691c32;
-        box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
-      }
-
-      .confirm-btn {
-        width: 50%;
-        max-height: 3rem;
-
-        margin: 1rem 25% 0;
-        padding: .5rem 2rem;
-
-        font-weight: 400;
-
-        background-color: #691c32;
-        color: white;
-
-        border: none;
-        border-radius: 15px;
-
-        cursor: pointer;
-
-        transition: all 0.25s ease-in-out;
-      }
-
-      .confirm-btn:hover {
-        background-color: #451321;
-      }
-
-      /* -----tabla de usuarios----- */
-      .user-container {
-        display: grid;
-        grid-template-columns: auto auto auto;
-
-        width: auto;
-        height: auto;
-        padding: 1rem;
-        margin: auto 1rem;
+    background-color: white;
+    border-radius: 5px;
+
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+
+    overflow: hidden;
+  }
+
+  .user-container__div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+
+    width: 350px;
+    height: fit-content;
+    padding: .5rem;
+    margin: 5px;
+
+    background-color: white;
+    border: 1px solid #691c32;
+    color: black;
 
-        background-color: white;
-        border-radius: 5px;
-
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-
-        overflow: hidden;
-      }
-
-      .user-container__div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-        position: relative;
-
-        width: 350px;
-        height: fit-content;
-        padding: .5rem;
-        margin: 5px;
-
-        background-color: white;
-        border: 1px solid #691c32;
-        color: black;
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 
-        border-radius: 5px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .user-container__div:hover {
+    scale: 1.02;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        transition: all 0.2s ease;
-      }
-
-      .user-container__div:hover {
-        scale: 1.02;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-      }
-
-      .img-placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    padding-bottom: 5px;
+    margin: .5rem;
+
+    text-align: center;
+    font-size: 4rem;
+
+    border-radius: 50%;
+    border: 1px solid black;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    height: 100%;
+    margin: .5rem;
+  }
+
+  .user-info .last {
+    margin-top: 1rem;
+    font-size: .8rem;
+    border: none;
+    color: #691c32;
+    ;
+    font-style: italic;
+  }
 
-        width: 5rem;
-        height: 5rem;
-        padding-bottom: 5px;
-        margin: .5rem;
-
-        text-align: center;
-        font-size: 4rem;
-
-        border-radius: 50%;
-        border: 1px solid black;
-      }
-
-      .user-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        flex: 1;
-        height: 100%;
-        margin: .5rem;
-      }
+  .user-info p {
+    margin: 0px;
+    border-bottom: 1px solid black;
+  }
 
-      .user-info .last {
-        margin-top: 1rem;
-        font-size: .8rem;
-        border: none;
-        color: #691c32;
-        ;
-        font-style: italic;
-      }
+  .open-edit-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
 
-      .user-info p {
-        margin: 0px;
-        border-bottom: 1px solid black;
-      }
+    font-size: 1rem;
 
-      .open-edit-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
+    background-color: white;
+    color: black;
 
-        font-size: 1rem;
+    border-radius: 50%;
 
-        background-color: white;
-        color: black;
+    border: none;
+    cursor: pointer;
 
-        border-radius: 50%;
+    transition: all 0.25s ease;
+  }
 
-        border: none;
-        cursor: pointer;
+  .open-edit-btn:hover {
+    background-color: rgba(105, 28, 50, 0.3);
+  }
 
-        transition: all 0.25s ease;
-      }
+  /* -----modal de editar usuario----- */
 
-      .open-edit-btn:hover {
-        background-color: rgba(105, 28, 50, 0.3);
-      }
+  .edit-user-modal {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
 
-      /* -----modal de editar usuario----- */
+    width: 100%;
+    height: 100%;
 
-      .edit-user-modal {
-        display: none;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 
-        width: 100%;
-        height: 100%;
+  .edit-user {
+    display: flex;
+    flex-direction: column;
+    position: relative;
 
-        background-color: rgba(0, 0, 0, 0.5);
-      }
+    width: 35%;
 
-      .edit-user {
-        display: flex;
-        flex-direction: column;
-        position: relative;
+    padding: 2rem 2rem 1rem;
 
-        width: 35%;
+    background-color: white;
+    color: #451321;
 
-        padding: 2rem 2rem 1rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
 
-        background-color: white;
-        color: #451321;
+  .edit-user__div {
+    display: flex;
+    flex-direction: column;
+  }
 
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-        border-radius: 5px;
-      }
+  .edit-user__div button {
+    align-self: flex-end;
+  }
 
-      .edit-user__div {
-        display: flex;
-        flex-direction: column;
-      }
+  .modal-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #451321;
+  }
 
-      .edit-user__div button {
-        align-self: flex-end;
-      }
+  .form-group select {
+    padding: 0.5rem;
 
-      .modal-title {
-        text-align: center;
-        font-size: 1.5rem;
-        margin-bottom: 5px;
-        border-bottom: 1px solid #451321;
-      }
+    border: 1px solid #ced4da;
+    border-radius: 4px;
 
-      .form-group select {
-        padding: 0.5rem;
+    outline: none;
+  }
 
-        border: 1px solid #ced4da;
-        border-radius: 4px;
+  .form-group select:focus {
+    border-color: #691c32;
 
-        outline: none;
-      }
+    box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
+  }
 
-      .form-group select:focus {
-        border-color: #691c32;
 
-        box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
-      }
+  .cerrar {
+    position: absolute;
+    top: 10px;
+    right: 25px;
 
+    font-size: 1.5rem;
 
-      .cerrar {
-        position: absolute;
-        top: 10px;
-        right: 25px;
+    color: #333;
 
-        font-size: 1.5rem;
+    cursor: pointer;
+  }
 
-        color: #333;
+  .delete-user-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 2rem 0 1rem;
+    border-top: 1px solid #451321;
+    text-align: center;
+  }
 
-        cursor: pointer;
-      }
+  .modal-title.delete {
+    border-bottom: none;
+  }
 
-      .delete-user-form {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin: 2rem 0 1rem;
-        border-top: 1px solid #451321;
-        text-align: center;
-      }
+  .delete-btn {
+    align-self: center;
 
-      .modal-title.delete {
-        border-bottom: none;
-      }
+    width: 50%;
 
-      .delete-btn {
-        align-self: center;
+    padding: .5rem;
 
-        width: 50%;
+    background-color: #451321;
+    color: white;
 
-        padding: .5rem;
+    border-radius: 10px;
+    border: none;
 
-        background-color: #451321;
-        color: white;
+    cursor: pointer;
 
-        border-radius: 10px;
-        border: none;
+    transition: all 0.25s ease-in-out;
+  }
 
-        cursor: pointer;
+  .delete-btn:hover {
+    background-color: #691c32;
+  }
+</style>
 
-        transition: all 0.25s ease-in-out;
-      }
+<script>
+  const registerBtn = document.getElementById("registerBtn");
+  const registerContainer = document.getElementById("registerContainer");
 
-      .delete-btn:hover {
-        background-color: #691c32;
-      }
-    </style>
+  registerBtn.addEventListener("click", () => {
+    registerContainer.classList.toggle("active");
+  });
 
-    <script>
-      const registerBtn = document.getElementById("registerBtn");
-      const registerContainer = document.getElementById("registerContainer");
+  const registerForm = document.getElementById("registerForm");
+  registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-      registerBtn.addEventListener("click", () => {
-        registerContainer.classList.toggle("active");
+    const payload = {
+      username: registerForm.username.value,
+      password: registerForm.password.value
+    };
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
 
+      const result = await response.json();
 
-      const registerForm = document.getElementById("registerForm");
-      registerForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+      if (response.ok) {
+        alert("Usuario creado correctamente");
+        location.reload();
+      } else {
+        alert("Error: " + result.error);
+      }
+    } catch (error) {
+      console.log("Error al crear usuario", error);
+      alert("Error al crear usuario");
+    }
+  });
 
-        const payload = {
-          username: registerForm.username.value,
-          password: registerForm.password.value
-        };
 
-        try {
-          const response = await fetch("/api/users", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
+  const editForm = document.getElementById("editForm");
+  editForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-          const result = await response.json();
+    const payload = {};
+    if (editForm.username.value) payload.username = editForm.username.value;
+    if (editForm.password.value) payload.password = editForm.password.value;
+    if (editForm.rol.value) payload.admin = editForm.rol.value;
 
-          if (response.ok) {
-            alert("Usuario creado correctamente");
-            location.reload();
-          } else {
-            alert("Error: " + result.error);
-          }
-        } catch (error) {
-          console.log("Error al crear usuario", error);
-          alert("Error al crear usuario");
-        }
+    try {
+      const response = await fetch(editForm.action, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
+      const result = await response.json();
 
-      const editForm = document.getElementById("editForm");
-      editForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+      if (response.ok) {
+        alert("Usuario modificado exitosamente");
+        location.reload();
+      } else {
+        alert("Error al modificar usuario: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error al modificar usuario:", error);
+      alert("Error al modificar usuario");
+    }
+  });
 
-        const payload = {};
-        if (editForm.username.value) payload.username = editForm.username.value;
-        if (editForm.password.value) payload.password = editForm.password.value;
-        if (editForm.rol.value) payload.admin = editForm.rol.value;
+  const deleteForm = document.getElementById("deleteForm");
+  deleteForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-        try {
-          const response = await fetch(editForm.action, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
+    if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
 
-          const result = await response.json();
+    try {
+      const response = await fetch(deleteForm.action, { method: "DELETE" });
+      const result = await response.json();
 
-          if (response.ok) {
-            alert("Usuario modificado exitosamente");
-            location.reload();
-          } else {
-            alert("Error al modificar usuario: " + result.error);
-          }
-        } catch (error) {
-          console.error("Error al modificar usuario:", error);
-          alert("Error al modificar usuario");
-        }
-      });
-
-      const deleteForm = document.getElementById("deleteForm");
-      deleteForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
-
-        try {
-          const response = await fetch(deleteForm.action, { method: "DELETE" });
-          const result = await response.json();
-
-          if (response.ok) {
-            alert("Usuario eliminado correctamente");
-            location.reload();
-          } else {
-            alert("Error al eliminar usuario: " + result.error);
-          }
-        } catch (error) {
-          console.error("Error al eliminar usuario:", error);
-          alert("Error al eliminar usuario");
-        }
-      });
+      if (response.ok) {
+        alert("Usuario eliminado correctamente");
+        location.reload();
+      } else {
+        alert("Error al eliminar usuario: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert("Error al eliminar usuario");
+    }
+  });
 
 
 
-      document.querySelectorAll(".open-edit-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const username = e.currentTarget.dataset.username;
+  document.querySelectorAll(".open-edit-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const username = e.currentTarget.dataset.username;
 
-          document.getElementById("edit-user-modal").style.display = "flex";
-          document.getElementById("edit-username-title").textContent = "Editar usuario: " + username;
-          document.getElementById("username_input").placeholder = username;
-          document.querySelector(".edit-user__form").action = "/api/users/" + username;
-          document.querySelector(".delete-user-form").action = "/api/users/" + username;
-        });
-      });
+      document.getElementById("edit-user-modal").style.display = "flex";
+      document.getElementById("edit-username-title").textContent = "Editar usuario: " + username;
+      document.getElementById("username_input").placeholder = username;
+      document.querySelector(".edit-user__form").action = "/api/users/" + username;
+      document.querySelector(".delete-user-form").action = "/api/users/" + username;
+    });
+  });
 
 
-      document.getElementById("close-modal").addEventListener("click", () => {
-        document.getElementById("edit-user-modal").style.display = "none";
-      })
+  document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("edit-user-modal").style.display = "none";
+  })
 
-    </script>
+</script>
 
-    <%- include('../layouts/footer'); %>
+<%- include('../layouts/footer'); %>
