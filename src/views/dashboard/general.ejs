@@ -335,6 +335,8 @@
   const defaultLat = -32.747711;
   const defaultLon =  -60.734190;
 
+  const markers = [];
+
   function getLatestPosition(trackerId) {
     const event = events
       .filter(e => e.trackerId === trackerId && e.latitude && e.longitude)
@@ -357,8 +359,6 @@
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  let pin = L.marker([initialLat, initialLon]).addTo(map);
-
   trackers.forEach(tracker => {
     const petIcon = L.icon({
       iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
@@ -367,9 +367,10 @@
       popupAnchor: [0, -24]
     });
     const { lat, lon } = getLatestPosition(tracker.id);
-    L.marker([lat, lon], { icon: petIcon })
+    const marker = L.marker([lat, lon], { icon: petIcon })
       .addTo(map)
       .bindPopup(tracker.petName);
+    markers.push({ marker, trackerId: tracker.id });
   });
 
   function updateMap(element) {
@@ -379,9 +380,6 @@
     map.setView([lat, lon], 16);
   }
 
-
-
-  const markers = [];
   const { hostname, port } = new URL(window.location.href);
   const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
 

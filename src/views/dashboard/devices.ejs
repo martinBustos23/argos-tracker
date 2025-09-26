@@ -1054,9 +1054,6 @@
   let map = L.map('map').setView([latitude, longitude], 17);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 
-  let pin = L.marker([latitude, longitude], { icon: petIcon }).addTo(map)
-    .bindPopup(tracker.petName)
-    .openPopup();
 
   tracker_info.forEach(infoDiv => {
     infoDiv.addEventListener('click', function () {
