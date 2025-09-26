@@ -1043,11 +1043,18 @@
     }
   }
 
+  const petIcon = L.icon({
+    iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+    iconSize: [48, 48],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -24]
+  });
+
   const markers = [];
   let map = L.map('map').setView([latitude, longitude], 17);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
 
-  let pin = L.marker([latitude, longitude]).addTo(map)
+  let pin = L.marker([latitude, longitude], { icon: petIcon }).addTo(map)
     .bindPopup(tracker.petName)
     .openPopup();
 
@@ -1065,7 +1072,7 @@
     });
   });
 
-  const marker = L.marker([latitude, longitude]).addTo(map);
+  const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
   markers.push(marker);
 
 
@@ -1246,6 +1253,7 @@
   });
 
   socket.addEventListener('message', (event) => {
+    console.log(event);
     const { latitude, longitude } = JSON.parse(event.data);
 
     // limpiar todos los markers
@@ -1254,7 +1262,7 @@
       markers.splice(i, 1);
     }
 
-    const marker = L.marker([latitude, longitude]).addTo(map);
+    const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
     markers.push(marker);
 
     map.setView([latitude, longitude], 15);

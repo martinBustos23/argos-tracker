@@ -360,8 +360,14 @@
   let pin = L.marker([initialLat, initialLon]).addTo(map);
 
   trackers.forEach(tracker => {
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
     const { lat, lon } = getLatestPosition(tracker.id);
-    L.marker([lat, lon])
+    L.marker([lat, lon], { icon: petIcon })
       .addTo(map)
       .bindPopup(tracker.petName);
   });
@@ -390,18 +396,25 @@
 
     // Eliminar marker antiguo del mismo tracker
     for (let i = markers.length - 1; i >= 0; i--) {
-      if (markers[i].petName === petName) {
+      if (markers[i].trackerId === trackerId) {
         map.removeLayer(markers[i].marker);
         markers.splice(i, 1);
       }
     }
 
-    const marker = L.marker([latitude, longitude])
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${trackers.find( tracker => tracker.id == trackerId).image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    
+    const marker = L.marker([latitude, longitude], { icon: petIcon})
       .addTo(map)
       .bindPopup(petName)
       .openPopup();
 
-    markers.push({ marker, petName });
+    markers.push({ marker, trackerId });
 
     map.setView([latitude, longitude], 15);
   });

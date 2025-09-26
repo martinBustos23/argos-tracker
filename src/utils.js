@@ -1,9 +1,10 @@
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import config from './config/config.js';
 
+import sharp from 'sharp';
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
@@ -86,6 +87,20 @@ export function broadcastWSEvent(trackerid, clients, data) {
   });
 }
 
+export async function roundImagePNG(inputImgPath, outputImgPath, size) {
+  const svg = Buffer.from(
+    `<svg width="${size}" height="${size}">
+      <circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="#fff"/>
+    </svg>`
+  );
+
+  await sharp(inputImgPath)
+    .resize(size, size, { fit: 'cover' })
+    .composite([{ input: svg, blend: 'dest-in' }])
+    .png()
+    .toFile(outputImgPath);
+}
+
 //Manejo de errores
 export class Exception extends Error {
   constructor(message, status) {
@@ -127,5 +142,20 @@ export class Conflict extends Exception {
 export class InternalError extends Exception {
   constructor(message) {
     super(message, 500);
+  }
+}
+
+async function convertImages(){
+  for (let index = 1; index <= 5; index++) {
+    await roundImagePNG(
+      join(__dirname, '..', `public/img/petIcons/gato${index}.jpg`),
+      join(__dirname, '..', `public/img/petIcons/rounded/gato${index}.png`), 256
+    ).catch(console.error);
+  }
+  for (let index = 1; index <= 5; index++) {
+    await roundImagePNG(
+      join(__dirname, '..', `public/img/petIcons/perro${index}.jpg`),
+      join(__dirname, '..', `public/img/petIcons/rounded/perro${index}.png`), 256
+    ).catch(console.error);
   }
 }
