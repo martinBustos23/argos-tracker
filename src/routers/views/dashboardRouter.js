@@ -22,7 +22,7 @@ export default (
       events.map(event => {
         const nuevoEvento = event;
         nuevoEvento.timestamp = new Date(event.timestamp);
-        nuevoEvento.trackerName = trackers.find(tracker => tracker.id === nuevoEvento.trackerId).petName;
+        nuevoEvento.petName = trackers.find(tracker => tracker.id === nuevoEvento.trackerId).petName;
       });
 
       const sortedEvents = events.sort((a, b) => {
