@@ -19,10 +19,12 @@ export default (
       const trackers = await trackerController.getAll();
 
       const events = await trackerEventController.getAll();
-      events.map(event => {
+      events.map((event) => {
         const nuevoEvento = event;
         nuevoEvento.timestamp = new Date(event.timestamp);
-        nuevoEvento.petName = trackers.find(tracker => tracker.id === nuevoEvento.trackerId).petName;
+        nuevoEvento.petName = trackers.find(
+          (tracker) => tracker.id === nuevoEvento.trackerId
+        ).petName;
       });
 
       const sortedEvents = events.sort((a, b) => {
@@ -66,7 +68,7 @@ export default (
       const tracker = await trackerController.find(req.params.trackerId);
 
       let lastEvents = await trackerEventController.getAll();
-      lastEvents = lastEvents.filter(event => event.trackerId == tracker.id);
+      lastEvents = lastEvents.filter((event) => event.trackerId == tracker.id);
       // let lastEvents = [];
       // if (tracker) {
       //   lastEvents = await trackerEventController.getAll(tracker.id);

@@ -90,7 +90,7 @@ export function broadcastWSEvent(trackerid, clients, data) {
 export async function roundImagePNG(inputImgPath, outputImgPath, size) {
   const svg = Buffer.from(
     `<svg width="${size}" height="${size}">
-      <circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="#fff"/>
+      <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff"/>
     </svg>`
   );
 
@@ -145,17 +145,19 @@ export class InternalError extends Exception {
   }
 }
 
-async function convertImages(){
+async function convertImages() {
   for (let index = 1; index <= 5; index++) {
     await roundImagePNG(
       join(__dirname, '..', `public/img/petIcons/gato${index}.jpg`),
-      join(__dirname, '..', `public/img/petIcons/rounded/gato${index}.png`), 256
+      join(__dirname, '..', `public/img/petIcons/rounded/gato${index}.png`),
+      256
     ).catch(console.error);
   }
   for (let index = 1; index <= 5; index++) {
     await roundImagePNG(
       join(__dirname, '..', `public/img/petIcons/perro${index}.jpg`),
-      join(__dirname, '..', `public/img/petIcons/rounded/perro${index}.png`), 256
+      join(__dirname, '..', `public/img/petIcons/rounded/perro${index}.png`),
+      256
     ).catch(console.error);
   }
 }
