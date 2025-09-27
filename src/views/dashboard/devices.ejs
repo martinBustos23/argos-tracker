@@ -237,7 +237,7 @@
                 <button><i class="bi bi-search"></i></button>
               </div>
             </div>
-            <button><i class="bi bi-download"></i></button>
+            <button><i class="bi bi-download" id="download-button"></i></button>
           </div>
           <table class="log-container__table">
             <thead>
@@ -1031,7 +1031,12 @@
   }
 </style>
 
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
 <script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
   const tracker = JSON.parse('<%- JSON.stringify(tracker) %>');
   const events = JSON.parse('<%- JSON.stringify(lastEvents) %>');
 
@@ -1399,6 +1404,40 @@
     });
   }
 
+  const downloadButton = document.querySelector("#download-button");
+  downloadButton.addEventListener("click", () => {
+    const filteredEvents = filterEvents(events);
+    createEventsDocument(filteredEvents);
+  });
+  
+  function createEventsDocument(events) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    doc.text("Eventos del tracker " + tracker.id + " " + tracker.petName, 10, 10);
+    
+    doc.setFontSize(11);
+    const columns = ["Timestamp", "Description", "Latitud", "Longitud", "Bateria"];
+    const rows = [];
+
+    for (const event of events) {
+      rows.push([
+        new Date(event.timestamp).toLocaleString('es-AR', { hour12: false }),
+        event.eventDesc,
+        event.latitude,
+        event.longitude,
+        event.batteryLvl
+      ]);
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
 </script>
 
 <%- include('../layouts/footer'); %>
