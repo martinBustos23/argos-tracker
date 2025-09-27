@@ -1266,7 +1266,6 @@
   });
 
   socket.addEventListener('message', (event) => {
-    console.log(event);
     const { latitude, longitude } = JSON.parse(event.data);
 
     // limpiar todos los markers
@@ -1284,6 +1283,7 @@
     const filteredEvents = filterEvents(events);
     console.log(filteredEvents);
     updateLogs(filteredEvents);
+    updateLastPositions();
   });
 
   const button = document.querySelector("#filtrar");
@@ -1291,6 +1291,37 @@
     const filteredEvents = filterEvents(events);
     updateLogs(filteredEvents);
   });
+
+  function updateLastPositions() {
+    const lastPositions = document.querySelector(".tracker-pos");
+    lastPositions.lastElementChild.remove();
+
+    const { latitude, longitude, timestamp } = events.filter(event => event.eventDesc == 'POSITION')[0];
+    const newCard = document.createElement("div");
+    newCard.className = "tracker-pos__info"
+    newCard.setAttribute("data-lat", latitude);
+    newCard.setAttribute("data-lon", longitude);
+
+    const timestampElem = document.createElement("div");
+    timestampElem.textContent = new Date(timestamp).toLocaleString('es-AR', {hour12: false});
+    newCard.appendChild(timestampElem);
+
+    const posElem = document.createElement("div");
+    posElem.className = "tracker-pos__latlon";
+    newCard.setAttribute("data-latt", latitude);
+    newCard.setAttribute("data-lonn", longitude);
+
+    const latElem = document.createElement("p");
+    latElem.textContent = "Lat: " + latitude;
+    posElem.appendChild(latElem);
+
+    const lonElem = document.createElement("p");
+    lonElem.textContent = "Lon: " + longitude;
+    posElem.appendChild(lonElem);
+
+    newCard.appendChild(posElem);
+    lastPositions.firstElementChild.insertAdjacentElement("afterend", newCard);
+  }
 
   function filterEvents(events) {
     const timesFilter = Number(document.querySelector("#timestampFilter").value);
