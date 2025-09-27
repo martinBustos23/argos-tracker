@@ -65,19 +65,21 @@ export default (
       const trackers = await trackerController.getAll();
       const tracker = await trackerController.find(req.params.trackerId);
 
-      let lastEvents = [];
-      if (tracker) {
-        lastEvents = await trackerEventController.getAll(tracker.id);
-        lastEvents.forEach((event) => {
-          if (event.timestamp) {
-            event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', {
-              hour12: false,
-            });
-          } else {
-            event.timestamp = 'Sin registro';
-          }
-        });
-      }
+      let lastEvents = await trackerEventController.getAll();
+      lastEvents = lastEvents.filter(event => event.trackerId == tracker.id);
+      // let lastEvents = [];
+      // if (tracker) {
+      //   lastEvents = await trackerEventController.getAll(tracker.id);
+      //   lastEvents.forEach((event) => {
+      //     if (event.timestamp) {
+      //       event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', {
+      //         hour12: false,
+      //       });
+      //     } else {
+      //       event.timestamp = 'Sin registro';
+      //     }
+      //   });
+      // }
 
       res.render('./dashboard/devices', { username, trackers, tracker, lastEvents });
     } catch (error) {

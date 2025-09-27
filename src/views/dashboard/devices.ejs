@@ -262,7 +262,7 @@
                             <% } %>
                     </td>
                     <td>
-                      <%= event.timestamp %>
+                      <%= event.timestamp.toLocaleString("es-AR", {hour12: false}); %>
                     </td>
                   </tr>
                   <% }) %>
