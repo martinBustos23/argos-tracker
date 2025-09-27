@@ -21,7 +21,7 @@ export default (
       const events = await trackerEventController.getAll();
       events.map(event => {
         const nuevoEvento = event;
-        nuevoEvento.timestamp = new Date(event.timestamp + ' UTC');
+        nuevoEvento.timestamp = new Date(event.timestamp);
         nuevoEvento.trackerName = trackers.find(tracker => tracker.id === nuevoEvento.trackerId).petName;
       });
 
