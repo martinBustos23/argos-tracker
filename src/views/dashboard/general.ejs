@@ -40,6 +40,24 @@
 
       <div class="log-container">
         <h2>Últimos datos recibidos</h2>
+        <div class="filter-panel">
+          <select id="timestampFilter" class="filter-panel__option">
+            <option value="0" selected>Historial completo</option>
+            <option value="1">Ultima hora</option>
+            <option value="2">Ultimas 24 horas</option>
+            <option value="3">Ultimos 7 dias</option>
+            <option value="4">Ultimos 30 dias</option>
+          </select>
+          <label for="disp" class="filter-panel__option">
+            <input type="number" name="disp" id="disp" min="1" placeholder="Todos los dispositivos" value="0">
+          </label>
+          <select id="eventFilter" class="filter-panel__option">
+            <option value="0" selected>Todos los eventos</option>
+            <option value="1">Posicion</option>
+            <option value="2">Bateria baja</option>
+          </select>
+          <button id="filtrar" class="filter-panel__button">Filtrar</button>
+        </div>
         <table class="log-container__table">
           <thead>
             <tr>
@@ -53,15 +71,15 @@
               <th>Ir al mapa</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="table-logs">
             <% if (events && events.length > 0) { %>
               <% events.forEach(event=> { %>
-                <tr>
+                <tr id="log-row">
                   <td>
                     <%= event.trackerId %>
                   </td>
                   <td>
-                    <%= event.trackerName %>
+                    <%= event.petName %>
                   </td>
                   <td>
                     <%= event.eventDesc %>
@@ -87,7 +105,7 @@
                           <% } %>
                   </td>
                   <td>
-                    <%= event.timestamp %>
+                    <%= event.timestamp.toLocaleString('es-AR', {hour12: false}); %>
                   </td>
                   <td>
                     -
@@ -379,7 +397,7 @@
     pin.setLatLng([lat, lon]);
     map.setView([lat, lon], 16);
   }
-
+  
   const { hostname, port } = new URL(window.location.href);
   const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
 
@@ -415,7 +433,111 @@
     markers.push({ marker, trackerId });
 
     map.setView([latitude, longitude], 15);
+
+    events.unshift(JSON.parse(event.data));
+    const filteredEvents = filterEvents(events);
+    console.log(filteredEvents);
+    updateLogs(filteredEvents);
   });
+
+  const button = document.querySelector("#filtrar");
+  button.addEventListener("click", (event) => {
+    const filteredEvents = filterEvents(events);
+    updateLogs(filteredEvents);
+  });
+
+  function filterEvents(events) {
+    const timesFilter = Number(document.querySelector("#timestampFilter").value);
+    const dispFilter = Number(document.querySelector("#disp").value);
+    const eventFilter = Number(document.querySelector("#eventFilter").value);
+
+    let newEvents = new Array(...events);
+    switch (timesFilter) {
+      case 1:
+        newEvents = newEvents.filter( 
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (60 * 60 * 1000)));
+        break;
+        
+      case 2:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (24 * 60 * 60 * 1000)));
+        break;
+
+      case 3:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (7 * 24 * 60 * 60 * 1000)));
+        break;
+
+      case 4:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (30 * 24 * 60 * 60 * 1000))
+        );
+        break;
+    }
+
+    if (dispFilter != 0)
+      newEvents = newEvents.filter( event => event.trackerId == dispFilter );
+    
+    switch (eventFilter) {
+      case 1:
+        newEvents = newEvents.filter( event => event.eventDesc == 'POSITION')
+        break;
+    
+      case 2:
+        newEvents = newEvents.filter( event => event.eventDesc == 'BATTERY')
+        break;
+    }
+    return newEvents;
+  }
+  // hacer asyncrona para no bloquear la pagina
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const tableContent = document.querySelectorAll("#log-row");
+      tableContent.forEach(row => row.remove());
+      
+      for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log["trackerId"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["petName"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["eventDesc"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["batteryLvl"] + "%";
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["latitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["longitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log["timestamp"]).toLocaleString("es-AR", {hour12: false});
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = "-";
+        logElement.appendChild(column);
+
+        document.querySelector("#table-logs").appendChild(logElement);
+
+        resolve(true);
+      }
+    });
+  }
+
 </script>
 
 <%- include('../layouts/footer'); %>
