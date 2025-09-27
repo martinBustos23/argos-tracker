@@ -18,29 +18,14 @@ export default (
       const username = getUserFromToken(token);
       const trackers = await trackerController.getAll();
 
-      const allEvents = [];
+      const events = await trackerEventController.getAll();
+      events.map(event => {
+        const nuevoEvento = event;
+        nuevoEvento.timestamp = new Date(event.timestamp + ' UTC');
+        nuevoEvento.trackerName = trackers.find(tracker => tracker.id === nuevoEvento.trackerId).petName;
+      });
 
-      for (const tracker of trackers) {
-        const events = await trackerEventController.getAll(tracker.id);
-
-        for (let i = 0; i < events.length; i++) {
-          if (!events[i].timestamp) {
-            events[i].timestamp = 'Sin registro';
-          } else {
-            events[i].timestamp = new Date(events[i].timestamp + ' UTC').toLocaleString('es-AR', {
-              hour12: false,
-            });
-          }
-
-          allEvents.push({
-            trackerId: tracker.id,
-            trackerName: tracker.petName,
-            ...events[i],
-          });
-        }
-      }
-
-      const sortedEvents = allEvents.sort((a, b) => {
+      const sortedEvents = events.sort((a, b) => {
         if (a.timestamp === 'Sin registro') return 1;
         if (b.timestamp === 'Sin registro') return -1;
         return new Date(b.timestamp) - new Date(a.timestamp);
