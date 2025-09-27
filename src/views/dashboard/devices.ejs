@@ -60,7 +60,7 @@
               <% positionEvents.forEach(event=> { %>
                 <div class="tracker-pos__info" data-lat="<%= event.latitude %>" data-lon="<%= event.longitude %>">
                   <div>
-                    <%= event.timestamp %>
+                    <%= event.timestamp.toLocaleString('es-AR', {hour12: false}) %>
                   </div>
                   <div class="tracker-pos__latlon" data-latt="<%= event.latitude %>" data-lonn="<%= event.longitude %>">
                     <p>Lat: <%= event.latitude %>
