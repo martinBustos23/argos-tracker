@@ -9,6 +9,7 @@ import {
 import bcrypt from 'bcryptjs';
 import config from '../../config/config.js';
 import { LEVEL, USER_ACTIONS, USER_TRIES } from '../../config/constants.js';
+import UserDTO from '../../dto/userDTO.js';
 
 export default class UserController {
   #userDAO;
@@ -26,7 +27,7 @@ export default class UserController {
 
       newUser.password = await this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
 
-      const result = await this.#userDAO.create(newUser);
+      const result = await this.#userDAO.create(new UserDTO(newUser));
       await this.#userLogController.addLog(
         LEVEL.INFO,
         result.id,
@@ -76,7 +77,7 @@ export default class UserController {
       // si se actualiza la contrasenia hashearla
       if (user.password) user.password = await this.#genPasswordHash(user.password);
 
-      const result = await this.#userDAO.update(id, user);
+      const result = await this.#userDAO.update(id, new UserDTO(user));
       await this.#userLogController.addLog(
         LEVEL.INFO,
         id,
@@ -111,7 +112,7 @@ export default class UserController {
       const exist = await this.#userDAO.find(id);
       if (!exist) throw new NotFound(`El usuario (${id}) no fue encontrado`);
 
-      const result = await this.update(id, { active: false });
+      const result = await this.update(id, new UserDTO({ active: false }));
       await this.#userLogController.addLog(
         LEVEL.INFO,
         id,
@@ -281,7 +282,7 @@ export default class UserController {
 
   async #timeoutUser(id, minutes) {
     const timeout = new Date(Date.now() + minutes * 60 * 1000).toISOString().replace(/[A-Z]/g, ' ');
-    await this.#userDAO.update(id, { timeout });
+    await this.#userDAO.update(id, new UserDTO({ timeout }));
     await this.#userLogController.addLog(
       LEVEL.INFO,
       id,
@@ -292,7 +293,7 @@ export default class UserController {
   }
 
   async #blockUser(id) {
-    await this.#userDAO.update(id, { active: false });
+    await this.#userDAO.update(id, new UserDTO({ active: false }));
     await this.#userLogController.addLog(
       LEVEL.INFO,
       id,
