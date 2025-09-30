@@ -20,6 +20,7 @@ export default class UserController {
 
   async create(newUser) {
     try {
+      if (Object.getOwnPropertyNames(newUser).length === 0) throw new BadRequest('Faltan parametros');
       const exists = await this.#userDAO.find(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
 
@@ -68,6 +69,7 @@ export default class UserController {
 
   async update(id, user) {
     try {
+      if (Object.getOwnPropertyNames(user).length === 0) throw new BadRequest('Faltan parametros');
       const updatedUser = await this.#userDAO.find(id);
       if (!updatedUser) throw new NotFound(`El usuario (${id}) no fue encontrado`);
 
