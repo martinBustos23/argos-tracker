@@ -29,7 +29,7 @@ export default class UserController {
       const result = await this.#userDAO.create(newUser);
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        newUser.id,
+        result.id,
         USER_ACTIONS.CREATE,
         'Se creo el usuario'
       );
@@ -37,7 +37,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        newUser.id,
+        1,
         USER_ACTIONS.DELETE,
         'Error al crear el usuario'
       );
