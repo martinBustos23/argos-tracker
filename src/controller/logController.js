@@ -32,12 +32,33 @@ export default class LogController {
     }
   }
 
-  async getLastNMinutes(n, action, level) {
+  async getLastNMinutes(n, source, action, level) {
     try {
       let logs = await this.#logDAO.getLastNMinutes(n);
+      if (source) logs = logs.filter((log) => log.source === source);
       if (action) logs = logs.filter((log) => log.action === action);
       if (level) logs = logs.filter((log) => log.level === level);
       return logs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findLastWhere(logConditions) {
+    try {
+      const result = await this.#logDAO.findLastWhere(logConditions);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllSince(id) {
+    try {
+      const exist = await this.#logDAO.findLog(id);
+      if (!exist) throw new InternalError('El log no existe')
+      const result = await this.#logDAO.getAllSince(exist);
+      return result;
     } catch (error) {
       throw error;
     }

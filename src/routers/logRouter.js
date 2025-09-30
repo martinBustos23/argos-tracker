@@ -62,5 +62,15 @@ export function createUserLogRouter(userLogController) {
     }
   });
 
+  // router.get('/userLogs/since/:id', async (req, res, next) => {
+  //   try {
+  //     const logId = req.params.id;
+  //     const result = await userLogController.getAllSince(logId);
+  //     res.status(200).json(result);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // });
+
   return router;
 }

@@ -176,21 +176,22 @@ export default class UserController {
 
       if (!(await bcrypt.compare(user.password, exist.password))) {
         const loginLogs = await this.#userLogController
-          .getLastNMinutes(10, USER_ACTIONS.LOGIN)
-          .then((result) => {
-            return result.filter((log) => log.source == exist.id);
-          });
+          .getLastNMinutes(10, exist.id, USER_ACTIONS.LOGIN);
 
-        const lastTimeout = await this.#userLogController
-          .getLastNMinutes(10, USER_ACTIONS.DISABLED)
-          .then((result) => {
-            return result.filter((log) => log.source == exist.id);
-          });
+        const lastLogin = await this.#userLogController.findLastWhere({
+          source: exist.id,
+          action: USER_ACTIONS.LOGIN,
+          level: LEVEL.INFO
+        });
+
+        let sinceLastLogin = await this.#userLogController.getAllSince(lastLogin.id || 0)
+        sinceLastLogin.filter(log => log.source === exist.id);
+        const timeouts = sinceLastLogin.filter(log => log.action == USER_ACTIONS.DISABLED).length;
 
         if (
-          loginLogs.length >= USER_TRIES.BLOCK_TRIES &&
-          lastTimeout.length == 2 &&
-          loginLogs.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === LEVEL.ERROR)
+          sinceLastLogin.length >= USER_TRIES.BLOCK_TRIES &&
+          timeouts == 2 &&
+          sinceLastLogin.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#blockUser(exist.id);
           throw new Unauthorized(
@@ -199,9 +200,9 @@ export default class UserController {
         }
 
         if (
-          loginLogs.length >= USER_TRIES.SECOND_TIMEOUT_TRIES &&
-          lastTimeout.length == 1 &&
-          loginLogs.slice(0, USER_TRIES.SECOND_TIMEOUT_TRIES).every((log) => log.level === LEVEL.ERROR)
+          sinceLastLogin.length >= USER_TRIES.SECOND_TIMEOUT_TRIES &&
+          timeouts == 1 &&
+          sinceLastLogin.slice(0, USER_TRIES.SECOND_TIMEOUT_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#timeoutUser(exist.id, USER_TRIES.SECOND_TIMEOUT_MINUTES);
           throw new Unauthorized(
@@ -210,9 +211,9 @@ export default class UserController {
         }
 
         if (
-          loginLogs.length >= USER_TRIES.FIRST_TIMEOUT_TRIES &&
-          lastTimeout.length == 0 &&
-          loginLogs.slice(0, USER_TRIES.FIRST_TIMEOUT_TRIES).every((log) => log.level === LEVEL.ERROR)
+          sinceLastLogin.length >= USER_TRIES.FIRST_TIMEOUT_TRIES &&
+          timeouts == 0 &&
+          sinceLastLogin.slice(0, USER_TRIES.FIRST_TIMEOUT_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#timeoutUser(exist.id, USER_TRIES.FIRST_TIMEOUT_MINUTES);
           throw new Unauthorized(
