@@ -7,7 +7,7 @@ export default class UserDAO {
   }
 
   async create(user) {
-    const columns = Object.getOwnPropertyNames(user);
+    const columns = Object.keys(user);
 
     // extraer descriptor y placeholders del mensaje del query
     const descriptor = columns.toString();
@@ -17,7 +17,7 @@ export default class UserDAO {
     const queryMsg = `INSERT INTO users (${descriptor}) VALUES (${placeHolders})`;
     const [result] = await this.#db.execute(queryMsg, values);
 
-    return this.find(user.username);
+    return this.find(result.insertId);
   }
 
   async getAll() {
@@ -25,29 +25,33 @@ export default class UserDAO {
     return rows.map((row) => new UserDTO(row));
   }
 
-  async find(username) {
-    const [result] = await this.#db.execute('SELECT * FROM users WHERE username = ?', [username]);
+  async find(id) {
+    let result;
+    if (typeof id === "number")
+      [result] = await this.#db.execute('SELECT * FROM users WHERE id = ?', [id]);
+    else
+      [result] = await this.#db.execute('SELECT * FROM users WHERE username = ?', [id]);
     if (result.length === 0) return null;
     return new UserDTO(result[0]);
   }
 
-  async update(username, user) {
-    const columns = Object.getOwnPropertyNames(user);
+  async update(id, user) {
+    const columns = Object.keys(user);
 
     // extraer descriptor y placeholders del mensaje del query
     const descriptor = columns.join(' = ?,').concat(' = ?');
     const values = columns.map((column) => user[column]);
 
-    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE username = ?`, [
+    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE id = ?`, [
       ...values,
-      username,
+      id,
     ]);
-    return this.find(username);
+    return this.find(id);
   }
 
-  async delete(username) {
-    const userToDelete = await this.find(username);
-    await this.#db.execute('DELETE FROM users WHERE username = ?', [username]);
+  async delete(id) {
+    const userToDelete = await this.find(id);
+    await this.#db.execute('DELETE FROM users WHERE id = ?', [id]);
     return userToDelete;
   }
 

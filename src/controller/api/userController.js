@@ -28,7 +28,7 @@ export default class UserController {
       const result = await this.#userDAO.create(newUser);
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        newUser.username,
+        newUser.id,
         USER_ACTIONS.CREATE,
         'Se creo el usuario'
       );
@@ -36,7 +36,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        newUser.username,
+        newUser.id,
         USER_ACTIONS.DELETE,
         'Error al crear el usuario'
       );
@@ -55,10 +55,10 @@ export default class UserController {
     }
   }
 
-  async find(username) {
+  async find(id) {
     try {
-      const user = await this.#userDAO.find(username);
-      if (!user) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      const user = await this.#userDAO.find(id);
+      if (!user) throw new NotFound(`El usuario (${id}) no fue encontrado`);
       return user;
     } catch (error) {
       if (error.status) throw error;
@@ -66,18 +66,18 @@ export default class UserController {
     }
   }
 
-  async update(username, user) {
+  async update(id, user) {
     try {
-      const updatedUser = await this.#userDAO.find(username);
-      if (!updatedUser) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      const updatedUser = await this.#userDAO.find(id);
+      if (!updatedUser) throw new NotFound(`El usuario (${id}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
       if (user.password) user.password = await this.#genPasswordHash(user.password);
 
-      const result = await this.#userDAO.update(username, user);
+      const result = await this.#userDAO.update(id, user);
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        username,
+        id,
         USER_ACTIONS.UPDATE,
         'Se actualizo el usuario'
       );
@@ -85,7 +85,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        username,
+        id,
         USER_ACTIONS.UPDATE,
         'Erro al actualizar el usuario'
       );
@@ -104,15 +104,15 @@ export default class UserController {
     }
   }
 
-  async disable(username) {
+  async disable(id) {
     try {
-      const exist = await this.#userDAO.find(username);
-      if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      const exist = await this.#userDAO.find(id);
+      if (!exist) throw new NotFound(`El usuario (${id}) no fue encontrado`);
 
-      const result = await this.update(username, { active: false });
+      const result = await this.update(id, { active: false });
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        username,
+        id,
         USER_ACTIONS.DISABLED,
         'Se deshabilito usuario'
       );
@@ -120,7 +120,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        username,
+        id,
         USER_ACTIONS.DISABLED,
         'Error al deshabilito usuario'
       );
@@ -129,21 +129,21 @@ export default class UserController {
     }
   }
 
-  async delete(username) {
+  async delete(id) {
     try {
-      const exist = await this.#userDAO.find(username);
+      const exist = await this.#userDAO.find(id);
 
-      if (!exist) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      if (!exist) throw new NotFound(`El usuario (${id}) no fue encontrado`);
 
       const users = await this.getAll();
       const admins = users.filter((user) => user.admin == true);
       if (admins.length <= 1)
         throw new Unauthorized('No se puede borrar todos los administradores');
 
-      const result = await this.#userDAO.delete(username);
+      const result = await this.#userDAO.delete(id);
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        username,
+        id,
         USER_ACTIONS.DELETE,
         'Se elimino usuario'
       );
@@ -151,7 +151,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        username,
+        id,
         USER_ACTIONS.DELETE,
         'Error al eliminar usuario'
       );
@@ -168,7 +168,7 @@ export default class UserController {
 
       if (exist.timeout && Date.now() >= exist.timeout) {
         // si tiene timeout y el mismo termino
-        this.#userDAO.update(exist.username, { timeout: null });
+        this.#userDAO.update(exist.id, { timeout: null });
       } else if (exist.timeout) {
         throw new Unauthorized('Esperar');
       }
@@ -223,19 +223,19 @@ export default class UserController {
       }
       const log = await this.#userLogController.addLog(
         LEVEL.INFO,
-        user.username,
+        exist.id,
         USER_ACTIONS.LOGIN,
         'Inicio de sesion con exito'
       );
       // obtener el timestamp del nuevo log, pasarlo a UTF y reemplazar T y Z del string
       const timestamp = new Date(log.timestamp).toISOString().replace(/[A-Z]/g, ' ');
       // actualizar el atributo lastLogin del usuario
-      await this.update(user.username, { lastLogin: timestamp });
+      await this.update(exist.id, { lastLogin: timestamp });
       return;
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        user.username,
+        exist.id,
         USER_ACTIONS.LOGIN,
         'Error al iniciar sesion'
       );
@@ -244,18 +244,18 @@ export default class UserController {
     }
   }
 
-  async logout(username) {
+  async logout(id) {
     try {
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        username,
+        id,
         USER_ACTIONS.LOGOUT,
         'Cerrar sesion con exito'
       );
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        username,
+        id,
         USER_ACTIONS.LOGOUT,
         'Error al cerrar sesion'
       );
@@ -270,19 +270,19 @@ export default class UserController {
     return hash;
   }
 
-  async #timeoutUser(username, minutes) {
+  async #timeoutUser(id, minutes) {
     const timeout = new Date(Date.now() + minutes * 60 * 1000).toISOString().replace(/[A-Z]/g, ' ');
-    await this.#userDAO.update(username, { timeout });
-    this.#userLogController.addTimeout(username, minutes);
+    await this.#userDAO.update(id, { timeout });
+    this.#userLogController.addTimeout(id, minutes);
   }
 
-  async #blockUser(username) {
-    await this.#userDAO.update(username, { active: false });
+  async #blockUser(id) {
+    await this.#userDAO.update(id, { active: false });
     await this.#userLogController.addLog(
       LEVEL.INFO,
       system,
       USER_ACTIONS.BLOCK,
-      `Se bloque el usuario: ${username}`
+      `Se bloque el usuario: ${id}`
     ); //esta bien esto?
   }
 }

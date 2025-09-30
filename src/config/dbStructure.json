@@ -3,9 +3,17 @@
     "name": "users",
     "fields": [
       {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
         "name": "username",
         "type": "varchar(32)",
-        "key": "primary key",
+        "key": null,
         "nullable": false,
         "default": null,
         "extra": null
@@ -206,7 +214,7 @@
       },
       {
         "name": "source",
-        "type": "varchar(32)",
+        "type": "int",
         "key": null,
         "nullable": false,
         "default": null,
@@ -234,7 +242,7 @@
         "name": "user",
         "column": "source",
         "reference_table": "users",
-        "reference_column": "username"
+        "reference_column": "id"
       }
     ]
   },

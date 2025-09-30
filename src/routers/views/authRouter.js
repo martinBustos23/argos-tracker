@@ -22,6 +22,7 @@ export default (UserController) => {
         })
         .redirect('dashboard');
     } catch (error) {
+      console.log(error.message);
       res.render('login', { errorMessage: 'Usuario o contraseña incorrectos' });
     }
   });
@@ -31,7 +32,8 @@ export default (UserController) => {
       const token = req.cookies.authorization;
       if (token) {
         const username = getUserFromToken(token);
-        await UserController.logout(username);
+        const user = await UserController.find(username);
+        await UserController.logout(user.id);
         return res.clearCookie('authorization').redirect('/login');
       }
       res.redirect('/login');

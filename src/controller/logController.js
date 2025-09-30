@@ -32,14 +32,6 @@ export default class LogController {
     }
   }
 
-  async getLastConnection(username) {
-    try {
-      return this.#logDAO.getLastConnection(username);
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async getLastNMinutes(n, action, level) {
     try {
       let logs = await this.#logDAO.getLastNMinutes(n);
