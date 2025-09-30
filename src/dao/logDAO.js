@@ -39,15 +39,15 @@ export default class LogDAO {
   }
 
   async findLastWhere(logConditions) {
-    const columns = Object.keys(logConditions)
-      .map((column) => {
-        if (typeof logConditions[column] === 'string')
-          return `${column} = '${logConditions[column]}'`
-        else
-          return `${column} = ${logConditions[column]}`
-        })
+    const columns = Object.keys(logConditions).map((column) => {
+      if (typeof logConditions[column] === 'string')
+        return `${column} = '${logConditions[column]}'`;
+      else return `${column} = ${logConditions[column]}`;
+    });
     const whereStatement = columns.join(' AND ');
-    const [result] = await this.#db.execute(`SELECT * FROM ${this.#table} WHERE ${whereStatement} ORDER BY timestamp DESC LIMIT 1`);
+    const [result] = await this.#db.execute(
+      `SELECT * FROM ${this.#table} WHERE ${whereStatement} ORDER BY timestamp DESC LIMIT 1`
+    );
     if (result.length === 0) return null;
     return new LogDTO(result[0]);
   }

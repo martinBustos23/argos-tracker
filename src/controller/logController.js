@@ -56,7 +56,7 @@ export default class LogController {
   async getAllSince(id) {
     try {
       const exist = await this.#logDAO.findLog(id);
-      if (!exist) throw new InternalError('El log no existe')
+      if (!exist) throw new InternalError('El log no existe');
       const result = await this.#logDAO.getAllSince(exist);
       return result;
     } catch (error) {

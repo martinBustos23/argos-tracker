@@ -27,10 +27,9 @@ export default class UserDAO {
 
   async find(id) {
     let result;
-    if (typeof id === "number")
+    if (typeof id === 'number')
       [result] = await this.#db.execute('SELECT * FROM users WHERE id = ?', [id]);
-    else
-      [result] = await this.#db.execute('SELECT * FROM users WHERE username = ?', [id]);
+    else [result] = await this.#db.execute('SELECT * FROM users WHERE username = ?', [id]);
     if (result.length === 0) return null;
     return new UserDTO(result[0]);
   }
@@ -42,10 +41,7 @@ export default class UserDAO {
     const descriptor = columns.join(' = ?,').concat(' = ?');
     const values = columns.map((column) => user[column]);
 
-    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE id = ?`, [
-      ...values,
-      id,
-    ]);
+    await this.#db.execute(`UPDATE users SET ${descriptor} WHERE id = ?`, [...values, id]);
     return this.find(id);
   }
 
