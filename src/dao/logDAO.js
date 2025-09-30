@@ -33,7 +33,7 @@ export default class LogDAO {
 
   async getLastNMinutes(n) {
     const [logs] = await this.#db.execute(
-      `SELECT * FROM ${this.#table} WHERE timestamp >= (CURRENT_TIMESTAMP() - ${n * 60})`
+      `SELECT * FROM ${this.#table} WHERE timestamp >= (CURRENT_TIMESTAMP() - ${n * 60}) ORDER BY timestamp DESC`
     );
     return logs.map((log) => new LogDTO(log));
   }

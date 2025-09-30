@@ -161,8 +161,9 @@ export default class UserController {
   }
 
   async login(user) {
+    let exist;
     try {
-      const exist = await this.#userDAO.find(user.username);
+      exist = await this.#userDAO.find(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
 
@@ -170,28 +171,28 @@ export default class UserController {
         // si tiene timeout y el mismo termino
         this.#userDAO.update(exist.id, { timeout: null });
       } else if (exist.timeout) {
-        throw new Unauthorized('Esperar');
+        throw new Unauthorized('Esperar ' + Math.floor((new Date(exist.timeout).getTime() - Date.now())/1000/60) + " minutos");
       }
 
       if (!(await bcrypt.compare(user.password, exist.password))) {
         const loginLogs = await this.#userLogController
-          .getLastNMinutes(10, 'Login')
+          .getLastNMinutes(10, USER_ACTIONS.LOGIN)
           .then((result) => {
-            return result.filter((log) => log.source == user.username);
+            return result.filter((log) => log.source == exist.id);
           });
 
         const lastTimeout = await this.#userLogController
-          .getLastNMinutes(10, 'Disable')
+          .getLastNMinutes(10, USER_ACTIONS.DISABLED)
           .then((result) => {
-            return result.filter((log) => log.source == user.username);
+            return result.filter((log) => log.source == exist.id);
           });
 
         if (
           loginLogs.length >= USER_TRIES.BLOCK_TRIES &&
           lastTimeout.length == 2 &&
-          loginLogs.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === 'ERROR')
+          loginLogs.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
-          this.#blockUser(user.username);
+          this.#blockUser(exist.id);
           throw new Unauthorized(
             `Ingreso la contraseña incorrecta demasiadas veces, si cuenta se bloqueo`
           );
@@ -200,22 +201,22 @@ export default class UserController {
         if (
           loginLogs.length >= USER_TRIES.SECOND_TIMEOUT_TRIES &&
           lastTimeout.length == 1 &&
-          loginLogs.slice(0, USER_TRIES.SECOND_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
+          loginLogs.slice(0, USER_TRIES.SECOND_TIMEOUT_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
-          this.#timeoutUser(user.username, USER_TRIES.SECOND_TIMEOUT_MINUTES);
+          this.#timeoutUser(exist.id, USER_TRIES.SECOND_TIMEOUT_MINUTES);
           throw new Unauthorized(
-            `Ingreso la contraseña incorrecta demasiadas veces, su cuenta se bloqueo`
+            `Contraseña incorrecta, espere ${USER_TRIES.SECOND_TIMEOUT_MINUTES} minutos para volver a intentarlo`
           );
         }
 
         if (
           loginLogs.length >= USER_TRIES.FIRST_TIMEOUT_TRIES &&
           lastTimeout.length == 0 &&
-          loginLogs.slice(0, USER_TRIES.FIRST_TIMEOUT_TRIES).every((log) => log.level === 'ERROR')
+          loginLogs.slice(0, USER_TRIES.FIRST_TIMEOUT_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
-          this.#timeoutUser(user.username, USER_TRIES.FIRST_TIMEOUT_MINUTES);
+          this.#timeoutUser(exist.id, USER_TRIES.FIRST_TIMEOUT_MINUTES);
           throw new Unauthorized(
-            'Contraseña incorrecta, espere 5 minutos para volver a intentarlo'
+            `Contraseña incorrecta, espere ${USER_TRIES.FIRST_TIMEOUT_MINUTES} minutos para volver a intentarlo`
           );
         }
 
@@ -273,16 +274,22 @@ export default class UserController {
   async #timeoutUser(id, minutes) {
     const timeout = new Date(Date.now() + minutes * 60 * 1000).toISOString().replace(/[A-Z]/g, ' ');
     await this.#userDAO.update(id, { timeout });
-    this.#userLogController.addTimeout(id, minutes);
+    await this.#userLogController.addLog(
+        LEVEL.INFO,
+        id,
+        USER_ACTIONS.DISABLED,
+        `Usuario deshabilitado ${minutes} minutos`
+      );
+    // this.#userLogController.addTimeout(id, minutes);
   }
 
   async #blockUser(id) {
     await this.#userDAO.update(id, { active: false });
     await this.#userLogController.addLog(
       LEVEL.INFO,
-      system,
+      id,
       USER_ACTIONS.BLOCK,
-      `Se bloque el usuario: ${id}`
+      `Se bloqueo el usuario: ${id}`
     ); //esta bien esto?
   }
 }
