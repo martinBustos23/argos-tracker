@@ -31,13 +31,6 @@ export default class LogDAO {
     return logs.map((log) => new LogDTO(log));
   }
 
-  async getLastNMinutes(n) {
-    const [logs] = await this.#db.execute(
-      `SELECT * FROM ${this.#table} WHERE timestamp >= (CURRENT_TIMESTAMP() - ${n * 60}) ORDER BY timestamp DESC`
-    );
-    return logs.map((log) => new LogDTO(log));
-  }
-
   async findLastWhere(logConditions) {
     const columns = Object.keys(logConditions).map((column) => {
       if (typeof logConditions[column] === 'string')
