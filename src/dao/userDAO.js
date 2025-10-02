@@ -26,10 +26,13 @@ export default class UserDAO {
   }
 
   async find(id) {
-    let result;
-    if (typeof id === 'number')
-      [result] = await this.#db.execute('SELECT * FROM users WHERE id = ?', [id]);
-    else [result] = await this.#db.execute('SELECT * FROM users WHERE username = ?', [id]);
+    const [result] = await this.#db.execute('SELECT * FROM users WHERE id = ?', [id]);
+    if (result.length === 0) return null;
+    return new UserDTO(result[0]);
+  }
+
+  async findByUsername(username) {
+    const [result] = await this.#db.execute('SELECT * FROM users WHERE username = ?', [username]);
     if (result.length === 0) return null;
     return new UserDTO(result[0]);
   }

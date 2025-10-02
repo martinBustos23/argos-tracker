@@ -68,6 +68,17 @@ export default class UserController {
     }
   }
 
+  async findByUsername(username) {
+    try {
+      const user = await this.#userDAO.findByUsername(username);
+      if (!user) throw new NotFound(`El usuario (${username}) no fue encontrado`);
+      return user;
+    } catch (error) {
+      if (error.status) throw error;
+      throw new InternalError('Error interno buscando usuario');
+    }
+  }
+
   async update(id, user) {
     try {
       if (Object.getOwnPropertyNames(user).length === 0) throw new BadRequest('Faltan parametros');
@@ -166,7 +177,7 @@ export default class UserController {
   async login(user) {
     let exist;
     try {
-      exist = await this.#userDAO.find(user.username);
+      exist = await this.#userDAO.findByUsername(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
 
@@ -241,7 +252,7 @@ export default class UserController {
       const timestamp = new Date(log.timestamp).toISOString().replace(/[A-Z]/g, ' ');
       // actualizar el atributo lastLogin del usuario
       await this.update(exist.id, { lastLogin: timestamp });
-      return;
+      return exist;
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
