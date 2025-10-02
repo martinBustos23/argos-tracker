@@ -1,6 +1,6 @@
 <%- include('../layouts/header', {title: 'devices-title' }); %>
 
-<%- include('../layouts/sidebar'); %>
+<%- include('../layouts/sidebar', {user: user}); %>
 
 <div class="main-content">
 
@@ -21,7 +21,9 @@
       <div class="content1-container">
 
         <div class="button-container">
-          <div class="tab-btn" data-target="tab-configg"><i class="bi bi-gear"></i></div>
+          <% if (user.admin) { %>
+            <div class="tab-btn" data-target="tab-configg"><i class="bi bi-gear"></i></div>
+          <% } %>
           <div class="tab-btn active" data-target="tab-tracker"><i class="bi bi-house"></i></div>
           <div class="tab-btn" data-target="tab-log"><i class="bi bi-geo-alt"></i></div>
         </div>
@@ -884,7 +886,7 @@
   .button-container {
     display: flex;
     background-color: #773344;
-
+    justify-content: center;
   }
 
   .tab-btn {

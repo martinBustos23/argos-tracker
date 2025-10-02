@@ -36,7 +36,7 @@ export default (
       const activeTrackers = await trackerController.getAllActive();
       const user = await userController.find(id);
       res.render('./dashboard/general', {
-        username: user.username,
+        user,
         trackers: activeTrackers,
         events: sortedEvents,
       });
@@ -72,7 +72,7 @@ export default (
       lastEvents = lastEvents.filter((event) => event.trackerId == tracker.id);
 
       const user = await userController.find(id);
-      res.render('./dashboard/devices', { username: user.username, trackers, tracker, lastEvents });
+      res.render('./dashboard/devices', { user, trackers, tracker, lastEvents });
     } catch (error) {
       res.status(500).send('Error al ingresar a devices: ' + error.message);
     }
@@ -96,7 +96,7 @@ export default (
       const id = getUserIdFromToken(token);
       const user = await userController.find(id);
 
-      res.render('./dashboard/users', { username: user.username, admin: user.admin, users });
+      res.render('./dashboard/users', { user, users });
     } catch (error) {
       next(error);
     }
@@ -145,7 +145,7 @@ export default (
       const user = await userController.find(id);
 
       res.render('./dashboard/config', {
-        username: user.username,
+        user,
         trackerLogs,
         userLogs,
         systemLogs,
@@ -159,7 +159,7 @@ export default (
     const token = req.cookies.authorization;
     const id = getUserIdFromToken(token);
     const user = await userController.find(id);
-    res.render('./dashboard/vincular', { username: user.id });
+    res.render('./dashboard/vincular', { user });
   });
 
   return router;
