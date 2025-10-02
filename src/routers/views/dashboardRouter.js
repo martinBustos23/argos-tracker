@@ -1,5 +1,5 @@
 import express from 'express';
-import { authToken, getUserFromToken } from '../../utils.js';
+import { authToken, getUserIdFromToken } from '../../utils.js';
 
 export default (
   userController,
@@ -15,7 +15,7 @@ export default (
   router.get('/', async (req, res) => {
     try {
       const token = req.cookies.authorization;
-      const username = getUserFromToken(token);
+      const id = getUserIdFromToken(token);
       const trackers = await trackerController.getAll();
 
       const events = await trackerEventController.getAll();
@@ -34,8 +34,9 @@ export default (
       });
 
       const activeTrackers = await trackerController.getAllActive();
+      const user = await userController.find(id);
       res.render('./dashboard/general', {
-        username,
+        username: user.username,
         trackers: activeTrackers,
         events: sortedEvents,
       });
@@ -47,10 +48,9 @@ export default (
   router.get('/devices', async (req, res) => {
     try {
       const token = req.cookies.authorization;
-      const username = getUserFromToken(token);
 
       const trackers = await trackerController.getAllActive();
-      //prob se tilde si no hay trackers je
+
       if (trackers.length == 0) {
         return res.redirect(`/dashboard/vincular`);
       }
@@ -64,33 +64,21 @@ export default (
   router.get('/devices/:trackerId', async (req, res) => {
     try {
       const token = req.cookies.authorization;
-      const username = getUserFromToken(token);
+      const id = getUserIdFromToken(token);
       const trackers = await trackerController.getAllActive();
       const tracker = await trackerController.find(req.params.trackerId);
 
       let lastEvents = await trackerEventController.getAll();
       lastEvents = lastEvents.filter((event) => event.trackerId == tracker.id);
-      // let lastEvents = [];
-      // if (tracker) {
-      //   lastEvents = await trackerEventController.getAll(tracker.id);
-      //   lastEvents.forEach((event) => {
-      //     if (event.timestamp) {
-      //       event.timestamp = new Date(event.timestamp + ' UTC').toLocaleString('es-AR', {
-      //         hour12: false,
-      //       });
-      //     } else {
-      //       event.timestamp = 'Sin registro';
-      //     }
-      //   });
-      // }
 
-      res.render('./dashboard/devices', { username, trackers, tracker, lastEvents });
+      const user = await userController.find(id);
+      res.render('./dashboard/devices', { username: user.username, trackers, tracker, lastEvents });
     } catch (error) {
       res.status(500).send('Error al ingresar a devices: ' + error.message);
     }
   });
 
-  router.get('/users', async (req, res) => {
+  router.get('/users', async (req, res, next) => {
     try {
       const users = await userController.getAll();
       // convertir timestamp a utc-3
@@ -105,13 +93,10 @@ export default (
         });
       }
       const token = req.cookies.authorization;
-      const username = getUserFromToken(token);
+      const id = getUserIdFromToken(token);
+      const user = await userController.find(id);
 
-      const user = await userController.find(req.user);
-      let admin = false;
-      if (user.admin) admin = true;
-
-      res.render('./dashboard/users', { username, admin, users });
+      res.render('./dashboard/users', { username: user.username, admin: user.admin, users });
     } catch (error) {
       next(error);
     }
@@ -120,7 +105,7 @@ export default (
   router.get('/config', async (req, res) => {
     try {
       const token = req.cookies.authorization;
-      const username = getUserFromToken(token);
+      const id = getUserIdFromToken(token);
       const trackerLogs = await trackerLogController.getLatest(20);
       const userLogs = await userLogController.getLatest(20);
       const systemLogs = await systemLogController.getLatest(20);
@@ -157,16 +142,19 @@ export default (
         );
       }
 
-      res.render('./dashboard/config', { username, trackerLogs, userLogs, systemLogs });
+      const user = await userController.find(id);
+
+      res.render('./dashboard/config', { username: user.username, trackerLogs, userLogs, systemLogs });
     } catch (error) {
       res.status(500).send('Error al ingresar a configuracion' + error.message);
     }
   });
 
-  router.get('/vincular', (req, res) => {
+  router.get('/vincular', async (req, res) => {
     const token = req.cookies.authorization;
-    const username = getUserFromToken(token);
-    res.render('./dashboard/vincular', { username });
+    const id = getUserIdFromToken(token);
+    const user = await userController.find(id);
+    res.render('./dashboard/vincular', { username: user.id });
   });
 
   return router;

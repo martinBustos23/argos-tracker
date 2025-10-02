@@ -8,8 +8,8 @@ import sharp from 'sharp';
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
-export const generateToken = (username) => {
-  const token = jwt.sign({ username }, config.JWT_KEY, { expiresIn: '1h' });
+export const generateToken = (id) => {
+  const token = jwt.sign({ id }, config.JWT_KEY, { expiresIn: '90d' });
   return token;
 };
 
@@ -18,7 +18,7 @@ export const authToken = (req, res, next) => {
   if (!token) return res.status(401).json({ error: 'Usuario no autenticado' });
   jwt.verify(token, config.JWT_KEY, (error, credentials) => {
     if (error) return res.status(403).json({ error: 'Usuario no autorizado' });
-    req.user = credentials.username;
+    req.id = credentials.id;
     next();
   });
 };
@@ -26,7 +26,7 @@ export const authToken = (req, res, next) => {
 export const isAdmin = (UserController) => {
   return async (req, res, next) => {
     try {
-      const user = await UserController.find(req.user);
+      const user = await UserController.find(req.id);
       if (!user || !user.admin) throw new Forbidden('Acceso solo para administrador');
 
       next();
@@ -36,13 +36,13 @@ export const isAdmin = (UserController) => {
   };
 };
 
-export const getUserFromToken = (token) => {
-  let username;
+export const getUserIdFromToken = (token) => {
+  let id;
   jwt.verify(token, config.JWT_KEY, (error, credentials) => {
     if (error) throw new Exception('No se pudo autenticar al usuario', 500);
-    username = credentials.username;
+    id = credentials.id;
   });
-  return username;
+  return id;
 };
 
 export async function createTable(name, structure, db) {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateToken, getUserFromToken } from '../../utils.js';
+import { generateToken, getUserIdFromToken } from '../../utils.js';
 
 export default (UserController) => {
   const router = express.Router();
@@ -14,7 +14,7 @@ export default (UserController) => {
     try {
       await UserController.login(req.body);
 
-      const token = generateToken(req.body.username);
+      const token = generateToken(user.id);
       res
         .cookie('authorization', token, {
           httpOnly: true, // la cookie solo puede ser obtenida por nuestro servidor
@@ -31,8 +31,8 @@ export default (UserController) => {
     try {
       const token = req.cookies.authorization;
       if (token) {
-        const username = getUserFromToken(token);
-        const user = await UserController.find(username);
+        const id = getUserIdFromToken(token);
+        const user = await UserController.find(id);
         await UserController.logout(user.id);
         return res.clearCookie('authorization').redirect('/login');
       }
