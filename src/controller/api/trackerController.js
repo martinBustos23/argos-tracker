@@ -8,6 +8,7 @@ import {
 } from '../../utils.js';
 import config from '../../config/config.js';
 import { LEVEL, TRACKER_ACTIONS } from '../../config/constants.js';
+import TrackerDTO from '../../dto/trackerDTO.js';
 
 export default class TrackerController {
   #trackerDAO;
@@ -21,7 +22,7 @@ export default class TrackerController {
     try {
       if (!this.#validarTracker(tracker))
         throw new BadRequest('Uno de los valores ingresados es invalido o esta fuera de rango');
-      const newTracker = await this.#trackerDAO.create(tracker);
+      const newTracker = await this.#trackerDAO.create(new TrackerDTO(tracker));
       await this.#trackerLogController.addLog(
         LEVEL.INFO,
         newTracker.id,
@@ -70,7 +71,7 @@ export default class TrackerController {
       if (!this.#validarTracker(tracker))
         throw new BadRequest('El o los valores a actualizar no son validos o estan fuera de rango');
 
-      const updatedTracker = await this.#trackerDAO.update(id, tracker);
+      const updatedTracker = await this.#trackerDAO.update(id, new TrackerDTO(tracker));
       await this.#trackerLogController.addLog(
         LEVEL.INFO,
         updatedTracker.id,
@@ -126,7 +127,7 @@ export default class TrackerController {
       const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
-      const result = await this.updateTracker(id, { active: false });
+      const result = await this.updateTracker(id, new TrackerDTO({ active: false }));
       await this.#trackerLogController.addLog(
         LEVEL.INFO,
         id,

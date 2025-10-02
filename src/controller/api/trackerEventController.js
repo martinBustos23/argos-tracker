@@ -32,7 +32,7 @@ export default class TrackerEventController {
   async #addEvent(event) {
     try {
       if (!this.#validateEvent(event)) throw new InternalError('Evento no valido');
-      const result = this.#trackerEventDAO.create(event);
+      const result = this.#trackerEventDAO.create(new TrackerEventDTO(event));
       return result;
     } catch (error) {
       if (error.status) throw error;
@@ -44,15 +44,13 @@ export default class TrackerEventController {
 
   async addPosition(trackerId, latitude, longitude, batteryLvl) {
     try {
-      return await this.#addEvent(
-        new TrackerEventDTO({
-          trackerId,
-          eventDesc: 'POSITION',
-          latitude,
-          longitude,
-          batteryLvl,
-        })
-      );
+      return await this.#addEvent({
+        trackerId,
+        eventDesc: 'POSITION',
+        latitude,
+        longitude,
+        batteryLvl,
+      });
     } catch (error) {
       throw error;
     }
