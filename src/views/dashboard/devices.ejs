@@ -176,14 +176,14 @@
                                                 "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
                       <label for="latitud">Latitud:</label>
                       <input class="input-text" type="text" id="latitud" name="latitud"
-                        placeholder="<%= tracker.geofenceLat %>">
+                        placeholder="<%= tracker.geofenceLat || -34.6037 %>">
                     </div>
                     <div class="option-geo helper2"
                       data-content='{"title": "Longitud", 
                                                 "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
                       <label for="latitud">Longitud:</label>
                       <input class="input-text" type="text" id="longitud" name="longitud"
-                        placeholder="<%= tracker.geofenceLon %>">
+                        placeholder="<%= tracker.geofenceLon || -58.3816 %>">
                     </div>
                     <div class="option-geo helper2" data-content='{"title": "Radio", 
                                                 "data": "Esta opción permite definir el radio del area segura"}'>
@@ -1100,18 +1100,20 @@
   markers.push(marker);
 
 
-  let geomap = L.map('geo-map').setView([tracker.geofenceLat, tracker.geofenceLon], 19);
+  let geomap = L.map('geo-map').setView([-32.747711 || tracker.geofenceLat, -60.734190 || tracker.geofenceLon], 19);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18
   }).addTo(geomap);
 
-  let circle = L.circle([tracker.geofenceLat, tracker.geofenceLon], {
-    radius: tracker.geofenceRadius, 
-    color: "#691c32",
-    fillColor: "#f03",
-    fillOpacity: 0.15
-  }).addTo(geomap).bindPopup("Zona Segura");
-
+  let circle
+  if (tracker.geofenceLat &&  tracker.geofenceLon) {
+    circle = L.circle([tracker.geofenceLat, tracker.geofenceLon], {
+      radius: tracker.geofenceRadius, 
+      color: "#691c32",
+      fillColor: "#f03",
+      fillOpacity: 0.15
+    }).addTo(geomap).bindPopup("Zona Segura");
+  }
   function updateRadio(event) {
     const radius = event.value;
     document.getElementById('radioValue').textContent = radius + 'm';
