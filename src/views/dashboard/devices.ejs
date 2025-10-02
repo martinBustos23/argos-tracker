@@ -1100,7 +1100,7 @@
   markers.push(marker);
 
 
-  let geomap = L.map('geo-map').setView([-32.747711 || tracker.geofenceLat, -60.734190 || tracker.geofenceLon], 19);
+  let geomap = L.map('geo-map').setView([tracker.geofenceLat || -32.747711, tracker.geofenceLon || -60.734190], 19);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18
   }).addTo(geomap);
