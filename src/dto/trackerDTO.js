@@ -10,9 +10,11 @@ export default class TrackerDTO {
     if (tracker.geofenceLat) this.geofenceLat = tracker.geofenceLat;
     if (tracker.geofenceLon) this.geofenceLon = tracker.geofenceLon;
     if (tracker.geofenceRadius) this.geofenceRadius = tracker.geofenceRadius;
-    if (tracker.enableGeofence) this.enableGeofence = tracker.enableGeofence;
-    if (tracker.enableSoundAlert) this.enableSoundAlert = tracker.enableSoundAlert;
+    if (tracker.enableGeofence || tracker.enableGeofence === false)
+      this.enableGeofence = tracker.enableGeofence ? true : false;
+    if (tracker.enableSoundAlert || tracker.enableSoundAlert === false)
+      this.enableSoundAlert = tracker.enableSoundAlert ? true : false;
     if (tracker.emergencyFrequency) this.emergencyFrequency = tracker.emergencyFrequency;
-    if (tracker.active) this.active = tracker.active;
+    if (tracker.active || tracker.active === false) this.active = tracker.active ? true : false;
   }
 }
