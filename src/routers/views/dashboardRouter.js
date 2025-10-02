@@ -33,9 +33,10 @@ export default (
         return new Date(b.timestamp) - new Date(a.timestamp);
       });
 
+      const activeTrackers = await trackerController.getAllActive();
       res.render('./dashboard/general', {
         username,
-        trackers,
+        trackers: activeTrackers,
         events: sortedEvents,
       });
     } catch (error) {
@@ -48,7 +49,7 @@ export default (
       const token = req.cookies.authorization;
       const username = getUserFromToken(token);
 
-      const trackers = await trackerController.getAll();
+      const trackers = await trackerController.getAllActive();
       //prob se tilde si no hay trackers je
       if (trackers.length == 0) {
         return res.redirect(`/dashboard/vincular`);
@@ -64,7 +65,7 @@ export default (
     try {
       const token = req.cookies.authorization;
       const username = getUserFromToken(token);
-      const trackers = await trackerController.getAll();
+      const trackers = await trackerController.getAllActive();
       const tracker = await trackerController.find(req.params.trackerId);
 
       let lastEvents = await trackerEventController.getAll();
