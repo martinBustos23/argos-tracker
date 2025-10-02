@@ -21,7 +21,8 @@ export default class UserController {
 
   async create(newUser) {
     try {
-      if (Object.getOwnPropertyNames(newUser).length === 0) throw new BadRequest('Faltan parametros');
+      if (Object.getOwnPropertyNames(newUser).length === 0)
+        throw new BadRequest('Faltan parametros');
       const exists = await this.#userDAO.find(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
 

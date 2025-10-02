@@ -55,7 +55,7 @@ export default class TrackerController {
   async getAllActive() {
     try {
       const trackers = await this.#trackerDAO.getAll();
-      return trackers.filter(tracker => tracker.active);
+      return trackers.filter((tracker) => tracker.active);
     } catch (error) {
       if (error.status) throw error;
       throw new InternalError('Error interno obteniendo trackers');

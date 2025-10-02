@@ -144,7 +144,12 @@ export default (
 
       const user = await userController.find(id);
 
-      res.render('./dashboard/config', { username: user.username, trackerLogs, userLogs, systemLogs });
+      res.render('./dashboard/config', {
+        username: user.username,
+        trackerLogs,
+        userLogs,
+        systemLogs,
+      });
     } catch (error) {
       res.status(500).send('Error al ingresar a configuracion' + error.message);
     }
