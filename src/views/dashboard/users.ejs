@@ -54,7 +54,7 @@
                   <p class="last">Última conexión: <%= user.lastLogin %>
                   </p>
                 </div>
-                <button class="open-edit-btn" data-username="<%= user.username %>">
+                <button class="open-edit-btn" data-id="<%= user.id %>">
                   <i class="bi bi-pencil-square"></i>
                 </button>
               </div>
@@ -532,13 +532,12 @@
 
   document.querySelectorAll(".open-edit-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
-      const username = e.currentTarget.dataset.username;
-
+      const id = e.currentTarget.dataset.id;
       document.getElementById("edit-user-modal").style.display = "flex";
-      document.getElementById("edit-username-title").textContent = "Editar usuario: " + username;
-      document.getElementById("username_input").placeholder = username;
-      document.querySelector(".edit-user__form").action = "/api/users/" + username;
-      document.querySelector(".delete-user-form").action = "/api/users/" + username;
+      // document.getElementById("edit-username-title").textContent = "Editar usuario: " + username;
+      // document.getElementById("username_input").placeholder = username;
+      document.querySelector(".edit-user__form").action = "/api/users/" + id;
+      document.querySelector(".delete-user-form").action = "/api/users/" + id;
     });
   });
 
