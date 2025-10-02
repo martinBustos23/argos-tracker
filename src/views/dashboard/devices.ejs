@@ -56,7 +56,8 @@
 
           <div class="tracker-pos">
             <h2>Últimas posiciones</h2>
-            <% const positionEvents=lastEvents.filter(e=> e.eventDesc === 'POSITION').slice(0, 5); %>
+            <div class="tracker-pos__container">
+              <% const positionEvents=lastEvents.filter(e=> e.eventDesc === 'POSITION').slice(0, 5); %>
               <% positionEvents.forEach(event=> { %>
                 <div class="tracker-pos__info" data-lat="<%= event.latitude %>" data-lon="<%= event.longitude %>">
                   <div>
@@ -69,7 +70,8 @@
                     </p>
                   </div>
                 </div>
-                <% }) %>
+              <% }) %>
+            </div>
           </div>
 
         </div>
@@ -831,12 +833,16 @@
     width: 80%;
   }
 
+  .tracker-pos__container {
+    width: 80%;
+  }
+  
   .tracker-pos__info {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    width: 80%;
+    width: 100%;
     min-height: 50px;
     margin: .5rem;
     padding: .5rem 1rem;
@@ -1298,8 +1304,7 @@
   });
 
   function updateLastPositions() {
-    const lastPositions = document.querySelector(".tracker-pos");
-    lastPositions.lastElementChild.remove();
+    const lastPositions = document.querySelector(".tracker-pos__container");
 
     const { latitude, longitude, timestamp } = events.filter(event => event.eventDesc == 'POSITION')[0];
     const newCard = document.createElement("div");
@@ -1325,7 +1330,11 @@
     posElem.appendChild(lonElem);
 
     newCard.appendChild(posElem);
-    lastPositions.firstElementChild.insertAdjacentElement("afterend", newCard);
+
+    if (lastPositions.childElementCount === 5) {
+      lastPositions.lastElementChild.remove();
+    }
+    lastPositions.insertBefore(newCard, lastPositions.firstElementChild);
   }
 
   function filterEvents(events) {
