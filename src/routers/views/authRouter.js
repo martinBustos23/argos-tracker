@@ -12,7 +12,7 @@ export default (UserController) => {
 
   router.post('/login', async (req, res, next) => {
     try {
-      await UserController.login(req.body);
+      const user = await UserController.login(req.body);
 
       const token = generateToken(user.id);
       res
