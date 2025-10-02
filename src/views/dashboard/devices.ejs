@@ -1078,9 +1078,14 @@
   });
 
   const markers = [];
-  let map = L.map('map').setView([latitude, longitude], 17);
+  let map = L.map('map');
+  if (latitude || longitude) {
+    map.setView([latitude, longitude], 17);
+    const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
+    markers.push(marker);
+  }
+  
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
-
 
   tracker_info.forEach(infoDiv => {
     infoDiv.addEventListener('click', function () {
@@ -1095,10 +1100,6 @@
       }
     });
   });
-
-  const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
-  markers.push(marker);
-
 
   let geomap = L.map('geo-map').setView([tracker.geofenceLat || -32.747711, tracker.geofenceLon || -60.734190], 19);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
