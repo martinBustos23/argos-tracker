@@ -1,10 +1,10 @@
 export default class Log {
   constructor(log) {
-    this.id = log.id;
-    this.timestamp = new Date(log.timestamp + 'UTC');
-    this.level = log.level;
-    this.source = log.source;
-    this.action = log.action;
-    this.description = log.description;
+    if (log.id) this.id = log.id;
+    if (log.timestamp) this.timestamp = new Date(log.timestamp + 'UTC');
+    if (log.level) this.level = log.level;
+    if (log.source) this.source = log.source;
+    if (log.action) this.action = log.action;
+    if (log.description) this.description = log.description;
   }
 }
