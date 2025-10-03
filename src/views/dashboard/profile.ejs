@@ -119,7 +119,7 @@
     if (editForm.password.value) payload.password = editForm.password.value;
 
     try {
-      const response = await fetch(editForm.action, {
+      const response = await fetch('/api/users/<%= user.id %>', {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -145,7 +145,7 @@
     if (!confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.")) return;
 
     try {
-      const response = await fetch(deleteForm.action, { method: "DELETE" });
+      const response = await fetch('/api/users/<%= user.id %>', { method: "DELETE" });
       const result = await response.json();
 
       if (response.ok) {
