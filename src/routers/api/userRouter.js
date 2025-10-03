@@ -1,5 +1,5 @@
 import express from 'express';
-import { authToken, isAdmin } from '../../utils.js';
+import { authToken, isAdmin, getUserIdFromToken } from '../../utils.js';
 
 export default function createUserRouter(UserController) {
   const router = express.Router();
@@ -42,9 +42,11 @@ export default function createUserRouter(UserController) {
     }
   });
 
-  router.put('/users/:uid', isAdmin(UserController), async (req, res, next) => {
+  router.put('/users/:uid', async (req, res, next) => {
+    const token = req.cookies.authorization;
     try {
-      const updatedUser = await UserController.update(req.params.uid, req.body);
+      const originUid = getUserIdFromToken(token);
+      const updatedUser = await UserController.update(originUid, req.body, req.params.uid);
 
       res.status(200).json(updatedUser);
     } catch (error) {
@@ -52,9 +54,11 @@ export default function createUserRouter(UserController) {
     }
   });
 
-  router.delete('/users/:uid', isAdmin(UserController), async (req, res, next) => {
+  router.delete('/users/:uid', async (req, res, next) => {
+    const token = req.cookies.authorization;
     try {
-      const result = await UserController.disable(req.params.uid);
+      const originUid = getUserIdFromToken(token);
+      const result = await UserController.disable(originUid, req.params.uid);
 
       res.status(200).json(result);
     } catch (error) {

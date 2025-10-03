@@ -80,19 +80,22 @@ export default class UserController {
     }
   }
 
-  async update(id, user) {
+  async update(originUid, mods, destinationUid=originUid) {
     try {
-      if (Object.getOwnPropertyNames(user).length === 0) throw new BadRequest('Faltan parametros');
-      const updatedUser = await this.#userDAO.find(id);
-      if (!updatedUser) throw new NotFound(`El usuario (${id}) no fue encontrado`);
+      const updatingUser = await this.#userDAO.find(originUid);
+      const updatedUser = destinationUid == originUid ? updatingUser : await this.#userDAO.find(destinationUid);
+      if (!updatingUser.admin && (updatingUser.id != destinationUid))
+        throw new Unauthorized('No estas autorizado');
+      if (Object.getOwnPropertyNames(mods).length == 0) throw new BadRequest('Faltan parametros');
+      if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
-      if (user.password) user.password = await this.#genPasswordHash(user.password);
+      if (mods.password) mods.password = await this.#genPasswordHash(mods.password);
 
-      const result = await this.#userDAO.update(id, new UserDTO(user));
+      const result = await this.#userDAO.update(destinationUid, new UserDTO(mods));
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        id,
+        destinationUid,
         USER_ACTIONS.UPDATE,
         'Se actualizo el usuario'
       );
@@ -100,7 +103,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        id,
+        destinationUid,
         USER_ACTIONS.UPDATE,
         'Error al actualizar el usuario'
       );
@@ -119,15 +122,18 @@ export default class UserController {
     }
   }
 
-  async disable(id) {
+  async disable(originUid, destinationUid = originUid) {
     try {
-      const exist = await this.#userDAO.find(id);
-      if (!exist) throw new NotFound(`El usuario (${id}) no fue encontrado`);
+      const updatingUser = await this.#userDAO.find(originUid);
+      if (!updatingUser.admin && (updatingUser.id != destinationUid))
+        throw new Unauthorized('No estas autorizado');
+      const exist = await this.#userDAO.find(destinationUid);
+      if (!exist) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
-      const result = await this.update(id, new UserDTO({ active: false }));
+      const result = await this.update(destinationUid, new UserDTO({ active: false }));
       await this.#userLogController.addLog(
         LEVEL.INFO,
-        id,
+        destinationUid,
         USER_ACTIONS.DISABLED,
         'Se deshabilito usuario'
       );
@@ -135,7 +141,7 @@ export default class UserController {
     } catch (error) {
       await this.#userLogController.addLog(
         LEVEL.ERROR,
-        id,
+        destinationUid,
         USER_ACTIONS.DISABLED,
         'Error al deshabilito usuario'
       );
