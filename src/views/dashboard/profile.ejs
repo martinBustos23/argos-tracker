@@ -1,0 +1,164 @@
+<%- include('../layouts/header', {title: 'Perfil de Usuario' }); %>
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', { title: 'Perfil de Usuario', subtitle: 'Editar datos de tu cuenta' }); %>
+
+  <div class="main-content__body">
+
+    <div class="profile-container">
+      <div class="img-placeholder">
+        <i class="bi bi-person-fill"></i>
+      </div>
+
+      <div class="profile-info">
+        <p><strong>Usuario:</strong> <%= user.username %></p>
+        <p><strong>Última conexión:</strong> <%= user.lastLogin %></p>
+      </div>
+    </div>
+
+    <!-- Formulario editar perfil -->
+    <div class="edit-profile">
+      <h2 class="form-title__h2">Editar Perfil</h2>
+
+      <form class="edit-form" id="editProfileForm" action="/api/profile/<%= user.id %>">
+        <div class="form-group">
+          <label for="username">Nuevo usuario</label>
+          <input type="text" id="username" name="username" placeholder="<%= user.username %>" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Nueva contraseña</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" />
+        </div>
+
+        <button type="submit" class="confirm-btn">Guardar cambios</button>
+      </form>
+    </div>
+
+    <!-- Eliminar cuenta -->
+    <div class="delete-profile">
+      <h2 class="form-title__h2 delete">Eliminar cuenta</h2>
+      <form id="deleteProfileForm" action="/api/profile/<%= user.id %>">
+        <button class="delete-btn" type="submit">Eliminar mi cuenta</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .profile-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    font-size: 3rem;
+    border-radius: 50%;
+    border: 1px solid black;
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .edit-profile, .delete-profile {
+    background: white;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 10px;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .form-title__h2 {
+    margin-bottom: .5rem;
+    font-size: 1.3rem;
+    border-bottom: 1px solid #691c32;
+  }
+
+  .delete-profile .form-title__h2.delete {
+    border: none;
+    color: #691c32;
+  }
+
+  .delete-btn {
+    background: #451321;
+    color: white;
+    padding: .5rem 1rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .delete-btn:hover {
+    background: #691c32;
+  }
+</style>
+
+<script>
+  const editForm = document.getElementById("editProfileForm");
+  editForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const payload = {};
+    if (editForm.username.value) payload.username = editForm.username.value;
+    if (editForm.password.value) payload.password = editForm.password.value;
+
+    try {
+      const response = await fetch(editForm.action, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Perfil actualizado correctamente");
+        location.reload();
+      } else {
+        alert("Error: " + result.error);
+      }
+    } catch (err) {
+      console.error("Error al actualizar perfil:", err);
+      alert("Error al actualizar perfil");
+    }
+  });
+
+  const deleteForm = document.getElementById("deleteProfileForm");
+  deleteForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.")) return;
+
+    try {
+      const response = await fetch(deleteForm.action, { method: "DELETE" });
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Cuenta eliminada correctamente");
+        window.location.href = "/logout"; // o redirigir donde corresponda
+      } else {
+        alert("Error al eliminar cuenta: " + result.error);
+      }
+    } catch (err) {
+      console.error("Error al eliminar cuenta:", err);
+      alert("Error al eliminar cuenta");
+    }
+  });
+</script>
+
+<%- include('../layouts/footer'); %>

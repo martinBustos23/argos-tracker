@@ -162,5 +162,16 @@ export default (
     res.render('./dashboard/vincular', { user });
   });
 
+  router.get('/profile', async (req, res) => {
+    const token = req.cookies.authorization;
+    const id = getUserIdFromToken(token);
+    const user = await userController.find(id);
+    user.lastLogin = new Date(user.lastLogin + ' UTC').toLocaleString(
+      'es-AR',
+      { hour12: false }
+    );
+    res.render('./dashboard/profile', { user });
+  });
+
   return router;
 };
