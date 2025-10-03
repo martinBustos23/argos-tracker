@@ -102,7 +102,7 @@ export default class UserController {
         LEVEL.ERROR,
         id,
         USER_ACTIONS.UPDATE,
-        'Erro al actualizar el usuario'
+        'Error al actualizar el usuario'
       );
       if (error.status) throw error;
       throw new InternalError('Error interno actualizando usuario');
