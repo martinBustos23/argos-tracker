@@ -15,21 +15,35 @@
 
           <section class="tracker-list">
             <% trackers.forEach( tracker=> { %>
-              <div class="tracker-list__btn" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
-                data-lon="<%= tracker.geofenceLon %>">
-                <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
-                <div class="tracker-list__info">
-                  <span class="label">
-                    <%= tracker.petName %>
-                  </span>
-                  <span class="label-name">
-                    <%= tracker.state %>
-                  </span>
+              <% if (tracker.active) { %>
+                <div class="tracker-list__btn" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
+                  data-lon="<%= tracker.geofenceLon %>">
+                  <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  <div class="tracker-list__info">
+                    <span class="label">
+                      <%= tracker.petName %>
+                    </span>
+                    <span class="label-name">
+                      <%= tracker.state %>
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <% }) %>
-
-                <a class="add-btn" href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
+              <% } else if (user.admin && config.devices.seeDisabled) { %>
+                <div class="tracker-list__btn tracker-list__disabled" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
+                  data-lon="<%= tracker.geofenceLon %>">
+                  <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  <div class="tracker-list__info">
+                    <span class="label">
+                      <%= tracker.petName %>
+                    </span>
+                    <span class="label-name">
+                      <%= tracker.state %>
+                    </span>
+                  </div>
+                </div>
+              <% } %>
+            <% }) %>
+            <a class="add-btn" href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
 
           </section>
 
@@ -315,6 +329,10 @@
   .tracker-list__info .label-name {
     text-align: center;
     color: white;
+  }
+
+  .tracker-list__disabled {
+    background-color: #61434c;
   }
 
   .add-btn {

@@ -33,11 +33,11 @@ export default (
         return new Date(b.timestamp) - new Date(a.timestamp);
       });
 
-      const activeTrackers = await trackerController.getAllActive();
       const user = await userController.find(id);
       res.render('./dashboard/general', {
         user,
-        trackers: activeTrackers,
+        config,
+        trackers: trackers.sort((a, b) => (a.active===b.active) ? 0 : (a.active ? -1 : 1)),
         events: sortedEvents,
       });
     } catch (error) {
