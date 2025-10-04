@@ -26,6 +26,7 @@ export const TRACKER_ACTIONS = Object.freeze({
 export const SYSTEM_ACTIONS = Object.freeze({
   CREATE: 'CREATE',
   CONNECT: 'CONNECT',
+  UPDATE_CONFIG: 'UPDATE_CONFIG'
 });
 
 export const USER_TRIES = Object.freeze({

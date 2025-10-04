@@ -15,12 +15,16 @@ import TrackerController from './controller/api/trackerController.js';
 import TrackerEventDAO from './dao/trackerEventDAO.js';
 import TrackerEventController from './controller/api/trackerEventController.js';
 
+import SystemConfigDAO from './dao/systemConfigDAO.js';
+import SystemConfigController from './controller/systemConfigController.js';
+
 import createUserRouter from './routers/api/userRouter.js';
 import createTrackerRouter from './routers/api/trackerRouter.js';
 import createTrackerEventRouter from './routers/api/trackerEventRouter.js';
 
 import createAuthRouter from './routers/views/authRouter.js';
 import createDashboardRouter from './routers/views/dashboardRouter.js';
+import createSystemConfigRouter from './routers/systemConfigRouter.js';
 
 import {
   createUserLogRouter,
@@ -51,6 +55,9 @@ export default async function createApp(db, webSocketclients) {
   const trackerEventDao = new TrackerEventDAO(db);
   const trackerEventController = new TrackerEventController(trackerEventDao);
 
+  const systemConfigDAO = new SystemConfigDAO(db);
+  const systemConfigController = new SystemConfigController(systemConfigDAO, systemLogController);
+
   const userRouter = createUserRouter(userController);
   const trackerRouter = createTrackerRouter(trackerController, userController);
   const trackerEventRouter = createTrackerEventRouter(
@@ -66,12 +73,15 @@ export default async function createApp(db, webSocketclients) {
     trackerController,
     trackerLogController,
     trackerEventController,
-    systemLogController
+    systemLogController,
+    systemConfigController
   );
 
   const userLogRouter = createUserLogRouter(userLogController);
   const trackerLogRouter = createTrackerLogRouter(trackerLogController);
   const systemLogRouter = createSystemLogRouter(systemLogController);
+
+  const systemConfigRouter = createSystemConfigRouter(systemConfigController, userController);
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
@@ -93,7 +103,8 @@ export default async function createApp(db, webSocketclients) {
     userLogRouter,
     trackerLogRouter,
     trackerEventRouter,
-    systemLogRouter
+    systemConfigRouter,
+    systemLogRouter,
   );
 
   app.use((error, req, res, next) => {

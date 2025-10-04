@@ -7,7 +7,8 @@ export default (
   trackerController,
   trackerLogController,
   trackerEventController,
-  systemLogController
+  systemLogController,
+  systemConfigController
 ) => {
   const router = express.Router();
   router.use(authToken);
@@ -34,6 +35,7 @@ export default (
       });
 
       const user = await userController.find(id);
+      const config = await systemConfigController.get();
       res.render('./dashboard/general', {
         user,
         config,
@@ -49,7 +51,7 @@ export default (
     try {
       const token = req.cookies.authorization;
 
-      const trackers = await trackerController.getAllActive();
+      const trackers = await trackerController.getAll();
 
       if (trackers.length == 0) {
         return res.redirect(`/dashboard/vincular`);

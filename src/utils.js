@@ -101,6 +101,13 @@ export async function roundImagePNG(inputImgPath, outputImgPath, size) {
     .toFile(outputImgPath);
 }
 
+export function updateObjectValues(from, to) {
+  for (const key in to) {
+    if (typeof from[key] === 'object') updateObjectValues(from[key], to[key]);
+    else from[key] = to[key];
+  }
+}
+
 //Manejo de errores
 export class Exception extends Error {
   constructor(message, status) {
