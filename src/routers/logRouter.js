@@ -5,7 +5,7 @@ export function createSystemLogRouter(systemLogController) {
   const router = express.Router();
   router.use(authToken);
 
-  router.get('/trackerLogs', async (req, res, next) => {
+  router.get('/systemLogs', async (req, res, next) => {
     try {
       const n = req.query.n;
       const logs = await systemLogController.getLatest(n);
