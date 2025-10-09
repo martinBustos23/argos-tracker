@@ -6,7 +6,7 @@ export default class UserDTO {
     if (user.image) this.image = user.image || 'default';
     if (user.admin || user.admin === false) this.admin = user.admin == true ? true : false;
     if (user.active || user.active === false) this.active = user.active == true ? true : false;
-    if (user.lastLogin) this.lastLogin = new Date(user.lastLogin + 'UTC');
-    if (user.timeout) this.timeout = new Date(user.timeout + 'UTC');
+    if (user.lastLogin) this.lastLogin = new Date(user.lastLogin);
+    if (user.timeout) this.timeout = new Date(user.timeout);
   }
 }

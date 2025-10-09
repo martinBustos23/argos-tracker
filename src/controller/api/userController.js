@@ -195,13 +195,13 @@ export default class UserController {
       if (!exist) throw new NotFound('Usuario no existe');
       if (!exist.active) throw new Unauthorized('Usuario no habilitado');
 
-      if (exist.timeout && Date.now() >= exist.timeout) {
+      if (exist.timeout && Date.now() >= exist.timeout.getTime()) {
         // si tiene timeout y el mismo termino
         this.#userDAO.update(exist.id, { timeout: null });
       } else if (exist.timeout) {
         throw new Unauthorized(
           'Esperar ' +
-            Math.floor((new Date(exist.timeout).getTime() - Date.now()) / 1000 / 60) +
+            Math.floor((exist.timeout.getTime() - Date.now()) / 1000 / 60) +
             ' minutos'
         );
       }
@@ -263,7 +263,7 @@ export default class UserController {
         'Inicio de sesion con exito'
       );
       // obtener el timestamp del nuevo log, pasarlo a UTF y reemplazar T y Z del string
-      const timestamp = new Date(log.timestamp).toISOString().replace(/[A-Z]/g, ' ');
+      const timestamp = log.timestamp.toISOString().replace(/[A-Z]/g, ' ');
       // actualizar el atributo lastLogin del usuario
       await this.update(exist.id, { lastLogin: timestamp });
       return exist;
