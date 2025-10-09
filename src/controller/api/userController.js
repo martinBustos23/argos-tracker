@@ -24,7 +24,7 @@ export default class UserController {
     try {
       if (Object.getOwnPropertyNames(newUser).length === 0)
         throw new BadRequest('Faltan parametros');
-      const exists = await this.#userDAO.find(newUser.username);
+      const exists = await this.#userDAO.findByUsername(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
 
       if (!validatePassword(newUser.password))
@@ -213,7 +213,7 @@ export default class UserController {
           level: LEVEL.INFO,
         });
 
-        let sinceLastLogin = await this.#userLogController.getAllSince(lastLogin.id || 0);
+        let sinceLastLogin = await this.#userLogController.getAllSince(1 || lastLogin.id);
         sinceLastLogin.filter((log) => log.source === exist.id);
         const timeouts = sinceLastLogin.filter((log) => log.action == USER_ACTIONS.DISABLED).length;
 
