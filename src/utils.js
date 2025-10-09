@@ -23,6 +23,16 @@ export const authToken = (req, res, next) => {
   });
 };
 
+export function validatePassword(password) {
+  if (password.length < 8) return false;
+  const expressions = [/[a-z]/g,/[A-Z]/g,/[0-9]/g];
+  for (const expression of expressions) {
+    const result = expression.test(password);
+    if (result === false) return false;
+  }
+  return true;
+}
+
 export const isAdmin = (UserController) => {
   return async (req, res, next) => {
     try {

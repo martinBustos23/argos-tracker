@@ -5,6 +5,7 @@ import {
   Unauthorized,
   Forbidden,
   InternalError,
+  validatePassword,
 } from '../../utils.js';
 import bcrypt from 'bcryptjs';
 import config from '../../config/config.js';
@@ -26,6 +27,8 @@ export default class UserController {
       const exists = await this.#userDAO.find(newUser.username);
       if (exists) throw new Conflict('Usuario ya registrado');
 
+      if (!validatePassword(newUser.password))
+        throw new BadRequest('La contraseña es demasiado corta, o no posee mayusculas, minusculas o numeros');
       newUser.password = await this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
 
       const result = await this.#userDAO.create(new UserDTO(newUser));
@@ -90,7 +93,11 @@ export default class UserController {
       if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
-      if (mods.password) mods.password = await this.#genPasswordHash(mods.password);
+      if (mods.password) {
+        if (!validatePassword(mods.password)) 
+          throw new BadRequest('La contraseña es demasiado corta, o no posee masculas, minusculas o numeros');
+        mods.password = await this.#genPasswordHash(mods.password);
+      }
 
       const result = await this.#userDAO.update(destinationUid, new UserDTO(mods));
       await this.#userLogController.addLog(
