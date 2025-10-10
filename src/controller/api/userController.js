@@ -137,7 +137,7 @@ export default class UserController {
       const exist = await this.#userDAO.find(destinationUid);
       if (!exist) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
-      const result = await this.update(destinationUid, new UserDTO({ active: false }));
+      const result = await this.update(destinationUid, { status: 'disabled' });
       await this.#userLogController.addLog(
         LEVEL.INFO,
         destinationUid,
@@ -193,7 +193,8 @@ export default class UserController {
     try {
       exist = await this.#userDAO.findByUsername(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
-      if (!exist.active) throw new Unauthorized('Usuario no habilitado');
+      if (exist.status === 'disabled' || exist.status === 'blocked')
+        throw new Unauthorized('Usuario no habilitado');
 
       const localNow = new Date();
       const utcNow = localNow.getTime() + localNow.getTimezoneOffset() * 60000;
@@ -322,7 +323,7 @@ export default class UserController {
   }
 
   async #blockUser(id) {
-    await this.#userDAO.update(id, new UserDTO({ active: false }));
+    await this.#userDAO.update(id, { status: 'blocked' });
     await this.#userLogController.addLog(
       LEVEL.INFO,
       id,

@@ -43,11 +43,11 @@
         "extra": null
       },
       {
-        "name": "active",
-        "type": "bool",
+        "name": "status",
+        "type": "enum('active', 'disabled', 'blocked')",
         "key": null,
         "nullable": false,
-        "default": 1,
+        "default": "'active'",
         "extra": null
       },
       {
