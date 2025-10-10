@@ -90,7 +90,7 @@ export default (
           continue;
         }
         // converite la hora de UTC a horario argentino (UTC -03:00)
-        users[i].lastLogin = new Date(users[i].lastLogin).toLocaleString('es-AR', {
+        users[i].lastLogin = new Date(users[i].lastLogin + ' UTC').toLocaleString('es-AR', {
           hour12: false,
         });
       }
