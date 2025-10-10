@@ -22,15 +22,19 @@ export default class TrackerEventDAO {
     return resultLog;
   }
 
-  async getLatest(n) {
-    const [logs] = await this.#db.execute(
-      `SELECT * FROM trackerEvents ORDER BY timestamp DESC LIMIT ${n}`
-    );
-    return logs.map((log) => new TrackerEventDTO(log));
+  async getByTrackerId(trackerId, limit) {
+    let query = `SELECT * FROM trackerEvents WHERE trackerId = ? ORDER BY timestamp DESC`;
+
+    if (limit !== null) {
+      query += ` LIMIT ${parseInt(limit)}`;
+    }
+
+    const [events] = await this.#db.execute(query, [trackerId]);
+    return events.map((event) => new TrackerEventDTO(event));
   }
 
   async getAll() {
-    const [logs] = await this.#db.execute(`SELECT * FROM trackerEvents ORDER BY timestamp DESC`);
-    return logs.map((log) => new TrackerEventDTO(log));
+    const [events] = await this.#db.execute(`SELECT * FROM trackerEvents ORDER BY timestamp DESC`);
+    return events.map((event) => new TrackerEventDTO(event));
   }
 }

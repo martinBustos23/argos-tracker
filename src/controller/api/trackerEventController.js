@@ -1,4 +1,4 @@
-import { InternalError, NotFound } from '../../utils.js';
+import { BadRequest, InternalError, NotFound } from '../../utils.js';
 import TrackerEventDTO from '../../dto/trackerEventDTO.js';
 
 export default class TrackerEventController {
@@ -29,9 +29,17 @@ export default class TrackerEventController {
     return true;
   }
 
-  async #addEvent(event) {
+  async addEvent(trackerId, latitude, longitude, batteryLvl, eventDesc) {
     try {
-      if (!this.#validateEvent(event)) throw new InternalError('Evento no valido');
+      const event = {
+        trackerId,
+        eventDesc: eventDesc || 'POSITION',
+        latitude,
+        longitude,
+        batteryLvl,
+      };
+
+      if (!this.#validateEvent(event)) throw new BadRequest('Datos del evento invalidos');
       const result = this.#trackerEventDAO.create(new TrackerEventDTO(event));
       return result;
     } catch (error) {
@@ -42,23 +50,10 @@ export default class TrackerEventController {
     }
   }
 
-  async addPosition(trackerId, latitude, longitude, batteryLvl) {
-    try {
-      return await this.#addEvent({
-        trackerId,
-        eventDesc: 'POSITION',
-        latitude,
-        longitude,
-        batteryLvl,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
 
-  async getLatest(n) {
+  async getEventsByTrackerId(trackerId, limit) {
     try {
-      return this.#trackerEventDAO.getLatest(n);
+      return await this.#trackerEventDAO.getByTrackerId(trackerId, limit);
     } catch (error) {
       throw error;
     }

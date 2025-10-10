@@ -2,6 +2,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 
 import path from 'path';
+import YAML from 'yamljs';
+import swaggerUi from 'swagger-ui-express';
 
 import LogDAO from './dao/logDAO.js';
 import LogController from './controller/logController.js';
@@ -106,6 +108,9 @@ export default async function createApp(db, webSocketclients) {
     systemConfigRouter,
     systemLogRouter,
   );
+
+  const swaggerDocument = YAML.load('./src/docs/swagger.yml');
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use((error, req, res, next) => {
     if (error instanceof Exception) {
