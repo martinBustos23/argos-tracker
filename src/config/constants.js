@@ -30,11 +30,11 @@ export const SYSTEM_ACTIONS = Object.freeze({
 });
 
 export const USER_TRIES = Object.freeze({
-  BLOCK_TRIES: 3,
+  BLOCK_TRIES: 9,
   FIRST_TIMEOUT_TRIES: 3,
-  FIRST_TIMEOUT_MINUTES: 5,
-  SECOND_TIMEOUT_TRIES: 3,
-  SECOND_TIMEOUT_MINUTES: 10,
+  FIRST_TIMEOUT_MINUTES: 0,
+  SECOND_TIMEOUT_TRIES: 6,
+  SECOND_TIMEOUT_MINUTES: 0,
 });
 
 export const PET_ICONS = Object.freeze([
