@@ -14,6 +14,9 @@ export default (UserController) => {
     try {
       const user = await UserController.login(req.body);
 
+      if (user.status === 'pwd_change')
+        return res.render('new-password', { user });
+        // return res.redirect('new-password?' + new URLSearchParams({ id: user.id }));
       const token = generateToken(user.id);
       res
         .cookie('authorization', token, {
@@ -23,7 +26,7 @@ export default (UserController) => {
         .redirect('dashboard');
     } catch (error) {
       console.log(error.message);
-      res.render('login', { errorMessage: 'Usuario o contraseña incorrectos' });
+      res.render('login', { errorMessage: error.message });
     }
   });
 

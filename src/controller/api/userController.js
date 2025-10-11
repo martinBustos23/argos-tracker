@@ -89,15 +89,22 @@ export default class UserController {
       const updatedUser = destinationUid == originUid ? updatingUser : await this.#userDAO.find(destinationUid);
       if (!updatingUser.admin && (updatingUser.id != destinationUid))
         throw new Unauthorized('No estas autorizado');
-      if (Object.getOwnPropertyNames(mods).length == 0) throw new BadRequest('Faltan parametros');
+      if (Object.keys(mods).length == 0) throw new BadRequest('Faltan parametros');
       if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
       if (mods.password) {
         if (!validatePassword(mods.password)) 
           throw new BadRequest('La contraseña es demasiado corta, o no posee masculas, minusculas o numeros');
+        // si es forzado a cambiar la contrasenia, cambiar su estado a activo
+        if (updatedUser.status === 'pwd_change')
+          mods.status = 'active';
         mods.password = await this.#genPasswordHash(mods.password);
       }
+
+      // si el usuario esta bloqueado y se lo quiere activar, forzarlo a cambiar la contrasenia
+      if (updatedUser.status === 'blocked' && mods.status === 'active') 
+        mods.status = 'pwd_change';
 
       const result = await this.#userDAO.update(destinationUid, new UserDTO(mods));
       await this.#userLogController.addLog(

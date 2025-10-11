@@ -13,14 +13,27 @@ export const generateToken = (id) => {
   return token;
 };
 
-export const authToken = (req, res, next) => {
+export const authToken = async (req, res, next, userController) => {
   const token = req.cookies.authorization;
-  if (!token) return res.status(401).json({ error: 'Usuario no autenticado' });
-  jwt.verify(token, config.JWT_KEY, (error, credentials) => {
-    if (error) return res.status(403).json({ error: 'Usuario no autorizado' });
-    req.id = credentials.id;
-    next();
-  });
+  try {
+    
+    if (!token && req.body.username && req.body.password) {
+      const user = await userController.login(req.body);
+      if (user)
+        next();
+      return res.status(401).json({ error: 'Usuario no autenticado' });
+    }
+
+    jwt.verify(token, config.JWT_KEY, (error, credentials) => {
+      if (error) return res.status(403).json({ error: 'Usuario no autorizado' });
+      req.id = credentials.id;
+      next();
+    });
+
+    return res.status(401).json({ error: 'Usuario no autenticado' });
+  } catch (error){
+    next(error);
+  }
 };
 
 export function validatePassword(password) {

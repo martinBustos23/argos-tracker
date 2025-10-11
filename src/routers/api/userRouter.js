@@ -1,4 +1,5 @@
 import express from 'express';
+import bcrypt from 'bcryptjs';
 import { authToken, isAdmin, getUserIdFromToken } from '../../utils.js';
 
 export default function createUserRouter(UserController) {
@@ -45,7 +46,16 @@ export default function createUserRouter(UserController) {
   router.put('/users/:uid', async (req, res, next) => {
     const token = req.cookies.authorization;
     try {
-      const originUid = getUserIdFromToken(token);
+      let originUid = token ? getUserIdFromToken(token) : req.params.uid;
+
+      if (!token) { // si no hay token, entonces debemos validar el usuario con una contrasenia
+        console.log(req.body);
+        const user = await UserController.find(originUid);
+        if (!(await bcrypt.compare(req.body.currentPassword, user.password)))
+          return res.status(404).json({ message: 'Su contrasenia actual no es correcta'});
+        req.body.password = req.body.newPassword;
+      }
+
       const updatedUser = await UserController.update(originUid, req.body, req.params.uid);
 
       res.status(200).json(updatedUser);

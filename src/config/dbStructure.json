@@ -44,7 +44,7 @@
       },
       {
         "name": "status",
-        "type": "enum('active', 'disabled', 'blocked')",
+        "type": "enum('active', 'disabled', 'blocked', 'pwd_change')",
         "key": null,
         "nullable": false,
         "default": "'active'",
