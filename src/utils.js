@@ -19,8 +19,10 @@ export const authToken = async (req, res, next, userController) => {
     
     if (!token && req.body.username && req.body.password) {
       const user = await userController.login(req.body);
-      if (user)
+      if (user) {
+        req.id = user.id;
         next();
+      }
       return res.status(401).json({ error: 'Usuario no autenticado' });
     }
 
@@ -30,7 +32,6 @@ export const authToken = async (req, res, next, userController) => {
       next();
     });
 
-    return res.status(401).json({ error: 'Usuario no autenticado' });
   } catch (error){
     next(error);
   }

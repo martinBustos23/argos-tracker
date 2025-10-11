@@ -4,7 +4,7 @@ import { authToken, isAdmin, getUserIdFromToken } from '../../utils.js';
 
 export default function createUserRouter(UserController) {
   const router = express.Router();
-  router.use(authToken);
+  router.use((req, res, next) => authToken(req, res, next, UserController));
 
   router.post('/users', isAdmin(UserController), async (req, res, next) => {
     try {
