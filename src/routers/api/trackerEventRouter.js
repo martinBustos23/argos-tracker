@@ -13,15 +13,15 @@ export default function createTrackerEventRouter(
     try {
       const trackerId = req.params.id;
       const tracker = await trackerController.find(trackerId);
-      if (!tracker) throw new NotFound(`No existe el tracker ${trackerId}`);
+      if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
 
       const { eventDesc, lat, lon, bat } = req.query;
-      // primero agrega el evento
-      const event = await trackerEventController.addPosition(trackerId, lat, lon, bat);
+      const event = await trackerEventController.addEvent(trackerId, lat, lon, bat, eventDesc);
+
       if (eventDesc == 'POSITION')
         broadcastWSEvent(trackerId, webSocketclients, { ...event, petName: tracker.petName });
 
-      res.status(200).json(event);
+      res.status(201).json(event);
     } catch (error) {
       next(error);
     }
@@ -31,12 +31,11 @@ export default function createTrackerEventRouter(
     try {
       const trackerId = req.params.id;
       const tracker = await trackerController.find(trackerId);
-      if (!tracker) throw new NotFound(`No existe el tracker ${trackerId}`);
-      if (!req.query.n) throw new BadRequest('No se indico cantidad de eventos');
-      const n = req.query.n;
-      const logs = await trackerEventController.getLatest(trackerId, n);
+      if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
+      const limit = req.query.n ? parseInt(req.query.n) : null;
+      const events = await trackerEventController.getEventsByTrackerId(trackerId, limit);
 
-      res.status(200).json(logs);
+      res.status(200).json(events);
     } catch (error) {
       next(error);
     }

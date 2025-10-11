@@ -1,0 +1,1414 @@
+openapi: 3.0.4
+info:
+  title: Argos-tracker API
+  description: |-
+    Argos Tracker es un sistema de rastreo y gestion de mascotas diseñado para que cada usuario pueda administrar
+    sus collares de rastreo y obtener informacion en tiempo real desde la estacion base.
+    
+    La API permite a las aplicaciones cliente (movil o web) interactuar con el sistema de rastreo, gestionar usuarios, dispositivos y sus eventos. 
+
+    Algunas funcionalidades clave: 
+      - Registro y autenticacion de usuarios 
+      - Gestion de collares asociados a mascotas 
+      - Configuracion de collares 
+      - Consulta de historial de eventos
+    
+    Links utiles:
+    - [Repositorio argos-tracker](https://github.com/martinBustos23/argos-tracker)
+    - [Documentacion del proyecyo](https://github.com/martinBustos23/argos-tracker)
+    
+    Desarrolladores:
+    - Martin Bustos: bustiger@argos-tracker.com
+    - Maximiliano Ariza: gaspanzer@argos-tracker.com 
+
+    Esta definicion esta basada en el estandar OpenAPI 3.0 y servira como base de documentacion y pruebas en Swagger.
+  version: 1.0.0
+
+  contact:
+    name: the team
+    email: soporte@argos-tracker.com
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor local
+
+tags:
+  - name: Users
+    description: Operaciones relacionadas con los usuarios
+  - name: Trackers
+    description: Operaciones relacionadas con los dispositivos de rastreo
+  - name: Tracker Events
+    description: Operaciones relacionadas con los eventos de cada dispositivo de rastreo
+
+paths:
+# -- USERS --
+
+  /api/users:
+    post:
+      tags:
+        - Users
+      summary: Crea un nuevo usuario.
+      description: Registra un nuevo usuario en el sistema. Solo administradores pueden crear usuarios.
+      operationId: createUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Datos del nuevo usuario.
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+            examples:
+              usuario_normal:
+                summary: Usuario normal
+                value:
+                  username: "Juan"
+                  password: "Constraseña123"
+                  admin: false
+              usuario_admin:
+                summary: Usuario administrador
+                value:
+                  username: "admin_nuevo"
+                  password: "admin"
+                  admin: true
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                faltan_parametros:
+                  value:
+                    error: "Faltan parametros"
+                password_debil:
+                  value:
+                    error: "La contraseña no cumple con los requisitos minimos"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+        '409':
+          description: Conflicto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario ya registrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Users
+      summary: Obtiene lista de usuarios
+      description: Retorna todos los usuarios activos o inactivos segun el parametro 'active'
+      operationId: getUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: active
+          in: query
+          description: Filtrar usuarios por estado 'active' (true = activos, false = inactivos)
+          required: false
+          schema:
+            type: string
+            enum: [true, false]
+            default: true
+          examples:
+            activos:
+              value: "true"
+              summary: Usuarios activos
+            inactivos:
+              value: "false"
+              summary: Usuarios inactivos
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                usuarios_activos:
+                  summary: Ejemplo de usuarios activos
+                  value:
+                    - id: 1
+                      username: "admin"
+                      image: "default"
+                      admin: true
+                      active: true
+                      lastLogin: "2025-10-04T12:55:40.000Z"
+                      timeout: null
+                    - id: 2
+                      username: "Juan"
+                      image: "default"
+                      admin: false
+                      active: true
+                      lastLogin: "2025-10-03T18:30:15.000Z"
+                      timeout: null
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{uid}:
+    get:
+      tags:
+        - Users
+      summary: Obtiene un usuario por ID
+      description: Retorna la informacion de un usuario
+      operationId: getUserByID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: uid
+          in: path
+          description: ID de usuario a obtener
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 2
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "ID de usuario invalido"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El usuario (2) no fue encontrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Users
+      summary: Actualiza un usuario
+      description: Actualiza los datos de un usuario existente. Solo los administradores pueden actualizar usuarios.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: uid
+          in: path
+          description: ID de usuario a modificar
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 2
+      requestBody:
+        description: Datos a actualizar del usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+            examples:
+              cambiar_completo:
+                summary: Modificar usuario por completo
+                value:
+                  username: "NuevoPepe"
+                  password: "Nuevacontraseña123"
+                  image: "default"
+                  admin: true
+              cambiar_password:
+                summary: Cambiar contraseña
+                value:
+                  password: "Nuevacontraseña123"
+              actualizar_imagen:
+                summary: Actualizar imagen
+                value:
+                  image: "default"
+              cambiar_rol:
+                summary: Cambiar a administrador
+                value:
+                  admin: true
+      responses:
+        '200':
+          description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Parametros de entradas invalidos" #probablemente haya que corregir este error... testear
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El usuario (2) no fue encontrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Users
+      summary: Deshabilita un usuario
+      description: Realiza un soft delete del usuario (lo marca como inactivo). Solo administradores pueden deshabilitar usuarios.
+      operationId: disableUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: uid
+          in: path
+          description: ID del usuario a deshabilitar
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 2
+      responses:
+        '200':
+          description: Usuario deshabilitado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuario deshabilitado correctamente"
+                  user:
+                    $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: ID de usuario invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Parametros de entradas invalidos" #probablemente haya que corregir este error... testear
+        '401':
+          description: No autorizado o no se puede eliminar el ultimo administrador
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                no_autorizado:
+                  value:
+                    error: "Usuario no autorizado"
+                ultimo_admin:
+                  value:
+                    error: "No se puede eliminar el ultimo administrador"
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El usuario (2) no fue encontrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+# -- TRACKERS --
+
+  /api/trackers:
+    post:
+      tags:
+        - Trackers
+      summary: Crea un nuevo tracker
+      description: Registra un nuevo dispositivo tracker en el sistema. Solo administradores pueden crear trackers
+      operationId: createTracker
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Datos del tracker
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackerCreate'
+            examples:
+              tracker_basico:
+                summary: Tracker basico
+                value:
+                  petName: "Toto"
+                  model: "verLoRa"
+                  frequency: 30
+                  emergencyFrequency: 5
+                  lowBat: 20
+              tracker_completo:
+                summary: Tracker completo
+                value:
+                  petName: "Mona"
+                  model: "verLoRa"
+                  image: "perro1"
+                  frequency: 30
+                  emergencyFrequency: 5
+                  lowBat: 25
+                  enableSoundAlert: true
+                  enableGeofence: true
+                  geofenceLat: -32.9442
+                  geofenceLon: -60.6505
+                  geofenceRadius: 60
+      responses:
+        '201':
+          description: Tracker creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackerResponse'
+        '400':
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                faltan_parametros:
+                  value:
+                    error: "Faltan parametros"
+                fuera_de_rango:
+                  value:
+                    error: "Valores fuera de rango"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Trackers
+      summary: Obtiene lista de trackers
+      description: Retorna todos los trackers
+      operationId: getTrackers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de trackers obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackerResponse'
+              examples:
+                trackers:
+                  summary: Trackers activos
+                  value:
+                    - id: 1
+                      petName: "Toto"
+                      model: "verLoRa"
+                      image: "perro2"
+                      state: false
+                      frequency: 30
+                      emergencyFrequency: 5
+                      lowBat: 20
+                      enableGeofence: true
+                      geofenceLat: -32.9442
+                      geofenceLon: -60.6505
+                      geofenceRadius: 60
+                      enableSoundAlert: true
+                      active: true
+                    - id: 2
+                      petName: "Mona"
+                      model: "verLoRa"
+                      image: "perro1"
+                      state: false
+                      frequency: 15
+                      emergencyFrequency: 3
+                      lowBat: 25
+                      enableGeofence: true
+                      geofenceLat: -32.9442
+                      geofenceLon: -60.6505
+                      geofenceRadius: 60
+                      enableSoundAlert: true
+                      active: true
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+
+  /api/trackers/{id}:
+    get:
+      tags:
+        - Trackers
+      summary: Obtiene un tracker por su ID
+      description: Retorna los datos de un tracker especifico
+      operationId: getTrackerById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID del tracker
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      responses:
+        '200':
+          description: Tracker encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackerResponse'
+        '400':
+          description: ID de tracker invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "ID de tracker invalido"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '404':
+          description: Tracker no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El tracker (1) no fue encontrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Trackers
+      summary: Actualiza un tracker
+      description: Actualiza los datos de un tracker existente. Solo administradores pueden actualizar trackers.
+      operationId: updateTracker
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID del tracker a actualizar
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      requestBody:
+        description: Datos a actualizar del tracker
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackerUpdate'
+            examples:
+              cambiar_frecuencia:
+                summary: Cambiar frecuencia de reportes
+                value:
+                  frequency: 30
+                  emergencyFrequency: 10
+              activar_geofence:
+                summary: Activar zona segura
+                value:
+                  enableGeofence: true
+                  geofenceLat: -32.9442
+                  geofenceLon: -60.6505
+                  geofenceRadius: 60
+              cambiar_imagen:
+                summary: Cambiar imagen
+                value:
+                  image: "perro3"
+              cambiar_nombre:
+                summary: Cambiar nombre de mascota
+                value:
+                  petName: "Totito"
+      responses:
+        '200':
+          description: Tracker actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackerResponse'
+        '400':
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                id_invalido:
+                  value:
+                    error: "ID de tracker invalido"
+                fuera_de_rango:
+                  value:
+                    error: "Valores fuera de rango: El radio de la zona segura debe estar entre 10 y 200 metros"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+        '404':
+          description: Tracker no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El tracker (1) no fue encontrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Trackers
+      summary: Deshabilita un tracker
+      description: Realiza un soft delete del tracker (lo marca como inactivo). Solo administradores pueden deshabilitar trackers.
+      operationId: disableTracker
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID del tracker a deshabilitar
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      responses:
+        '200':
+          description: Tracker deshabilitado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tracker deshabilitado correctamente"
+                  tracker:
+                    $ref: '#/components/schemas/TrackerResponse'
+        '400':
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "ID de tracker invalido"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no es administrador"
+        '404':
+          description: Tracker no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El tracker (1) no fue encontrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+# -- EVENTS --
+
+  /api/trackerEvents/{id}:
+    post:
+      tags:
+        - Tracker Events
+      summary: Registra un nuevo evento de un tracker
+      description: Crea un evento asociado a un tracker especifico
+      operationId: createTrackerEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del tracker asociado al evento
+          schema:
+            type: integer
+            example: 1
+        - name: lat
+          in: query
+          required: true
+          description: Latitud de la posicion del tracker
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+            example: -34.6037
+        - name: lon
+          in: query
+          required: true
+          description: Longitud de la posicion del tracker
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+            example: -58.3816
+        - name: bat
+          in: query
+          required: false
+          description: Nivel de bateria del tracker
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            nullable: true
+            example: 89
+        - name: eventDesc
+          in: query
+          required: false
+          description: Descripcion del evento
+          schema:
+            type: string
+            example: "POSITION"
+      responses:
+        "201":
+          description: Evento registrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackerEvent'
+              examples:
+                POSITION:
+                  summary: Evento default
+                  value:
+                    id: 58
+                    trackerId: 1
+                    lat: -34.6037
+                    lon: -58.3816
+                    bat: 67
+                    body: "POSITION"
+                    createdAt: "2025-03-25T12:45:32.000Z"
+        "400":
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missingParams:
+                  summary: Faltan parametros requeridos
+                  value:
+                    error: "Faltan parametros requeridos"
+                invalidData:
+                  summary: Datos invalidos
+                  value:
+                    error: "Datos invalidos"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        "404":
+          description: Tracker no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El tracker (1) no fue encontrado"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Error interno del servidor"
+
+    get:
+      tags:
+        - Tracker Events
+      summary: Obtiene los eventos de un tracker
+      description: Devuelve todos los eventos registrados para el tracker indicado, ordenados del mas reciente al mas antiguo
+      operationId: getTrackerEventsById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del tracker del cual se quieren obtener los eventos
+          schema:
+            type: integer
+            example: 1
+        - name: n
+          in: query
+          nullable: false
+          description: Limite de la cantidad de eventos
+          schema:
+            type: integer
+            example: 5
+      responses:
+        "200":
+          description: Lista de eventos del tracker
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackerEvent'
+              example:
+                - id: 56
+                  trackerId: 1
+                  lat: -34.6042
+                  lon: -58.3825
+                  bat: 90
+                  body: "POSITION"
+                  createdAt: "2025-09-23T10:25:00.000Z"
+                - id: 55
+                  trackerId: 1
+                  lat: -34.6039
+                  lon: -58.3819
+                  bat: null
+                  body: "POSITION"
+                  createdAt: "2025-09-23T10:05:00.000Z"
+        "400":
+          description: Datos de entrada invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Datos invalidos"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        "404":
+          description: Tracker no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "El tracker (1) no fue encontrado"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Error al obtener eventos del tracker"
+
+  /api/trackerEvents:
+    get:
+      tags:
+        - Tracker Events
+      summary: Lista todos los eventos del sistema
+      description: Devuelve todos los eventos registrados en el sistema, ordenados del mas reciente al mas antiguo
+      operationId: getAllTrackerEvents
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista completa de eventos del sistema
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackerEvent'
+              example:
+                - id: 58
+                  trackerId: 2
+                  lat: -34.6042
+                  lon: -58.3825
+                  bat: 90
+                  body: "POSITION"
+                  createdAt: "2025-09-23T10:30:00.000Z"
+                - id: 56
+                  trackerId: 2
+                  lat: -34.6042
+                  lon: -58.3825
+                  bat: 90
+                  body: "POSITION"
+                  createdAt: "2025-09-23T10:25:00.000Z"
+                - id: 55
+                  trackerId: 1
+                  lat: -34.6039
+                  lon: -58.3819
+                  bat: null
+                  body: "POSITION"
+                  createdAt: "2025-09-23T10:05:00.000Z"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Usuario no autorizado"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Error al obtener todos los eventos"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtenido del endpoint de login
+
+  schemas:
+    UserCreate:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 32
+          description: Nombre de usuario
+          example: "Juan"
+        password:
+          type: string
+          minLength: 8
+          maxLength: 256
+          description: Contraseña del usuario
+          example: "Contraseña123"
+        image:
+          type: string
+          description: Nombre de la imagen del usuario para la URL (default si no se especifica)
+          default: "default"
+          example: "default"
+        # admin:
+        #   type: boolean
+        #   description: Define si el usuario tiene rol de administrador
+        #   example: false
+      description: Es probable que mas parametros sean requeridos para la versiona final de la app... por ejemplo admin
+
+    UserUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 32
+          description: Nombre de usuario
+          example: "Juan actualizado"
+        password:
+          type: string
+          minLength: 8
+          maxLength: 256
+          description: Nueva contraseña del usuario
+          example: "Nuevacontraseña123"
+        image:
+          type: string
+          description: Nombre de la imagen del usuario para la URL
+          example: "default"
+        admin:
+          type: boolean
+          description: Cambiar rol de administrador
+          example: true
+        timeout:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha hasta cuando el usuario está bloqueado temporalmente
+          example: null
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador unico del usuario
+          example: 2
+        username:
+          type: string
+          description: Nombre de usuario
+          example: "Juan"
+        image:
+          type: string
+          description: Nombre de la imagen del usuario para la URL
+          example: "default"
+        admin:
+          type: boolean
+          description: Indica si el usuario es administrador
+          example: false
+        active:
+          type: boolean
+          description: Indica si la cuenta esta activa
+          example: true
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha del ultimo inicio de sesión
+          example: "2025-10-04T12:55:40.000Z"
+        timeout:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha hasta cuando el usuario esta bloqueado temporalmente
+          example: null
+
+    TrackerCreate:
+      type: object
+      required:
+        - petName
+        - frequency
+        - lowBat
+      properties:
+        petName:
+          type: string
+          minLength: 1
+          maxLength: 32
+          description: Nombre de la mascota
+          example: "Toto"
+        model:
+          type: string
+          description: Modelo del dispositivo tracker
+          example: "verLoRa"
+        image:
+          type: string
+          description: Nombre de la imagen del tracker (opcional, default si no se especifica)
+          default: "default"
+          example: "perro1"
+        state:
+          type: boolean
+          description: Estado de emergencia actual del tracker
+          default: false
+          example: false
+        frequency:
+          type: integer
+          minimum: 1
+          maximum: 60
+          description: Intervalo en minutos para envio de mensajes
+          example: 30
+        emergencyFrequency:
+          type: integer
+          minimum: 1
+          maximum: 30
+          description: Intervalo en minutos para envio de mensajes en modo emergencia
+          default: 5
+          example: 5
+        lowBat:
+          type: integer
+          minimum: 20
+          maximum: 80
+          description: Umbral de bateria baja (%) para alertas
+          example: 40
+        enableGeofence:
+          type: boolean
+          description: Activa/desactiva zona segura (geofence)
+          default: true
+          example: true
+        geofenceLat:
+          type: number
+          minimum: -90
+          maximum: 90
+          description: Latitud del centro de la zona segura
+          example: -32.9442
+        geofenceLon:
+          type: number
+          minimum: -180
+          maximum: 180
+          description: Longitud del centro de la zona segura
+          example: -60.6505
+        geofenceRadius:
+          type: integer
+          minimum: 5
+          maximum: 250
+          description: Radio de la zona segura en metros
+          default: 25
+          example: 50
+        enableSoundAlert:
+          type: boolean
+          description: Activa/desactiva alertas sonoras
+          default: true
+          example: true
+
+    TrackerUpdate:
+      type: object
+      properties:
+        petName:
+          type: string
+          minLength: 1
+          maxLength: 32
+          description: Nombre de la mascota
+          example: "Toto actualizado"
+        model:
+          type: string
+          description: Modelo del dispositivo tracker
+          example: "verLoRa"
+        image:
+          type: string
+          description: Nombre de la imagen del tracker
+          example: "perro4"
+        state:
+          type: boolean
+          description: Estado del tracker
+          example: false
+        frequency:
+          type: integer
+          minimum: 1
+          maximum: 60
+          description: Intervalo en minutos para modo normal
+          example: 60
+        emergencyFrequency:
+          type: integer
+          minimum: 1
+          maximum: 30
+          description: Intervalo en minutos para modo emergencia
+          example: 10
+        lowBat:
+          type: integer
+          minimum: 20
+          maximum: 80
+          description: Umbral de bateria baja (%)
+          example: 40
+        enableGeofence:
+          type: boolean
+          description: Activa/desactiva zona segura
+          example: false
+        geofenceLat:
+          type: number
+          minimum: -90
+          maximum: 90
+          description: Latitud del centro de la zona segura
+          example: -32.9442
+        geofenceLon:
+          type: number
+          minimum: -180
+          maximum: 180
+          description: Longitud del centro de la zona segura
+          example: -60.6505
+        geofenceRadius:
+          type: integer
+          minimum: 5
+          maximum: 250
+          description: Radio de la zona segura en metros
+          example: 100
+        enableSoundAlert:
+          type: boolean
+          description: Activa/desactiva alertas sonoras
+          example: false
+        active:
+          type: boolean
+          description: Estado activo/inactivo del tracker dentro del sistema
+          example: true
+
+    TrackerResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador del tracker
+          example: 1
+        petName:
+          type: string
+          description: Nombre de la mascota
+          example: "Toto"
+        model:
+          type: string
+          description: Modelo del dispositivo tracker
+          example: "verLoRa"
+        image:
+          type: string
+          description: Nombre de la imagen del tracker
+          example: "perro3"
+        state:
+          type: boolean
+          description: Estado del tracker (encendido/apagado)
+          example: false
+        frequency:
+          type: integer
+          description: Intervalo en minutos para modo normal
+          example: 45
+        emergencyFrequency:
+          type: integer
+          description: Intervalo en minutos para modo emergencia
+          example: 10
+        lowBat:
+          type: integer
+          description: Umbral de bateria baja (%)
+          example: 40
+        enableGeofence:
+          type: boolean
+          description: Indica si la zona segura esta habilitada o no
+          example: true
+        geofenceLat:
+          type: number
+          description: Latitud del centro de la zona segura
+          example: -32.9442
+        geofenceLon:
+          type: number
+          description: Longitud del centro de la zona segura
+          example: -60.6505
+        geofenceRadius:
+          type: integer
+          description: Radio de la zona segura en metros
+          example: 50
+        enableSoundAlert:
+          type: boolean
+          description: Indica si la alerta sonora esta habilitada o no
+          example: true
+        active:
+          type: boolean
+          description: Indica si el tracker esta activo o no en el sismtema
+          example: true
+      
+    TrackerEventCreate:
+      type: object
+      required:
+        - lat
+        - lon
+        - eventDesc
+      properties:
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+          description: Latitud de la posicion del tracker
+          example: -34.6037
+        lon:
+          type: number
+          minimum: -180
+          maximum: 180
+          description: Longitud de la posicion del tracker
+          example: -58.3816
+        bat:
+          type: integer
+          minimum: 1
+          maximum: 100
+          nullable: true
+          description: Nivel de bateria del tracker
+          example: 79
+        eventDesc:
+          type: string
+          description: Descripcion del evento
+          example: "POSITION"
+
+    TrackerEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador del evento
+          example: 29
+        trackerId:
+          type: integer
+          description: ID del tracker asociado
+          example: 1
+        lat:
+          type: number
+          description: Latitud de la posicion
+          example: -34.6037
+        lon:
+          type: number
+          description: Longitud de la posicion
+          example: -58.3816
+        bat:
+          type: integer
+          nullable: true
+          description: Nivel de bateria
+          example: 89
+        eventDesc:
+          type: string
+          description: Descripcion del evento
+          example: "POSITION"
+        createdAt:
+          type: string
+          description: Fecha y hora de creacion del evento
+          example: "2025-10-07T12:45:32.000Z"
+          
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Mensaje de error descriptivo
+          example: "Error interno del servidor"
