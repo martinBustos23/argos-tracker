@@ -21,7 +21,7 @@ export default (UserController) => {
       res
         .cookie('authorization', token, {
           httpOnly: true, // la cookie solo puede ser obtenida por nuestro servidor
-          maxAge: 1000 * 60 * 60, // 1h
+          maxAge: 1000 * 60 * 60 * 24 * 90, // 90d
         })
         .redirect('dashboard');
     } catch (error) {
