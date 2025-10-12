@@ -20,6 +20,10 @@
 
           <form class="register-form" id="registerForm">
             <div class="register-form__div">
+              <button class="img-placeholder image-btn">
+                <i><i class="bi bi-person-fill "></i></i>
+              </button>
+
               <div class="form-group">
                 <label for="username">Usuario</label>
                 <input type="text" id="username" name="username" placeholder="Escribir usuario" required />
@@ -28,78 +32,99 @@
                 <label for="password">Contraseña</label>
                 <input type="password" id="password" name="password" placeholder="Escribir contraseña" required />
               </div>
+              <div class="form-group">
+                <label for="admin">Rol</label>
+                <select class="input-text" id="Rol">
+                  <option value="false">Usuario</option>
+                  <option value="true">Administrador</option>
+                </select>
+              </div>
               <button type="submit" class="confirm-btn">Confirmar</button>
             </div>
           </form>
 
 
         </div>
-        <% } %>
+      <% } %>
 
-          <div class="user-container">
-            <% users.forEach(user=> { %>
-              <div class="user-container__div">
-                <div class="img-placeholder">
+      <div class="user-container">
+        <% users.forEach(user=> { %>
+          <div class="user-container__div">
+            <div class="img-placeholder">
+              <i><i class="bi bi-person-fill "></i></i>
+            </div>
+            <div class="user-info">
+              <div>
+                <p>
+                  <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
+                </p>
+                <span>Activo: <%= user.status %></span>
+
+              </div>
+
+              <p class="last">Última conexión: <%= user.lastLogin %>
+              </p>
+            </div>
+            <button class="open-edit-btn" data-id="<%= user.id %>">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+          </div>
+          <% }) %>
+      </div>
+
+      <div id="edit-user-modal" class="edit-user-modal">
+        <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
+        <div class="edit-user">
+          <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
+
+          <h2 id="edit-username-title" class="modal-title">Editar usuario </h2>
+          <form class="edit-user__form" id="editForm">
+
+            <div class="edit-user__div">
+              <div class="edit-option-img">
+                <div class="img-placeholder img-edit">
                   <i><i class="bi bi-person-fill "></i></i>
                 </div>
-                <div class="user-info">
-                  <div>
-                    <p>
-                      <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
-                    </p>
-                    <span>Status: <%= user.status %></span>
-
-                  </div>
-
-                  <p class="last">Última conexión: <%= user.lastLogin %>
-                  </p>
-                </div>
-                <button class="open-edit-btn" data-id="<%= user.id %>">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
               </div>
-              <% }) %>
-          </div>
-
-          <div id="edit-user-modal" class="edit-user-modal">
-            <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
-            <div class="edit-user">
-              <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
-
-              <h2 id="edit-username-title" class="modal-title">Editar usuario</h2>
-              <form class="edit-user__form" id="editForm">
-
-                <div class="edit-user__div">
-                  <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="text" id="username_input" name="username" />
-                  </div>
-                  <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" placeholder="Editar contraseña" />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="rol">Rol</label>
-                    <select id="rol" name="rol">
-                      <option value="" selected></option>
-                      <option value="0">Usuario</option>
-                      <option value="1">Admin</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="confirm-btn">Confirmar</button>
+              
+              <div class="edit-option">
+                <div class="form-group">
+                  <label for="username">Usuario</label>
+                  <input type="text" id="username_edit" name="username" />
                 </div>
-
-              </form>
-              <!-- formulario eliminar usuario en base uid -->
-              <form class="delete-user-form" id="deleteForm">
-                <h2 id="delete-username-title" class="modal-title delete">Eliminar usuario</h2>
-                <button class="delete-btn" type="submit">Eliminar</button>
-              </form>
-
+                <div class="form-group">
+                  <label for="password">Contraseña</label>
+                  <input type="password" id="password_edit" name="password" placeholder="Editar contraseña" />
+                </div>
+                <div class="form-group">
+                  <label for="rol">Rol</label>
+                  <select id="rol" name="rol">
+                    <option value="" disabled selected>Selecciona un rol</option>
+                    <option value="0">Usuario</option>
+                    <option value="1">Administrador</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="status">Estado de cuenta</label>
+                  <select id="status" name="status">
+                    <option id="message" value="" disabled selected>Selecciona un rol</option>
+                    <option value="active">Habilitar</option>
+                    <option value="blocked">Bloquear</option>
+                  </select>
+                </div>
+              </div>
             </div>
+            
+            <button type="submit" class="confirm-btn">Confirmar</button>
+          </form>
+          <!-- formulario eliminar usuario en base uid -->
+          <form class="delete-user-form" id="deleteForm">
+            <button class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+          </form>
 
-          </div>
+        </div>
+
+      </div>
 
     </div>
 </div>
@@ -133,7 +158,7 @@
     transition: all 0.25s ease;
   }
 
-  .register-container.active i {
+  .register-container.active .register-modal__btn i {
     rotate: -180deg;
   }
 
@@ -154,7 +179,15 @@
     flex-direction: column;
     justify-content: center;
     width: 90%;
-    padding: .5rem 0 2rem;
+    padding: 1rem 0;
+  }
+
+  .register-form__div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
 
   .form-title__h2 {
@@ -165,11 +198,10 @@
     border-bottom: 1px solid #691c32;
   }
 
-
   .form-group {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    width: 100%;
   }
 
   .form-group label {
@@ -180,7 +212,7 @@
   }
 
   .form-group input {
-    padding: 0.25rem;
+    padding: 0.25rem 1rem;
 
     border: 1px solid #ced4da;
     border-radius: 10px;
@@ -193,16 +225,15 @@
     box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
   }
 
-  .confirm-btn {
-    width: 50%;
-    max-height: 3rem;
 
-    margin: 1rem 25% 0;
+  .confirm-btn {
+    width: 25%;
+    margin: 1rem 0;
     padding: .5rem 2rem;
 
     font-weight: 400;
 
-    background-color: #691c32;
+    background-color: #451321;
     color: white;
 
     border: none;
@@ -214,7 +245,7 @@
   }
 
   .confirm-btn:hover {
-    background-color: #451321;
+    background-color: #691c32;
   }
 
   /* -----tabla de usuarios----- */
@@ -324,6 +355,15 @@
     background-color: rgba(105, 28, 50, 0.3);
   }
 
+  .image-btn {
+    justify-self: center;
+    margin: 0;
+    padding-bottom: 15px;
+    font-size: 6rem;
+    width:  7rem;
+    height: 7rem;
+  }
+
   /* -----modal de editar usuario----- */
 
   .edit-user-modal {
@@ -331,7 +371,7 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    z-index: 1000;
+    z-index: 500;
     left: 0;
     top: 0;
 
@@ -346,24 +386,54 @@
     flex-direction: column;
     position: relative;
 
-    width: 35%;
+    min-width: 50%;
 
-    padding: 2rem 2rem 1rem;
+    padding: 1rem;
 
     background-color: white;
     color: #451321;
 
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
   }
 
-  .edit-user__div {
+  .edit-user__form {
     display: flex;
     flex-direction: column;
+    align-items: center;
+  }
+  .edit-user__div {
+    display: flex;
+    width: 100%;
+    padding: 1rem 0;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
   .edit-user__div button {
     align-self: flex-end;
+  }
+
+  .edit-option-img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .img-edit{
+    color: black;
+    padding-bottom: 15px;
+    font-size: 8rem;
+    width:  9rem;
+    height: 9rem;
+  }
+  
+  .edit-option{
+    width: 80%;
+    padding: 1rem 3rem 1rem 2rem;
+    margin: auto;
+    border-left: 1px solid #451321;
   }
 
   .modal-title {
@@ -391,8 +461,8 @@
 
   .cerrar {
     position: absolute;
-    top: 10px;
-    right: 25px;
+    top: 15px;
+    right: 30px;
 
     font-size: 1.5rem;
 
@@ -402,12 +472,9 @@
   }
 
   .delete-user-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 2rem 0 1rem;
-    border-top: 1px solid #451321;
-    text-align: center;
+    position: absolute;
+    top: 75px;
+    right: 25px;
   }
 
   .modal-title.delete {
@@ -415,16 +482,20 @@
   }
 
   .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     align-self: center;
-
-    width: 50%;
+    font-size: 1rem;
+    width: 35px;
+    height: 35px;
 
     padding: .5rem;
 
     background-color: #451321;
     color: white;
 
-    border-radius: 10px;
+    border-radius: 50%;
     border: none;
 
     cursor: pointer;
@@ -438,6 +509,7 @@
 </style>
 
 <script>
+  const users = JSON.parse('<%- JSON.stringify(users) %>');
   const registerBtn = document.getElementById("registerBtn");
   const registerContainer = document.getElementById("registerContainer");
 
@@ -464,14 +536,30 @@
       const result = await response.json();
 
       if (response.ok) {
-        alert("Usuario creado correctamente");
+        Swal.fire({
+          title: "¡Usuario creado!",
+          text: "Tu usuario ha sido creado con exito.",
+          confirmButtonColor: "#451321",
+          icon: "success"
+        }).then( () => {
         location.reload();
+        });
       } else {
-        alert("Error: " + result.error);
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: result.error,
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
       }
     } catch (error) {
       console.log("Error al crear usuario", error);
-      alert("Error al crear usuario");
+      Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: "Error al crear usuario.",
+          confirmButtonColor: "#451321",
+          icon: "error"
+      });
     }
   });
 
@@ -483,8 +571,20 @@
     const payload = {};
     if (editForm.username.value) payload.username = editForm.username.value;
     if (editForm.password.value) payload.password = editForm.password.value;
+    // add image
     if (editForm.rol.value) payload.admin = editForm.rol.value;
+    if (editForm.status.value) payload.status = editForm.status.value;
 
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas modificar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
     try {
       const response = await fetch(editForm.action, {
         method: "PUT",
@@ -495,14 +595,32 @@
       const result = await response.json();
 
       if (response.ok) {
-        alert("Usuario modificado exitosamente");
+          Swal.fire({
+            title: "¡Usuario modificado!",
+            text: "Tu usuario ha sido modificado con exito.",
+            confirmButtonColor: "#451321",
+            icon: "success"
+          }).then( () => {
         location.reload();
+          });
       } else {
-        alert("Error al modificar usuario: " + result.error);
+          Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: result.error,
+            confirmButtonColor: "#451321",
+            icon: "error"
+          });
       }
     } catch (error) {
       console.error("Error al modificar usuario:", error);
-      alert("Error al modificar usuario");
+        Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: "Error al modificar el perfil.",
+            confirmButtonColor: "#451321",
+            icon: "error"
+        });
+      }
+      
     }
   });
 
@@ -510,21 +628,46 @@
   deleteForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas eliminar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
 
+    if (isConfirmed) {
     try {
       const response = await fetch(deleteForm.action, { method: "DELETE" });
       const result = await response.json();
 
       if (response.ok) {
-        alert("Usuario eliminado correctamente");
+          Swal.fire({
+            title: "Usuario eliminado",
+            text: "Tu usuario ha sido eliminado con exito.",
+            confirmButtonColor: "#451321",
+            icon: "success"
+          }).then( () => {
         location.reload();
+          });   
       } else {
-        alert("Error al eliminar usuario: " + result.error);
+          Swal.fire({
+              title: "¡Ocurrio un error!",
+              text: "Error al eliminar el perfil.",
+              confirmButtonColor: "#451321",
+              icon: "error"
+          });
       }
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
-      alert("Error al eliminar usuario");
+        Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: "Error al modificar el perfil.",
+            confirmButtonColor: "#451321",
+            icon: "error"
+        });
+      }
     }
   });
 
@@ -533,9 +676,34 @@
   document.querySelectorAll(".open-edit-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
+      const user = users.find(user => user.id == id);
       document.getElementById("edit-user-modal").style.display = "flex";
-      // document.getElementById("edit-username-title").textContent = "Editar usuario: " + username;
-      // document.getElementById("username_input").placeholder = username;
+      document.getElementById("edit-username-title").textContent = "Editar usuario: " + user.username;
+      document.getElementById("username_edit").placeholder = user.username;
+      document.getElementById("password_edit").placeholder = "Contraseña";
+
+      const rolSelect = document.getElementById("rol");
+      rolSelect.value = user.admin ? "1" : "0"; 
+
+      let statusMessage;
+      switch (user.status) {
+        case 'active':
+          statusMessage = "Usuario habilitado";
+          break;
+        case 'disabled':
+          statusMessage = "Usuario deshabilitado";
+          break;
+        case 'blocked':
+          statusMessage = "Usuario bloqueado";
+          break;
+        case 'pwd_change':
+          statusMessage = "Usuario debe cambiar la contraseña";
+          break;
+        default:
+          statusMessage = "Estado desconocido";
+      }
+      document.getElementById("message").textContent = statusMessage; 
+
       document.querySelector(".edit-user__form").action = "/api/users/" + id;
       document.querySelector(".delete-user-form").action = "/api/users/" + id;
     });
@@ -545,6 +713,7 @@
   document.getElementById("close-modal").addEventListener("click", () => {
     document.getElementById("edit-user-modal").style.display = "none";
   })
+
 
 </script>
 

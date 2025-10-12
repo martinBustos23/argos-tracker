@@ -221,8 +221,6 @@
         </div>
 
         <div id="tab-log" class="tab-log tab-content">
-          <div class="tab-log__nav">
-            <div class="tab-log__buscador">
               <div class="filter-panel">
                 <select id="timestampFilter" class="filter-panel__option">
                   <option value="0" selected>Historial completo</option>
@@ -237,12 +235,8 @@
                   <option value="2">Bateria baja</option>
                 </select>
                 <button id="filtrar" class="filter-panel__button">Filtrar</button>
-                <input type="text" name="" id="" placeholder="Buscar...">
-                <button><i class="bi bi-search"></i></button>
+                <button id="download-button"><i class="bi bi-download" ></i></button>
               </div>
-            </div>
-            <button><i class="bi bi-download" id="download-button"></i></button>
-          </div>
           <table class="log-container__table">
             <thead>
               <tr>
@@ -304,7 +298,6 @@
     display: none;
     flex-direction: column;
     flex: 1;
-    align-items: center;
     width: 100%;
     background-color: rgba(170, 170, 170, 0.2);
   }
@@ -313,41 +306,7 @@
     display: flex;
   }
 
-  .tab-log__nav {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    padding: 1rem 2rem;
-    justify-content: space-between;
-    border: 1px solid #aaa;
-  }
 
-  .tab-log__nav button {
-    height: 2rem;
-    width: 2rem;
-    margin-left: .5rem;
-    border-radius: 50%;
-    border: none;
-    transition: all .25s ease;
-  }
-
-  .tab-log__nav button:hover {
-    background-color: rgba(69, 19, 33, 0.15);
-  }
-
-  .tab-log__buscador input {
-    width: 250px;
-    height: 2rem;
-    padding: 0rem 1rem;
-    border-radius: 15px;
-    border: 1px solid #aaa;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  .tab-log__buscador input:focus {
-    border: none;
-  }
 
   .log-container__table {
     width: 100%;
@@ -446,10 +405,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    width: 90%;
     height: 100%;
     margin: .15rem 0rem;
-    padding: 0rem 1rem;
+    padding: 0rem 2rem;
     border-radius: 4px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
     background-color: white;
@@ -562,13 +521,14 @@
   }
 
   #geo-map {
-    height: 45vh;
+    min-height: 45vh;
+    height: 100%;
     width: 85%;
-    margin: auto;
+    margin: 1rem auto;
     border-radius: 4px;
     border: 1px solid #aaa;
     transition: all .5s ease-in;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); 
   }
 
   #geo-map:hover {
@@ -608,10 +568,7 @@
     width: 100%;
     flex: 1;
     margin: .5rem 0rem;
-    padding: 0rem 1rem;
     border-radius: 4px;
-
-
     color: #451321;
   }
 
@@ -695,7 +652,7 @@
   }
 
   .cargar-tracker-btn {
-    width: calc(100% + 2rem);
+    width: calc(100% + 4rem);
     padding: 1rem 1.5rem;
     font-size: 1.25rem;
     font-weight: 500;
@@ -713,10 +670,11 @@
 
   /*  */
   #map {
-    height: 50vh;
+    min-height: 50vh;
+    height: 100%;
     width: 70%;
     border-radius: 4px;
-    margin: .5rem 0rem;
+    margin: .5rem 0rem 1rem;
     border: 1px solid #aaa;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
     transition: all .5s ease-in;

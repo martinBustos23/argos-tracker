@@ -14,21 +14,21 @@
 
       <div class="profile-info">
         <p><strong>Usuario:</strong> <%= user.username %></p>
-        <p><strong>Rol:</strong> <%= user.admin %></p>
+        <p><strong>Rol:</strong><%= user.admin ? " Administrador" : " Usuario" %></p>
         <p><strong>Última conexión:</strong> <%= user.lastLogin %></p>
       </div>
 
       <div class="edit-profile">
         <h2 class="form-title__h2">Editar Perfil</h2>
 
-        <form class="edit-form" id="editProfileForm" action="/api/profile/<%= user.id %>">
+        <form class="edit-form" id="editProfileForm" action="/api/users/<%= user.id %>">
           <div class="form-group">
-            <label for="username">Nuevo usuario</label>
+            <label for="username">Usuario</label>
             <input type="text" id="username" name="username" placeholder="<%= user.username %>" />
           </div>
 
           <div class="form-group">
-            <label for="password">Nueva contraseña</label>
+            <label for="password">Contraseña</label>
             <input type="password" id="password" name="password" placeholder="••••••••" />
           </div>
 
@@ -36,8 +36,9 @@
         </form>
       </div>
 
-
-      <button class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+      <form id="deleteProfileForm" action="/api/users/<%= user.id %>">
+        <button id="deleteProfileForm" class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+      </form>
 
     </div>
   </div>
@@ -55,38 +56,60 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    background: white;
+    background: #691c32;
+    color: white;
     position: relative;
-    padding: 1rem;
     margin-bottom: 1.5rem;
     border-radius: 10px;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    overflow: hidden;
   }
 
   .img-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: white;
+    color: black;
+    margin-top: 1rem;
     width: 5rem;
     height: 5rem;
-    font-size: 3rem;
+    font-size: 4rem;
+    padding-bottom: 5px;
     border-radius: 50%;
-    border: 1px solid black;
+    border: 1px solid white;
   }
 
   .profile-info p {
     margin: 0;
   }
 
-  .edit-profile, .delete-profile {
+  .edit-profile {
+    background-color: white;
+    color: #451321;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .edit-form{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     background: white;
     padding: 1rem;
     margin: 0;
+    gap: .5rem;
     height: 100%;
     border-radius: 10px;
     box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .edit-form input{
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
   }
 
   .form-title__h2 {
@@ -102,32 +125,36 @@
     gap: 20px
   }
 
-  .delete-profile .form-title__h2.delete {
-    border: none;
-    color: #691c32;
-  }
-
-  .delete-btn {
+  #deleteProfileForm{
     position: absolute;
-    right: 20px;
-    background: #451321;
-    color: white;
-    min-width: 1rem;
-    min-height: 1rem;
+    top: 10px;
+    right: 10px;
+  }
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+    color: #451321;
+    width: 35px;
+    height: 35px;
     font-size: 1rem;
     padding: .5rem;
-    border-radius: 1rem 1rem;
+    border-radius: 50%;
     border: none;
     cursor: pointer;
     transition: all 0.25s ease;
   }
 
   .delete-btn:hover {
-    background: #691c32;
+    background: rgba(255, 255, 255, 0.5);
   }
 
   .confirm-btn{
+    margin: 1rem 0 0;
     margin-left: 50%;
+    transform: translateX(-50%);
     background: #451321;
     color: white;
     font-size: 1rem;
@@ -136,6 +163,10 @@
     border: none;
     cursor: pointer;
     transition: all 0.25s ease;
+  }
+
+  .confirm-btn:hover {
+    background: #691c32;
   }
 </style>
 
@@ -148,45 +179,98 @@
     if (editForm.username.value) payload.username = editForm.username.value;
     if (editForm.password.value) payload.password = editForm.password.value;
 
-    try {
-      const response = await fetch('/api/users/<%= user.id %>', {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas modificar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        alert("Perfil actualizado correctamente");
-        location.reload();
-      } else {
-        alert("Error: " + result.error);
+    if (isConfirmed) {
+      try {
+        const response = await fetch(editForm.action, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          Swal.fire({
+            title: "¡Usuario modificado!",
+            text: "Tu usuario ha sido modificado con exito.",
+            confirmButtonColor: "#451321",
+            icon: "success"
+          }).then( () => {
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: result.error,
+            confirmButtonColor: "#451321",
+            icon: "error"
+          });
+        }
+      } catch (err) {
+        console.error("Error al modificar perfil:", err);
+        Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: "Error al modificar el perfil.",
+            confirmButtonColor: "#451321",
+            icon: "error"
+        });
       }
-    } catch (err) {
-      console.error("Error al actualizar perfil:", err);
-      alert("Error al actualizar perfil");
     }
   });
 
   const deleteForm = document.getElementById("deleteProfileForm");
   deleteForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.")) return;
 
-    try {
-      const response = await fetch('/api/users/<%= user.id %>', { method: "DELETE" });
-      const result = await response.json();
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas eliminar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
 
-      if (response.ok) {
-        alert("Cuenta eliminada correctamente");
-        window.location.href = "/logout"; // o redirigir donde corresponda
-      } else {
-        alert("Error al eliminar cuenta: " + result.error);
+    if (isConfirmed) {
+      try {
+        const response = await fetch(deleteForm.action, { method: "DELETE" });
+        const result = await response.json();
+  
+        if (response.ok) {
+          Swal.fire({
+            title: "Usuario eliminado",
+            text: "Tu usuario ha sido eliminado con exito.",
+            confirmButtonColor: "#451321",
+            icon: "success"
+          }).then( () => {
+            window.location.href = "/logout"; // o redirigir donde corresponda
+          });
+        } else {
+          Swal.fire({
+              title: "¡Ocurrio un error!",
+              text: "Error al eliminar el perfil.",
+              confirmButtonColor: "#451321",
+              icon: "error"
+          });
+        }
+      } catch (err) {
+        console.error("Error al eliminar cuenta:", err);
+        Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: "Error al modificar el perfil.",
+            confirmButtonColor: "#451321",
+            icon: "error"
+        });
       }
-    } catch (err) {
-      console.error("Error al eliminar cuenta:", err);
-      alert("Error al eliminar cuenta");
     }
   });
 </script>

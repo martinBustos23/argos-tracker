@@ -55,6 +55,13 @@
       <div class="log-container">
         <h2>Últimos datos recibidos</h2>
         <div class="filter-panel">
+          <!-- <label for="disp" class="filter-panel__option">
+            <input type="number" name="disp" id="disp" min="1" placeholder="Todos los dispositivos" value="0">
+          </label> -->
+          <select id="disp" class="filter-panel__option">
+            <option value="0" disabled selected>Seleccionar dispositivo</option>
+            <option value="0">Todos los dispositivos</option>
+          </select>
           <select id="timestampFilter" class="filter-panel__option">
             <option value="0" selected>Historial completo</option>
             <option value="1">Ultima hora</option>
@@ -62,16 +69,13 @@
             <option value="3">Ultimos 7 dias</option>
             <option value="4">Ultimos 30 dias</option>
           </select>
-          <label for="disp" class="filter-panel__option">
-            <input type="number" name="disp" id="disp" min="1" placeholder="Todos los dispositivos" value="0">
-          </label>
           <select id="eventFilter" class="filter-panel__option">
             <option value="0" selected>Todos los eventos</option>
             <option value="1">Posicion</option>
             <option value="2">Bateria baja</option>
           </select>
           <button id="filtrar" class="filter-panel__button">Filtrar</button>
-          <button><i class="bi bi-download" id="download-button"></i></button>
+          <button id="download-button"><i class="bi bi-download" ></i></button>
         </div>
         <table class="log-container__table">
           <thead>
@@ -166,7 +170,7 @@
     width: 30%;
     background-color: white;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    margin: 0rem 1rem .5rem;
+    margin: 0rem .5rem .5rem 1rem;
     border-radius: 5px;
   }
 
@@ -192,7 +196,7 @@
     width: 80%;
     height: calc(90vh - .5rem);
     border-radius: 10px;
-
+    margin-right: 1rem;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
     border: 1px solid #aaa;
     transition: all 0.25s ease-out;
@@ -465,6 +469,18 @@
     updateLogs(filteredEvents);
   });
 
+  // ............
+
+  const trackerSelection = document.getElementById("disp")
+  
+  trackers.forEach(tracker => {
+    const option = document.createElement('option');
+    option.value = tracker.id;
+    option.textContent = tracker.petName;
+
+    trackerSelection.appendChild(option);
+  });
+  
   const button = document.querySelector("#filtrar");
   button.addEventListener("click", (event) => {
     const filteredEvents = filterEvents(events);
