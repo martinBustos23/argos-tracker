@@ -34,7 +34,7 @@ import {
   createSystemLogRouter,
 } from './routers/logRouter.js';
 
-import { __dirname, Exception } from './utils.js';
+import { __dirname, deletePasswordMiddleware, Exception } from './utils.js';
 
 export default async function createApp(db, webSocketclients) {
   const app = express();
@@ -91,10 +91,8 @@ export default async function createApp(db, webSocketclients) {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.static(path.join(__dirname, '..', 'public')));
   app.use(cookieParser());
-
-  // app.get('/', (req, res) => {
-  //   res.json({ message: 'Bienvenido ArgosTracker App' });
-  // });
+  // middleware para eliminar password de respuestas de api users
+  app.use(deletePasswordMiddleware);
 
   app.use('/', authRouter);
   app.use('/dashboard', dashboardRouter);

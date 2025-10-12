@@ -59,6 +59,15 @@ export const isAdmin = (UserController) => {
   };
 };
 
+export function deletePasswordMiddleware(req, res, next) {
+  const originalJson = res.json;
+  res.json = function (body) {
+    if (body.password) delete body.password;
+    originalJson.call(this, body);
+  }
+  next();
+} 
+
 export const getUserIdFromToken = (token) => {
   let id;
   jwt.verify(token, config.JWT_KEY, (error, credentials) => {
