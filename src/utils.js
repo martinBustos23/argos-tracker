@@ -19,19 +19,18 @@ export const authToken = async (req, res, next, userController) => {
     
     if (!token && req.body.username && req.body.password) {
       const user = await userController.login(req.body);
-      if (user) {
-        req.id = user.id;
-        next();
-      }
-      return res.status(401).json({ error: 'Usuario no autenticado' });
+      if (!user)
+        return res.status(401).json({ error: 'Usuario no autenticado' });
+      req.id = user.id;
     }
 
-    jwt.verify(token, config.JWT_KEY, (error, credentials) => {
-      if (error) return res.status(403).json({ error: 'Usuario no autorizado' });
-      req.id = credentials.id;
-      next();
-    });
+    if (token)
+      jwt.verify(token, config.JWT_KEY, (error, credentials) => {
+        if (error) return res.status(403).json({ error: 'Usuario no autorizado', nose: 'hola' });
+        req.id = credentials.id;
+      });
 
+    next();
   } catch (error){
     next(error);
   }
