@@ -1171,7 +1171,7 @@
 
     try {
       const response = await fetch(`/api/trackers/${tracker.id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });

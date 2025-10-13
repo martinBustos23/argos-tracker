@@ -35,7 +35,7 @@ export default function createTrackerRouter(trackerController, userController) {
     }
   });
 
-  router.put('/trackers/:id', isAdmin(userController), async (req, res, next) => {
+  router.patch('/trackers/:id', isAdmin(userController), async (req, res, next) => {
     try {
       const updatedTracker = await trackerController.update(req.params.id, req.body);
 
