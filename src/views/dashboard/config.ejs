@@ -236,6 +236,10 @@
         <div class="log-container" id="tracker">
           <h2>Registro de auditoría de dispositivos</h2>
           <div class="filter-panel">
+            <select id="sourceFilter" class="filter-panel__option">
+              <option value="0" disabled selected>Dispositivo</option>
+              <option value="0">Todos </option>
+            </select>
             <select id="timestampFilter" class="filter-panel__option">
               <option value="0" selected>Historial completo</option>
               <option value="1">Ultima hora</option>
@@ -249,9 +253,9 @@
               <option value="2">Error</option>
               <option value="3">Warning</option>
             </select>
-            <label for="disp" class="filter-panel__option">
+            <!-- <label for="disp" class="filter-panel__option">
               <input type="number" name="disp" id="sourceFilter" min="1" placeholder="Todos los dispositivos" value="0">
-            </label>
+            </label> -->
             <select id="actionFilter" class="filter-panel__option">
               <option value="0" selected>Todos las acciones</option>
               <option value="1">Link</option>
@@ -261,7 +265,7 @@
               <option value="5">Create</option>
             </select>
             <button id="filtrar" class="filter-panel__button">Filtrar</button>
-            <button><i class="bi bi-download" id="download-button"></i></button>
+            <button id="download-button"><i class="bi bi-download" ></i></button>
           </div>
           <table class="log-container__table">
             <thead>
@@ -282,6 +286,10 @@
         <div class="log-container" id="user">
           <h2>Registro de auditoría de usuarios</h2>
           <div class="filter-panel">
+            <select id="sourceFilter" class="filter-panel__option">
+              <option value="0" disabled selected>Usuario</option>
+              <option value="0">Todos</option>
+            </select>
             <select id="timestampFilter" class="filter-panel__option">
               <option value="0" selected>Historial completo</option>
               <option value="1">Ultima hora</option>
@@ -295,9 +303,9 @@
               <option value="2">Error</option>
               <option value="3">Warning</option>
             </select>
-            <label for="uid" class="filter-panel__option">
+            <!-- <label for="uid" class="filter-panel__option">
               <input type="number" name="uid" id="sourceFilter" min="1" placeholder="Todos los usuarios" value="0">
-            </label>
+            </label> -->
             <select id="actionFilter" class="filter-panel__option">
               <option value="0" selected>Todos las acciones</option>
               <option value="1">Login</option>
@@ -308,7 +316,7 @@
               <option value="6">Disable</option>
             </select>
             <button id="filtrar" class="filter-panel__button">Filtrar</button>
-            <button><i class="bi bi-download" id="download-button"></i></button>
+            <button id="download-button"><i class="bi bi-download" ></i></button>
           </div>
           <table class="log-container__table">
             <thead>
@@ -326,7 +334,7 @@
           </table>
         </div>
 
-        <div class="log-container" id="ayuda" style="display:none;">
+        <div class="log-container" id="ayuda">
           <h2>Ayudin</h2>
           <div style="width:60%; margin:auto; text-align: center;">
             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"> Ir a la pagina web de
@@ -494,6 +502,12 @@
       sections.forEach(section => section.style.display = "none");
       const target = document.getElementById(opt.dataset.target);
       opt.classList.add("active");
+      console.log(target);
+      if (target.id == "configuracion" || target.id == "ayuda"){
+        target.style.display = "block";
+        return;
+      }
+
       const response = await fetch(`/api/${target.id}Logs?` + new URLSearchParams({n: 200}));
       logs = await response.json();
       filteredLogs = logs;
@@ -501,6 +515,7 @@
       target.style.display = "block";
     });
   });
+
 
   const buttons = document.querySelectorAll("#filtrar");
   buttons.forEach(button => 
@@ -556,6 +571,10 @@
       const activeSection = document.querySelector(".active");
       const activeTable = document.querySelector(`#${activeSection.dataset.target}`);
       const tableContent = activeTable.querySelectorAll("#log-row");
+
+      const option = document.createElement('option');
+      const userSelection = document.getElementById("disp")
+
       if (tableContent)
         tableContent.forEach(row => row.remove());
       
@@ -590,6 +609,12 @@
         logElement.appendChild(column);
 
         activeTable.querySelector("tbody").appendChild(logElement);
+
+      
+        option.value = log.source;
+        option.textContent = log.source;
+        userSelection.appendChild(option);
+
 
         resolve(true);
       }

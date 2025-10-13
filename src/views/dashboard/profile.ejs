@@ -2,56 +2,80 @@
 <%- include('../layouts/sidebar', {user: user}); %>
 
 <div class="main-content">
-
   <%- include('../layouts/navbar', { title: 'Perfil de Usuario', subtitle: 'Editar datos de tu cuenta' }); %>
 
-  <div class="main-content__body">
+  <div class="user-dashboard">
 
-    <div class="profile-container">
-      <div class="img-placeholder">
+    <section  class="profile-card help-box" 
+          data-message="Esta es tu tarjeta de usuario: acá podes ver tu información y editar tu perfil" 
+          data-position="right">
+      
+      <div class="profile-card__img help-box" 
+            data-message="Esta es tu imagen de perfil!" 
+            data-position="top">
         <i class="bi bi-person-fill"></i>
       </div>
 
-      <div class="profile-info">
+      <div class="profile-card__info help-box" 
+            data-message="Estos son tus datos" 
+            data-position="left">
         <p><strong>Usuario:</strong> <%= user.username %></p>
         <p><strong>Rol:</strong><%= user.admin ? " Administrador" : " Usuario" %></p>
         <p><strong>Última conexión:</strong> <%= user.lastLogin %></p>
       </div>
 
-      <div class="edit-profile">
-        <h2 class="form-title__h2">Editar Perfil</h2>
 
-        <form class="edit-form" id="editProfileForm" action="/api/users/<%= user.id %>">
-          <div class="form-group">
+      <div class="profile-edit help-box"
+            data-message="En esta sección podés actualizar tus datos personales"
+            data-position="right">
+
+        <h2 class="profile-edit__title">Editar Perfil</h2>
+
+        <form class="profile-edit__form" id="editProfileForm" action="/api/users/<%= user.id %>">
+          
+          <div class="form-group help-box" 
+                data-message="Acá podes cambier el nombre de tu usuario" 
+                data-position="left">
             <label for="username">Usuario</label>
             <input type="text" id="username" name="username" placeholder="<%= user.username %>" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group help-box" 
+                data-message="Acá podes cambiar tu contraseña. Debe tener al menos 8 caracteres, una mayúscula, una miníscula y un número" 
+                data-position="left">
             <label for="password">Contraseña</label>
             <input type="password" id="password" name="password" placeholder="••••••••" />
           </div>
 
-          <button type="submit" class="confirm-btn">Guardar cambios</button>
+          <button class="confirm-btn help-box" type="submit" 
+                    data-message="Presioná este botón para guardar tus cambios"
+                    data-position="bottom">Guardar cambios</button>
         </form>
+
       </div>
 
-      <form id="deleteProfileForm" action="/api/users/<%= user.id %>">
-        <button id="deleteProfileForm" class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+      <form class="profile-delete help-box" id="deleteProfileForm" action="/api/users/<%= user.id %>"
+              data-message="Si querés eliminar tu cuenta, podés hacerlo acá. ¡Cuidado, esta acción no se puede deshacer!"
+              data-position="top">
+      <button class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
       </form>
 
-    </div>
+    </section >
   </div>
 </div>
 
 <style>
-  .main-content__body {
+  .user-dashboard {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: rgba(170, 170, 170, 0.2);
+    min-height: 90vh;
+    min-width: 100%;
   }
 
-  .profile-container {
+  .profile-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -65,7 +89,8 @@
     overflow: hidden;
   }
 
-  .img-placeholder {
+
+  .profile-card__img {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,18 +105,19 @@
     border: 1px solid white;
   }
 
-  .profile-info p {
+  .profile-card__info p {
     margin: 0;
   }
 
-  .edit-profile {
+  
+  .profile-edit {
     background-color: white;
     color: #451321;
     width: 100%;
     padding: 1rem;
   }
 
-  .edit-form{
+  .profile-edit__form{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -104,7 +130,7 @@
     box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
   }
 
-  .edit-form input{
+  .profile-edit__form input{
     outline: none;
     border: 1px solid #ddd;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
@@ -112,7 +138,7 @@
     padding: 0rem 1rem;
   }
 
-  .form-title__h2 {
+  .profile-edit__title {
     margin-bottom: .5rem;
     font-size: 1.3rem;
     border-bottom: 1px solid #691c32;
@@ -123,32 +149,6 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 20px
-  }
-
-  #deleteProfileForm{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-  .delete-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: white;
-    color: #451321;
-    width: 35px;
-    height: 35px;
-    font-size: 1rem;
-    padding: .5rem;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-
-  .delete-btn:hover {
-    background: rgba(255, 255, 255, 0.5);
   }
 
   .confirm-btn{
@@ -167,6 +167,33 @@
 
   .confirm-btn:hover {
     background: #691c32;
+  }
+
+
+  .profile-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #451321;
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+    padding: .5rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .delete-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
   }
 </style>
 

@@ -159,10 +159,11 @@
 
 <style>
     #geo-map {
-        height: 45vh;
+        min-height: 45vh;
+        height: 100%;
         width: 95%;
         border-radius: 4px;
-        margin: auto;
+        margin: 1rem;
         border: 1px solid #aaa;
         transition: all .5s ease-in;
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
@@ -254,7 +255,7 @@
         flex: 1;
         background-color: white;
         border-radius: 5px;
-        margin: .25rem 0;
+        margin: .25rem;
         padding: .5rem 1rem 0rem;
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
     }
@@ -412,8 +413,8 @@
         flex: 1;
         background-color: white;
         border-radius: 5px;
-        margin: .25rem .25rem .25rem 1rem;
-        padding: .5rem 1rem;
+        margin: .25rem;
+        padding: .5rem 1rem 0;
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
     }
 
@@ -440,7 +441,7 @@
 
     .option-geo input {
         width: 50%;
-        margin: 0rem 2rem;
+        margin: 0rem .5rem 0 1rem;
         align-self: center;
     }
 
@@ -617,14 +618,30 @@
             const result = await response.json();
 
             if (response.ok) {
-                alert("Dispositivo creado correctamente");
-
+                Swal.fire({
+                    title: "¡Dispositivo creado!",
+                    text: "Tu dispositivo ha sido vinculado con exito.",
+                    confirmButtonColor: "#451321",
+                    icon: "success"
+                }).then( () => {
+                    window.location.href = "/dashboard";
+                });
             } else {
-                alert("Error: " + result.error);
+                Swal.fire({
+                    title: "¡Ocurrio un error!",
+                    text: result.error,
+                    confirmButtonColor: "#451321",
+                    icon: "error"
+                });
             }
         } catch (error) {
             console.log("Error al crear dispositivo", error);
-            alert("Error al crear dispositivo");
+            Swal.fire({
+                title: "¡Ocurrio un error!",
+                text: "Error al crear dispositivo.",
+                confirmButtonColor: "#451321",
+                icon: "error"
+            });
         }
     });
 

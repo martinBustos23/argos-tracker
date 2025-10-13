@@ -227,7 +227,6 @@
 
 
   .confirm-btn {
-    width: 25%;
     margin: 1rem 0;
     padding: .5rem 2rem;
 
@@ -388,7 +387,7 @@
 
     min-width: 50%;
 
-    padding: 1rem;
+    padding: .5rem 1rem 0;
 
     background-color: white;
     color: #451321;
@@ -405,9 +404,9 @@
   .edit-user__div {
     display: flex;
     width: 100%;
-    padding: 1rem 0;
+    padding: .5rem 0 0;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
   }
 
@@ -423,6 +422,7 @@
   
   .img-edit{
     color: black;
+    margin: 0 2.5rem 0 1.5rem;
     padding-bottom: 15px;
     font-size: 8rem;
     width:  9rem;
@@ -430,9 +430,9 @@
   }
   
   .edit-option{
-    width: 80%;
-    padding: 1rem 3rem 1rem 2rem;
-    margin: auto;
+    width: 50%;
+    padding: .5rem 1rem;
+    margin: 0;
     border-left: 1px solid #451321;
   }
 
@@ -461,7 +461,7 @@
 
   .cerrar {
     position: absolute;
-    top: 15px;
+    top: 5px;
     right: 30px;
 
     font-size: 1.5rem;
@@ -473,7 +473,7 @@
 
   .delete-user-form {
     position: absolute;
-    top: 75px;
+    top: 60px;
     right: 25px;
   }
 
@@ -671,8 +671,6 @@
     }
   });
 
-
-
   document.querySelectorAll(".open-edit-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
@@ -708,7 +706,6 @@
       document.querySelector(".delete-user-form").action = "/api/users/" + id;
     });
   });
-
 
   document.getElementById("close-modal").addEventListener("click", () => {
     document.getElementById("edit-user-modal").style.display = "none";
