@@ -14,7 +14,7 @@ export default class SystemConfigDAO {
       path.join(__dirname, './config/systemConfig.json'),
       { encoding: 'utf-8' }
     );
-    return new SystemConfigDTO(JSON.parse(systemConfigString));
+    return JSON.parse(systemConfigString);
   }
 
   async update(configMods) {
@@ -24,6 +24,6 @@ export default class SystemConfigDAO {
       path.join(__dirname, './config/systemConfig.json'),
       JSON.stringify(systemConfig, null, 2)
     );
-    return new SystemConfigDTO(configMods);
+    return await this.get();
   }
 }

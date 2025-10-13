@@ -15,7 +15,7 @@ export default function createSystemConfigRouter(systemConfigController, userCon
     }
   });
 
-  router.put('/systemConfig', isAdmin(userController), async (req, res, next) => {
+  router.patch('/systemConfig', isAdmin(userController), async (req, res, next) => {
     try {
       const config = await systemConfigController.update(req.body);
 

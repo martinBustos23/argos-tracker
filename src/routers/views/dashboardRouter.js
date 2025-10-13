@@ -146,12 +146,13 @@ export default (
       }
 
       const user = await userController.find(id);
-
+      const config = await systemConfigController.get();
       res.render('./dashboard/config', {
         user,
         trackerLogs,
         userLogs,
         systemLogs,
+        config,
       });
     } catch (error) {
       res.status(500).send('Error al ingresar a configuracion' + error.message);

@@ -35,160 +35,71 @@
         <div class="log-container" id="configuracion" style="display: block;">
           <h2>Configuración del sistema</h2>
           <form id="configForm">
-            <table class="log-container__table">
-              <thead>
-                <tr>
-                  <th>Opción</th>
-                  <th>Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-
-
-                <tr>
-                  <td colspan="2"><strong>General</strong></td>
-                </tr>
-                <tr>
-                  <td>Idioma del sistema</td>
-                  <td>
-                    <select class="input-default" name="idioma">
-                      <option value="es">Español</option>
-                      <option value="en">Inglés</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Zona horaria</td>
-                  <td><input class="input-default" type="text" name="zonaHoraria" value="GMT-3"></td>
-                </tr>
-                <tr>
-                  <td>Formato de hora</td>
-                  <td>
-                    <select class="input-default" name="formatoHora">
-                      <option value="24h">24h</option>
-                      <option value="12h">12h</option>
-                    </select>
-                  </td>
-                </tr>
-
-
-                <tr>
-                  <td colspan="2"><strong>Dispositivos</strong></td>
-                </tr>
-                <tr>
-                  <td>Dispositivos conectados</td>
-                  <td><span id="dispositivosActivos">3 activos</span></td>
-                </tr>
-                <tr>
-                  <td>Ver dispositivos deshabilitados</td>
-                  <td><input type="checkbox" name="verDeshabilitados"></td>
-                </tr>
-                
-
-                <tr>
-                  <td colspan="2"><strong>Ubicación</strong></td>
-                </tr>
-                <tr>
-                  <td>Localidad/Zona</td>
-                  <td><input class="input-default" type="text" name="zona" placeholder="San lorenzo..."></td>
-                </tr>
-                <tr>
-                  <td>Geocerca (zoom)</td>
-                  <td><input class="input-default" type="number" name="geocerca" value="19"></td>
-                </tr>
-
-
-                <tr>
-                  <td colspan="2"><strong>Red y Conexión</strong></td>
-                </tr>
-                <tr>
-                  <td>Estado de conexión</td>
-                  <td><span id="estadoConexion">Online</span></td>
-                </tr>
-                <tr>
-                  <td>WiFi Local (Local)</td>
-                  <td>
-                    <input class="input-default" type="text" name="wifi" placeholder="Nombre de red">
-                    <input class="input-default" type="password" name="wifiClave" placeholder="Contraseña">
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Modo de red</td>
-                  <td>
-                    <select class="input-default" name="modoRed" id="modoRed">
-                      <option value="ap">Crear red local (AP)</option>
-                      <option value="passthrough">Usar red existente</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr id="redSecundaria">
-                  <td>WiFi (Passthrough)</td>
-                  <td>
-                    <input class="input-default" type="text" name="wifiSecundaria" placeholder="Nombre de red">
-                    <input class="input-default" type="password" name="wifiClaveSecundaria" placeholder="Contraseña">
-                  </td>
-                </tr>
-
-
-                <tr>
-                  <td colspan="2"><strong>Alertas</strong></td>
-                </tr>
-                <tr>
-                  <td>Activar alertas</td>
-                  <td><input type="checkbox" name="alertas" checked></td>
-                </tr>
-                <tr>
-                  <td>Alertas de sonido</td>
-                  <td><input type="checkbox" name="alertasSonido"></td>
-                </tr>
-                <tr>
-                  <td>Volumen de alerta</td>
-                  <td>
-                    <input type="range" name="volumen" min="0" max="100" value="50" 
-                          oninput="volumenValor.textContent=this.value+'%'">
-                    <span id="volumenValor">50%</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Duración alerta sonora</td>
-                  <td><input class="input-default" type="number" name="duracionSonido" value="5"> s</td>
-                </tr>
-
-
-                <tr>
-                  <td colspan="2"><strong>Seguridad</strong></td>
-                </tr>
-                <tr>
-                  <td>Contraseña administrador</td>
-                  <td><input class="input-default" type="password" name="adminPass"></td>
-                </tr>
-                <tr>
-                  <td>Expiración de sesión</td>
-                  <td><input class="input-default" type="number" name="expSesion" value="60"> min</td>
-                </tr>
-
-
-                <tr>
-                  <td colspan="2"><strong>Sistema</strong></td>
-                </tr>
-                <tr>
-                  <td>Espacio libre en disco</td>
-                  <td><span id="espacioDisco">2.5 GB</span></td>
-                </tr>
-                <tr>
-                  <td>Actualizar software</td>
-                  <td><button class="input-btn" type="button">Actualizar</button></td>
-                </tr>
-                <tr>
-                  <td>Respaldo configuración</td>
-                  <td><button class="input-btn" type="button">Generar</button></td>
-                </tr>
-
-              </tbody>
-            </table>
-
-            <button class="input-btn sumbit-btn" type="submit">Guardar configuración</button>
+            <fieldset id="general">
+              <legend>General</legend>
+              <div class="config-row">
+                <label for="idioma">Idioma del sistema</label>
+                <select class="input-default name="idioma" id="idioma" value="<%= config.general.language %>">
+                  <option value="es">Español</option>
+                  <option value="en">Inglés</option>
+                </select>
+              </div>
+              <div class="config-row">
+                <label for="zonaHoraria">Zona horaria</label>
+                <input class="input-default" type="text" name="zonaHoraria" id="zonaHoraria" value="<%= config.general.timezone %>">
+              </div>
+              <div class="config-row">
+                <label for="formatoHora">Formato de hora</label>
+                <select class="input-default" name="formatoHora" id="formatoHora" value="<%= config.general['12/24hs'] %>">
+                  <option value="24h">24h</option>
+                  <option value="12h">12h</option>
+                </select>
+              </div>
+            </fieldset>
+            <fieldset id="devices">
+              <legend>Dispositivos</legend>
+              <div class="config-row">
+                <label for="mostrarDeshabilitados">Mostrar disp. deshabilitados</label>
+                <input type="checkbox" name="mostrarDeshabilitados" id="mostrarDeshabilitados">
+              </div>
+            </fieldset>
+            <fieldset id="location">
+              <legend>Ubicación</legend>
+              <div class="config-row">
+                <label for="zona">Localidad</label>
+                <input type="text" class="input-default" name="zona" id="zona" placeholder="San Lorenzo" value="<%= config.location.zone %>">
+              </div>
+              <div class="config-row">
+                <label for="geocerca">Geocerca (zoom)</label>
+                <input type="number" class="input-default" name="geocerca" id="geocerca" value="<%= config.location.zoom %>">
+              </div>
+            </fieldset>
+            <fieldset id="network">
+              <legend>Red y Conexión</legend>
+              <div class="config-row">
+                <label for="wifi-ap__ssid">WiFi AP</label>
+                <div>
+                  <input type="text" name="wifi-ap__ssid" id="wifi-ap__ssid" class="input-default" placeholder="Nombre de red" value="<%= config.network['wifi-client__ssid'] %>">
+                  <input type="text" name="wifi-ap__pwd" id="wifi-ap__pwd" class="input-default" placeholder="Contraseña" value="<%= config.network['wifi-client__pwd'] %>">
+                </div>
+              </div>
+              <div class="config-row">
+                <label for="wifi-mode">Modo de red</label>
+                <select name="wifi-mode" id="wifi-mode" class="input-default" value="<%= config.network.mode %>">
+                  <option value="auto">Automatico</option>
+                  <option value="ap">Red local</option>
+                  <option value="client">Red existente</option>
+                </select>
+              </div>
+              <div class="config-row">
+                <label for="wifi-client__ssid">Wifi existente</label>
+                <div>
+                  <input type="text" name="wifi-client__ssid" id="wifi-client__ssid" class="input-default" placeholder="Nombre de red" value="<%= config.network['wifi-ap__ssid'] %>">
+                  <input type="text" name="wifi-client__pwd" id="wifi-client__pwd" class="input-default" placeholder="Contraseña" value="<%= config.network['wifi-ap__pwd'] %>">
+                </div>
+              </div>
+            </fieldset>
+            <button class="input-btn sumbit-btn" type="submit" id="config-btn">Guardar configuración</button>
           </form>
         </div>
 
@@ -492,8 +403,69 @@
 <script>
   const { jsPDF } = window.jspdf;
   window.applyPlugin(jsPDF);
+
+  const config = JSON.parse('<%- JSON.stringify(config) %>');
   const sidebarOptions = document.querySelectorAll(".config-sidebar__option");
   const sections = document.querySelectorAll(".log-container");
+
+  
+  const configForm = document.querySelector("#configForm");
+
+  configForm.mostrarDeshabilitados.checked = config.devices.showDisabled;
+  configForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const payload = {
+      general: {
+        language: configForm.idioma.value,
+        timezone: configForm.zonaHoraria.value,
+        "12/24hs": configForm.formatoHora.value,
+      },
+
+      devices: {
+        showDisabled: configForm.mostrarDeshabilitados.checked,
+      },
+
+      location: {
+        zone: configForm.zona.value,
+        zoom: configForm.geocerca.value,
+      },
+
+      network: {
+        "wifi-client__ssid": configForm["wifi-client__ssid"].value,
+        "wifi-client__pwd": configForm["wifi-client__pwd"].value,
+        mode: configForm["wifi-mode"].value,
+        "wifi-ap__ssid": configForm["wifi-ap__ssid"].value,
+        "wifi-ap__pwd": configForm["wifi-ap__pwd"].value,
+      }
+    };
+
+    for (const topKey in payload) {
+      const topValue = payload[topKey];
+
+      if (typeof topValue === 'object')
+        for (const bottomKey in topValue) {
+          const bottomValue = topValue[bottomKey];
+          if (bottomValue === "" || bottomValue === config[topKey][bottomKey])
+            delete payload[topKey][bottomKey];
+        }
+
+      if (Object.keys(topValue) == false)
+        delete payload[topKey];
+    }
+
+    if (Object.keys(payload) == false) return;
+
+    const response = await fetch('/api/systemConfig', {
+      method: 'PATCH',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+
+    if (response.ok)
+      window.location.reload();
+  });
+
   let logs;
   let filteredLogs;
   sidebarOptions.forEach(opt => {

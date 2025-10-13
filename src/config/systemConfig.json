@@ -1,21 +1,21 @@
 {
   "general": {
-    "lang": "Espanol",
-    "timezone": -3,
-    "12/24hs": false
+    "language": "en",
+    "timezone": "GMT-3",
+    "12/24hs": "12h"
   },
   "devices": {
-    "seeDisabled": true
+    "showDisabled": true
   },
   "location": {
-    "city": "San Lorenzo",
-    "zoom": 19
+    "zone": "Beltran",
+    "zoom": "17"
   },
   "network": {
-    "localWifiSSID": "SSID",
-    "localWifiPWD": "hash",
-    "mode": "AP",
-    "portableWifiSSID": "SSID",
-    "portableWifiPWD": "hash"
+    "wifi-client__ssid": "nombre",
+    "wifi-client__pwd": "password",
+    "mode": "ap",
+    "wifi-ap__ssid": "nombre",
+    "wifi-ap__pwd": "password"
   }
 }
