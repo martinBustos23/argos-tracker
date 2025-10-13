@@ -55,7 +55,7 @@ export default async function createApp(db, webSocketclients) {
   const trackerController = new TrackerController(trackerDao, trackerLogController);
 
   const trackerEventDao = new TrackerEventDAO(db);
-  const trackerEventController = new TrackerEventController(trackerEventDao);
+  const trackerEventController = new TrackerEventController(trackerEventDao, trackerController);
 
   const systemConfigDAO = new SystemConfigDAO(db);
   const systemConfigController = new SystemConfigController(systemConfigDAO, systemLogController);
@@ -64,7 +64,6 @@ export default async function createApp(db, webSocketclients) {
   const trackerRouter = createTrackerRouter(trackerController, userController);
   const trackerEventRouter = createTrackerEventRouter(
     trackerEventController,
-    trackerController,
     webSocketclients
   );
 
