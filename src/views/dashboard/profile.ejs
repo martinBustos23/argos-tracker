@@ -21,6 +21,20 @@
             data-position="left">
         <p><strong>Usuario:</strong> <%= user.username %></p>
         <p><strong>Rol:</strong><%= user.admin ? " Administrador" : " Usuario" %></p>
+        <p>
+          <strong>Estado:</strong>
+          <%
+            if (user.status === 'active') {
+              %> Cuenta activa <%
+            } else if (user.status === 'disabled') {
+              %> Cuenta deshabilitada <%
+            } else if (user.status === 'blocked') {
+              %> Cuenta bloqueada <%
+            } else if (user.status === 'pwd_change') {
+              %> Cambio de contraseña pendiente <%
+            }
+          %>
+        </p>
         <p><strong>Última conexión:</strong> <%= user.lastLogin %></p>
       </div>
 
