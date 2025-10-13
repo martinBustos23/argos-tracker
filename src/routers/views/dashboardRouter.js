@@ -1,5 +1,6 @@
 import express from 'express';
 import { authToken, getUserIdFromToken } from '../../utils.js';
+import systemConfig from '../../config/systemConfig.json' with { type: 'json' };
 
 export default (
   userController,
@@ -67,14 +68,14 @@ export default (
     try {
       const token = req.cookies.authorization;
       const id = getUserIdFromToken(token);
-      const trackers = await trackerController.getAllActive();
+      const trackers = await trackerController.getAll();
       const tracker = await trackerController.find(req.params.trackerId);
 
       let lastEvents = await trackerEventController.getAll();
       lastEvents = lastEvents.filter((event) => event.trackerId == tracker.id);
 
       const user = await userController.find(id);
-      res.render('./dashboard/devices', { user, trackers, tracker, lastEvents });
+      res.render('./dashboard/devices', { user, trackers, tracker, lastEvents, systemConfig });
     } catch (error) {
       res.status(500).send('Error al ingresar a devices: ' + error.message);
     }
