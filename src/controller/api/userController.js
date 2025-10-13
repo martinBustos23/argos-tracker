@@ -90,7 +90,7 @@ export default class UserController {
       const updatedUser = destinationUid == originUid ? updatingUser : await this.#userDAO.find(destinationUid);
       if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
       if (!updatingUser.admin && (updatingUser.id != destinationUid))
-        throw new Unauthorized('No estas autorizado');
+        throw new Forbidden('No estas autorizado');
       if (Object.keys(mods).length == 0) throw new BadRequest('Faltan parametros');
 
       // si se actualiza la contrasenia hashearla
@@ -141,7 +141,7 @@ export default class UserController {
     try {
       const updatingUser = await this.#userDAO.find(originUid);
       if (!updatingUser.admin && (updatingUser.id != destinationUid))
-        throw new Unauthorized('No estas autorizado');
+        throw new Forbidden('No estas autorizado');
       const exist = await this.#userDAO.find(destinationUid);
       if (!exist) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
@@ -173,7 +173,7 @@ export default class UserController {
       const users = await this.getAll();
       const admins = users.filter((user) => user.admin == true);
       if (admins.length <= 1)
-        throw new Unauthorized('No se puede borrar todos los administradores');
+        throw new Forbidden('No se puede borrar todos los administradores');
 
       const result = await this.#userDAO.delete(id);
       await this.#userLogController.addLog(
@@ -201,7 +201,7 @@ export default class UserController {
       exist = await this.#userDAO.findByUsername(user.username);
       if (!exist) throw new NotFound('Usuario no existe');
       if (exist.status === 'disabled' || exist.status === 'blocked')
-        throw new Unauthorized('Usuario no habilitado');
+        throw new Forbidden('Usuario no habilitado');
 
       const localNow = new Date();
       const utcNow = localNow.getTime() + localNow.getTimezoneOffset() * 60000;
@@ -209,8 +209,8 @@ export default class UserController {
         // si tiene timeout y el mismo termino
         this.#userDAO.update(exist.id, { timeout: null });
       } else if (exist.timeout) {
-        throw new Unauthorized(
-          'Esperar ' +
+        throw new Forbidden(
+          'Espere ' +
             Math.floor((exist.timeout.getTime() - utcNow) / 1000 / 60) +
             ' minutos'
         );
@@ -235,8 +235,8 @@ export default class UserController {
           loginTries.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#blockUser(exist.id);
-          throw new Unauthorized(
-            `Ingreso la contraseña incorrecta demasiadas veces, si cuenta se bloqueo`
+          throw new Forbidden(
+            `Demasiados intentos, su cuenta se bloqueo`
           );
         }
 
@@ -248,8 +248,8 @@ export default class UserController {
             .every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#timeoutUser(exist.id, USER_TRIES.SECOND_TIMEOUT_MINUTES);
-          throw new Unauthorized(
-            `Contraseña incorrecta, espere ${USER_TRIES.SECOND_TIMEOUT_MINUTES} minutos para volver a intentarlo`
+          throw new Forbidden(
+            `Usuario y/o contraseña incorrectos, espere ${USER_TRIES.SECOND_TIMEOUT_MINUTES} minutos para volver a intentarlo`
           );
         }
 
@@ -261,12 +261,12 @@ export default class UserController {
             .every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#timeoutUser(exist.id, USER_TRIES.FIRST_TIMEOUT_MINUTES);
-          throw new Unauthorized(
-            `Contraseña incorrecta, espere ${USER_TRIES.FIRST_TIMEOUT_MINUTES} minutos para volver a intentarlo`
+          throw new Forbidden(
+            `Usuario y/o contraseña incorrectos, espere ${USER_TRIES.FIRST_TIMEOUT_MINUTES} minutos para volver a intentarlo`
           );
         }
 
-        throw new Unauthorized('Contraseña incorrecta');
+        throw new Forbidden('Usuario y/o contraseña incorrectos');
       }
       const log = await this.#userLogController.addLog(
         LEVEL.INFO,
