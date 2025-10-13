@@ -18,7 +18,7 @@ export default class TrackerController {
     this.#trackerLogController = trackerLogController;
   }
 
-  async createTracker(tracker) {
+  async create(tracker) {
     try {
       if (!this.#validarTracker(tracker))
         throw new BadRequest('Uno de los valores ingresados es invalido o esta fuera de rango');
@@ -73,7 +73,7 @@ export default class TrackerController {
     }
   }
 
-  async updateTracker(id, tracker) {
+  async update(id, tracker) {
     try {
       const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
@@ -137,7 +137,7 @@ export default class TrackerController {
       const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
 
-      const result = await this.updateTracker(id, new TrackerDTO({ active: false }));
+      const result = await this.update(id, new TrackerDTO({ active: false }));
       await this.#trackerLogController.addLog(
         LEVEL.INFO,
         id,
@@ -157,7 +157,7 @@ export default class TrackerController {
     }
   }
 
-  async deleteTracker(id) {
+  async delete(id) {
     try {
       const exist = await this.#trackerDAO.find(id);
       if (!exist) throw new NotFound(`El tracker (${id}) no fue encontrado`);
