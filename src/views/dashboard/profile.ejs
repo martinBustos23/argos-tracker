@@ -1,0 +1,305 @@
+<%- include('../layouts/header', {title: 'Perfil de Usuario' }); %>
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+  <%- include('../layouts/navbar', { title: 'Perfil de Usuario', subtitle: 'Editar datos de tu cuenta' }); %>
+
+  <div class="user-dashboard">
+
+    <section  class="profile-card help-box" 
+          data-message="Esta es tu tarjeta de usuario: acá podes ver tu información y editar tu perfil" 
+          data-position="right">
+      
+      <div class="profile-card__img help-box" 
+            data-message="Esta es tu imagen de perfil!" 
+            data-position="top">
+        <i class="bi bi-person-fill"></i>
+      </div>
+
+      <div class="profile-card__info help-box" 
+            data-message="Estos son tus datos" 
+            data-position="left">
+        <p><strong>Usuario:</strong> <%= user.username %></p>
+        <p><strong>Rol:</strong><%= user.admin ? " Administrador" : " Usuario" %></p>
+        <p><strong>Última conexión:</strong> <%= user.lastLogin %></p>
+      </div>
+
+
+      <div class="profile-edit help-box"
+            data-message="En esta sección podés actualizar tus datos personales"
+            data-position="right">
+
+        <h2 class="profile-edit__title">Editar Perfil</h2>
+
+        <form class="profile-edit__form" id="editProfileForm" action="/api/users/<%= user.id %>">
+          
+          <div class="form-group help-box" 
+                data-message="Acá podes cambier el nombre de tu usuario" 
+                data-position="left">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" placeholder="<%= user.username %>" />
+          </div>
+
+          <div class="form-group help-box" 
+                data-message="Acá podes cambiar tu contraseña. Debe tener al menos 8 caracteres, una mayúscula, una miníscula y un número" 
+                data-position="left">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" />
+          </div>
+
+          <button class="confirm-btn help-box" type="submit" 
+                    data-message="Presioná este botón para guardar tus cambios"
+                    data-position="bottom">Guardar cambios</button>
+        </form>
+
+      </div>
+
+      <form class="profile-delete help-box" id="deleteProfileForm" action="/api/users/<%= user.id %>"
+              data-message="Si querés eliminar tu cuenta, podés hacerlo acá. ¡Cuidado, esta acción no se puede deshacer!"
+              data-position="top">
+      <button class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+      </form>
+
+    </section >
+  </div>
+</div>
+
+<style>
+  .user-dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(170, 170, 170, 0.2);
+    min-height: 90vh;
+    min-width: 100%;
+  }
+
+  .profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background: #691c32;
+    color: white;
+    position: relative;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+
+  .profile-card__img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    margin-top: 1rem;
+    width: 5rem;
+    height: 5rem;
+    font-size: 4rem;
+    padding-bottom: 5px;
+    border-radius: 50%;
+    border: 1px solid white;
+  }
+
+  .profile-card__info p {
+    margin: 0;
+  }
+
+  
+  .profile-edit {
+    background-color: white;
+    color: #451321;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .profile-edit__form{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: white;
+    padding: 1rem;
+    margin: 0;
+    gap: .5rem;
+    height: 100%;
+    border-radius: 10px;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .profile-edit__form input{
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
+  }
+
+  .profile-edit__title {
+    margin-bottom: .5rem;
+    font-size: 1.3rem;
+    border-bottom: 1px solid #691c32;
+  }
+
+  .form-group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px
+  }
+
+  .confirm-btn{
+    margin: 1rem 0 0;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    background: #451321;
+    color: white;
+    font-size: 1rem;
+    padding: .5rem;
+    border-radius: 1rem 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .confirm-btn:hover {
+    background: #691c32;
+  }
+
+
+  .profile-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #451321;
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+    padding: .5rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .delete-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+</style>
+
+<script>
+  const editForm = document.getElementById("editProfileForm");
+  editForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const payload = {};
+    if (editForm.username.value) payload.username = editForm.username.value;
+    if (editForm.password.value) payload.password = editForm.password.value;
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas modificar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+      try {
+        const response = await fetch(editForm.action, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          Swal.fire({
+            title: "¡Usuario modificado!",
+            text: "Tu usuario ha sido modificado con exito.",
+            confirmButtonColor: "#451321",
+            icon: "success"
+          }).then( () => {
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: result.error,
+            confirmButtonColor: "#451321",
+            icon: "error"
+          });
+        }
+      } catch (err) {
+        console.error("Error al modificar perfil:", err);
+        Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: "Error al modificar el perfil.",
+            confirmButtonColor: "#451321",
+            icon: "error"
+        });
+      }
+    }
+  });
+
+  const deleteForm = document.getElementById("deleteProfileForm");
+  deleteForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas eliminar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+      try {
+        const response = await fetch(deleteForm.action, { method: "DELETE" });
+        const result = await response.json();
+  
+        if (response.ok) {
+          Swal.fire({
+            title: "Usuario eliminado",
+            text: "Tu usuario ha sido eliminado con exito.",
+            confirmButtonColor: "#451321",
+            icon: "success"
+          }).then( () => {
+            window.location.href = "/logout"; // o redirigir donde corresponda
+          });
+        } else {
+          Swal.fire({
+              title: "¡Ocurrio un error!",
+              text: "Error al eliminar el perfil.",
+              confirmButtonColor: "#451321",
+              icon: "error"
+          });
+        }
+      } catch (err) {
+        console.error("Error al eliminar cuenta:", err);
+        Swal.fire({
+            title: "¡Ocurrio un error!",
+            text: "Error al modificar el perfil.",
+            confirmButtonColor: "#451321",
+            icon: "error"
+        });
+      }
+    }
+  });
+</script>
+
+<%- include('../layouts/footer'); %>

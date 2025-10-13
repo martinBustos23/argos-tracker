@@ -4,3 +4,6 @@ package-lock.json
 tests/
 .env
 .vscode/
+public/tiles
+public/js/jspdf.umd.min.js
+public/js/jspdf.plugin.autotable.min.js

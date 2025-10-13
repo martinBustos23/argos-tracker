@@ -1,0 +1,674 @@
+<%- include('../layouts/header', {title: 'config-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', {title: 'Configuración del sistema' ,
+    subtitle: 'Opciones, registros, restauración...' }); %>
+
+    <div class="body-content">
+
+      <div class="config-sidebar">
+        <div class="config-sidebar__option active" data-target="configuracion">
+          <h2>Configuración</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="system">
+          <h2>Registro del Sistema</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="tracker">
+          <h2>Registro de Dispositivos</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="user">
+          <h2>Registro de Usuarios</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="ayuda">
+          <h2>Ayuda</h2>
+        </div>
+        <div class="config-sidebar__option ultimo">
+          <h2>Restaurar de fábrica</h2>
+        </div>
+      </div>
+
+      <div class="config-content">
+
+        <div class="log-container" id="configuracion" style="display: block;">
+          <h2>Configuración del sistema</h2>
+          <form id="configForm">
+            <table class="log-container__table">
+              <thead>
+                <tr>
+                  <th>Opción</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+
+
+                <tr>
+                  <td colspan="2"><strong>General</strong></td>
+                </tr>
+                <tr>
+                  <td>Idioma del sistema</td>
+                  <td>
+                    <select class="input-default" name="idioma">
+                      <option value="es">Español</option>
+                      <option value="en">Inglés</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Zona horaria</td>
+                  <td><input class="input-default" type="text" name="zonaHoraria" value="GMT-3"></td>
+                </tr>
+                <tr>
+                  <td>Formato de hora</td>
+                  <td>
+                    <select class="input-default" name="formatoHora">
+                      <option value="24h">24h</option>
+                      <option value="12h">12h</option>
+                    </select>
+                  </td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Dispositivos</strong></td>
+                </tr>
+                <tr>
+                  <td>Dispositivos conectados</td>
+                  <td><span id="dispositivosActivos">3 activos</span></td>
+                </tr>
+                <tr>
+                  <td>Ver dispositivos deshabilitados</td>
+                  <td><input type="checkbox" name="verDeshabilitados"></td>
+                </tr>
+                
+
+                <tr>
+                  <td colspan="2"><strong>Ubicación</strong></td>
+                </tr>
+                <tr>
+                  <td>Localidad/Zona</td>
+                  <td><input class="input-default" type="text" name="zona" placeholder="San lorenzo..."></td>
+                </tr>
+                <tr>
+                  <td>Geocerca (zoom)</td>
+                  <td><input class="input-default" type="number" name="geocerca" value="19"></td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Red y Conexión</strong></td>
+                </tr>
+                <tr>
+                  <td>Estado de conexión</td>
+                  <td><span id="estadoConexion">Online</span></td>
+                </tr>
+                <tr>
+                  <td>WiFi Local (Local)</td>
+                  <td>
+                    <input class="input-default" type="text" name="wifi" placeholder="Nombre de red">
+                    <input class="input-default" type="password" name="wifiClave" placeholder="Contraseña">
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Modo de red</td>
+                  <td>
+                    <select class="input-default" name="modoRed" id="modoRed">
+                      <option value="ap">Crear red local (AP)</option>
+                      <option value="passthrough">Usar red existente</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr id="redSecundaria">
+                  <td>WiFi (Passthrough)</td>
+                  <td>
+                    <input class="input-default" type="text" name="wifiSecundaria" placeholder="Nombre de red">
+                    <input class="input-default" type="password" name="wifiClaveSecundaria" placeholder="Contraseña">
+                  </td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Alertas</strong></td>
+                </tr>
+                <tr>
+                  <td>Activar alertas</td>
+                  <td><input type="checkbox" name="alertas" checked></td>
+                </tr>
+                <tr>
+                  <td>Alertas de sonido</td>
+                  <td><input type="checkbox" name="alertasSonido"></td>
+                </tr>
+                <tr>
+                  <td>Volumen de alerta</td>
+                  <td>
+                    <input type="range" name="volumen" min="0" max="100" value="50" 
+                          oninput="volumenValor.textContent=this.value+'%'">
+                    <span id="volumenValor">50%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Duración alerta sonora</td>
+                  <td><input class="input-default" type="number" name="duracionSonido" value="5"> s</td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Seguridad</strong></td>
+                </tr>
+                <tr>
+                  <td>Contraseña administrador</td>
+                  <td><input class="input-default" type="password" name="adminPass"></td>
+                </tr>
+                <tr>
+                  <td>Expiración de sesión</td>
+                  <td><input class="input-default" type="number" name="expSesion" value="60"> min</td>
+                </tr>
+
+
+                <tr>
+                  <td colspan="2"><strong>Sistema</strong></td>
+                </tr>
+                <tr>
+                  <td>Espacio libre en disco</td>
+                  <td><span id="espacioDisco">2.5 GB</span></td>
+                </tr>
+                <tr>
+                  <td>Actualizar software</td>
+                  <td><button class="input-btn" type="button">Actualizar</button></td>
+                </tr>
+                <tr>
+                  <td>Respaldo configuración</td>
+                  <td><button class="input-btn" type="button">Generar</button></td>
+                </tr>
+
+              </tbody>
+            </table>
+
+            <button class="input-btn sumbit-btn" type="submit">Guardar configuración</button>
+          </form>
+        </div>
+
+        <div class="log-container" id="system">
+          <h2>Registro de auditoría del sistema</h2>
+          <div class="filter-panel">
+            <select id="timestampFilter" class="filter-panel__option">
+              <option value="0" selected>Historial completo</option>
+              <option value="1">Ultima hora</option>
+              <option value="2">Ultimas 24 horas</option>
+              <option value="3">Ultimos 7 dias</option>
+              <option value="4">Ultimos 30 dias</option>
+            </select>
+            <select id="levelFilter" class="filter-panel__option">
+              <option value="0" selected>Todos los niveles</option>
+              <option value="1">Info</option>
+              <option value="2">Error</option>
+              <option value="3">Warning</option>
+            </select>
+            <select id="actionFilter" class="filter-panel__option">
+              <option value="0" selected>Todos las acciones</option>
+              <option value="1">Create</option>
+              <option value="2">Connect</option>
+              <option value="3">Update config</option>
+            </select>
+            <button id="filtrar" class="filter-panel__button">Filtrar</button>
+            <button id="download-button"><i class="bi bi-download" ></i></button>
+          </div>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="log-container" id="tracker">
+          <h2>Registro de auditoría de dispositivos</h2>
+          <div class="filter-panel">
+            <select id="sourceFilter" class="filter-panel__option">
+              <option value="0" disabled selected>Dispositivo</option>
+              <option value="0">Todos </option>
+            </select>
+            <select id="timestampFilter" class="filter-panel__option">
+              <option value="0" selected>Historial completo</option>
+              <option value="1">Ultima hora</option>
+              <option value="2">Ultimas 24 horas</option>
+              <option value="3">Ultimos 7 dias</option>
+              <option value="4">Ultimos 30 dias</option>
+            </select>
+            <select id="levelFilter" class="filter-panel__option">
+              <option value="0" selected>Todos los niveles</option>
+              <option value="1">Info</option>
+              <option value="2">Error</option>
+              <option value="3">Warning</option>
+            </select>
+            <!-- <label for="disp" class="filter-panel__option">
+              <input type="number" name="disp" id="sourceFilter" min="1" placeholder="Todos los dispositivos" value="0">
+            </label> -->
+            <select id="actionFilter" class="filter-panel__option">
+              <option value="0" selected>Todos las acciones</option>
+              <option value="1">Link</option>
+              <option value="2">Unlink</option>
+              <option value="3">Disable</option>
+              <option value="4">Update</option>
+              <option value="5">Create</option>
+            </select>
+            <button id="filtrar" class="filter-panel__button">Filtrar</button>
+            <button id="download-button"><i class="bi bi-download" ></i></button>
+          </div>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="log-container" id="user">
+          <h2>Registro de auditoría de usuarios</h2>
+          <div class="filter-panel">
+            <select id="sourceFilter" class="filter-panel__option">
+              <option value="0" disabled selected>Usuario</option>
+              <option value="0">Todos</option>
+            </select>
+            <select id="timestampFilter" class="filter-panel__option">
+              <option value="0" selected>Historial completo</option>
+              <option value="1">Ultima hora</option>
+              <option value="2">Ultimas 24 horas</option>
+              <option value="3">Ultimos 7 dias</option>
+              <option value="4">Ultimos 30 dias</option>
+            </select>
+            <select id="levelFilter" class="filter-panel__option">
+              <option value="0" selected>Todos los niveles</option>
+              <option value="1">Info</option>
+              <option value="2">Error</option>
+              <option value="3">Warning</option>
+            </select>
+            <!-- <label for="uid" class="filter-panel__option">
+              <input type="number" name="uid" id="sourceFilter" min="1" placeholder="Todos los usuarios" value="0">
+            </label> -->
+            <select id="actionFilter" class="filter-panel__option">
+              <option value="0" selected>Todos las acciones</option>
+              <option value="1">Login</option>
+              <option value="2">Logout</option>
+              <option value="3">Create</option>
+              <option value="4">Update</option>
+              <option value="5">Block</option>
+              <option value="6">Disable</option>
+            </select>
+            <button id="filtrar" class="filter-panel__button">Filtrar</button>
+            <button id="download-button"><i class="bi bi-download" ></i></button>
+          </div>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="log-container" id="ayuda">
+          <h2>Ayudin</h2>
+          <div style="width:60%; margin:auto; text-align: center;">
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"> Ir a la pagina web de
+              ayuda!!!</a>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+
+<style>
+  .body-content {
+    display: flex;
+    flex-direction: row;
+    min-height: 90vh;
+    overflow: hidden;
+  }
+
+  .config-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    width: 20%;
+    max-height:90vh;
+  }
+
+  .config-sidebar__option {
+    width: 100%;
+    padding: .8rem 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    border-right: 5px solid transparent;
+  }
+
+  .config-sidebar__option:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .config-sidebar__option.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #691c32;
+  }
+
+  .config-sidebar__option h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .ultimo {
+    margin-top: auto;
+  }
+
+  .config-content {
+    left: 20%;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    max-height:90vh;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .log-container {
+    display: none;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem 0rem 0rem 0rem;
+    overflow: auto;
+  }
+
+  .log-container h2 {
+    text-align: center;
+    font-weight: bold;
+    padding: .5rem 1rem;
+    font-size: 1.25rem;
+  }
+
+  .log-container__table {
+    width: 100%;
+    font-size: .9rem;
+    font-family: sans-serif;
+  }
+
+  .log-container__table thead tr {
+    background-color: white;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table th,
+  .log-container__table td {
+    padding: .5rem 1rem;
+    white-space: nowrap;
+  }
+
+  .log-container__table td {
+    padding: .5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table tbody tr {
+    transition: all .25s ease;
+  }
+
+  .log-container__table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+
+  .input-default{
+    padding: 0rem 1rem;
+
+    min-height: 2rem;
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
+    transition: all .35s ease-in-out;
+  }
+  .input-btn{
+    padding: 0rem 1rem;
+    background-color: white;
+    min-height: 2rem;
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
+    transition: all .35s ease-in-out;
+  }
+  .input-btn:hover{
+    border: 1px solid #691c32;
+  }
+
+  .sumbit-btn{
+    display: flex; 
+    align-items: center;
+    justify-self: center;
+    margin: 1rem;
+
+  }
+</style>
+
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
+  const sidebarOptions = document.querySelectorAll(".config-sidebar__option");
+  const sections = document.querySelectorAll(".log-container");
+  let logs;
+  let filteredLogs;
+  sidebarOptions.forEach(opt => {
+    opt.addEventListener("click", async () => {
+      sidebarOptions.forEach(option => option.classList.remove("active"));
+      sections.forEach(section => section.style.display = "none");
+      const target = document.getElementById(opt.dataset.target);
+      opt.classList.add("active");
+      console.log(target);
+      if (target.id == "configuracion" || target.id == "ayuda"){
+        target.style.display = "block";
+        return;
+      }
+
+      const response = await fetch(`/api/${target.id}Logs?` + new URLSearchParams({n: 200}));
+      logs = await response.json();
+      filteredLogs = logs;
+      updateLogs(logs);
+      target.style.display = "block";
+    });
+  });
+
+
+  const buttons = document.querySelectorAll("#filtrar");
+  buttons.forEach(button => 
+    button.addEventListener("click", (event) => {
+      filteredLogs = filterLogs(logs);
+      updateLogs(filteredLogs);
+  }));
+
+  const downloadButtons = document.querySelectorAll("#download-button");
+  downloadButtons.forEach(button => button.addEventListener("click", () => {
+    if (filteredLogs)
+      createLogsDocument(filteredLogs);
+    else
+      alert('No hay logs para imprimir');
+  }));
+
+  function filterLogs(logs) {
+    const activeSection = document.querySelector(".active");
+    const table = document.querySelector(`#${activeSection.dataset.target}`);
+    const timesFilter = Number(table.querySelector("#timestampFilter").value);
+    const actionFilter = Number(table.querySelector("#actionFilter").value);
+    const levelFilter = Number(table.querySelector("#levelFilter").value);
+    const sourceFilter = activeSection.dataset.target != 'system' ? 
+      Number(table.querySelector("#sourceFilter").value) : 0;
+
+    let newLogs = new Array(...logs);
+    
+    const timeFilterOptions = [3600, 86400, 604800, 2592000];
+    if (timesFilter)
+      newLogs = newLogs.filter( 
+        log => new Date(log.timestamp).getTime() >= ( Date.now() - (timeFilterOptions[timesFilter-1] * 1000)));
+    
+    const levelFilterOptions = ['INFO', 'ERROR', 'WARNING'];
+    if (levelFilter)
+      newLogs = newLogs.filter( log => log.level == levelFilterOptions[levelFilter-1]);
+
+    const actionFilterOptions = {
+      system: ['CREATE', 'CONNECT', 'UPDATE_CONFIG'],
+      tracker: ['LINK', 'UNLINK', 'DISABLED', 'UPDATE', 'CREATE'],
+      user: ['LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'BLOCK', 'DISABLED']
+    };
+    if (actionFilter)
+      newLogs = newLogs.filter( log => log.action == actionFilterOptions[activeSection.dataset.target][actionFilter-1]);
+
+    if (sourceFilter)
+      newLogs = newLogs.filter( log => log.source == sourceFilter );
+
+    return newLogs;
+  }
+
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const activeSection = document.querySelector(".active");
+      const activeTable = document.querySelector(`#${activeSection.dataset.target}`);
+      const tableContent = activeTable.querySelectorAll("#log-row");
+
+      const option = document.createElement('option');
+      const userSelection = document.getElementById("disp")
+
+      if (tableContent)
+        tableContent.forEach(row => row.remove());
+      
+      for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log.id;
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log.timestamp).toLocaleString("es-AR", {hour12: false});
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log.level;
+        logElement.appendChild(column);
+
+        if (activeSection != 'sistema') {
+          column = document.createElement("td");
+          column.textContent = log.source;
+          logElement.appendChild(column);
+        }
+
+        column = document.createElement("td");
+        column.textContent = log.action;
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log.description;
+        logElement.appendChild(column);
+
+        activeTable.querySelector("tbody").appendChild(logElement);
+
+      
+        option.value = log.source;
+        option.textContent = log.source;
+        userSelection.appendChild(option);
+
+
+        resolve(true);
+      }
+    });
+  }
+
+  function createLogsDocument(logs) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    const activeSection = document.querySelector(".active");
+    const registro = {
+      system: "sistema",
+      tracker: "dispositivos",
+      user: "usuarios"
+    }
+    doc.text("Registro de " + registro[activeSection.dataset.target] , 10, 10);
+    
+    doc.setFontSize(11);
+    const rows = [];
+    let columns;
+    if (activeSection.dataset.target != 'system') {
+      columns = ["ID", "Timestamp", "Level", "Source", "Action", "Description"];
+      for (const log of logs) {
+        rows.push([
+          log.id,
+          new Date(log.timestamp).toLocaleString('es-AR', { hour12: false }),
+          log.level,
+          log.source,
+          log.action,
+          log.description
+        ]);
+      }
+    } else {
+      columns = ["ID", "Timestamp", "Level", "Action", "Description"];
+      for (const log of logs) {
+        rows.push([
+          log.id,
+          new Date(log.timestamp).toLocaleString('es-AR', { hour12: false }),
+          log.level,
+          log.action,
+          log.description
+        ]);
+      }
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
+</script>
+
+<%- include('../layouts/footer'); %>

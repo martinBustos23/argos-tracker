@@ -1,0 +1,21 @@
+{
+  "general": {
+    "lang": "Espanol",
+    "timezone": -3,
+    "12/24hs": false
+  },
+  "devices": {
+    "seeDisabled": true
+  },
+  "location": {
+    "city": "San Lorenzo",
+    "zoom": 19
+  },
+  "network": {
+    "localWifiSSID": "SSID",
+    "localWifiPWD": "hash",
+    "mode": "AP",
+    "portableWifiSSID": "SSID",
+    "portableWifiPWD": "hash"
+  }
+}

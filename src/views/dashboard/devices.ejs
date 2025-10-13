@@ -1,0 +1,1428 @@
+<%- include('../layouts/header', {title: 'devices-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', {title: 'Gestion de dispositivos' ,
+    subtitle: 'Lista de los dispositivos vinculados' }); %>
+
+    <div class="body-content">
+      <!-- <div class="tabs-container" id="tabs"></div> -->
+      <div class="tabs-container">
+        <% trackers.forEach(Tracker => { %>
+          <% if (Tracker.active || (user.admin && systemConfig.devices.seeDisabled)) { %>
+            <a href="/dashboard/devices/<%= Tracker.id %>"
+              class="tab <%= Tracker.active === true ? '' : 'disabled' %> <%= tracker.id === Tracker.id ? 'selected' : '' %>">
+              <%= Tracker.petName %>
+            </a>
+          <% } %>
+        <% }) %>
+      </div>
+
+      <div class="content1-container">
+
+        <div class="button-container">
+          <% if (user.admin) { %>
+            <div class="tab-btn" data-target="tab-configg"><i class="bi bi-gear"></i></div>
+          <% } %>
+          <div class="tab-btn active" data-target="tab-tracker"><i class="bi bi-house"></i></div>
+          <div class="tab-btn" data-target="tab-log"><i class="bi bi-geo-alt"></i></div>
+        </div>
+
+        <div id="tab-tracker" class="tab-tracker tab-content active">
+
+          <div class="tracker-info">
+
+            <div class="tracker-info__div">
+              <div class="tracker-info__pet">
+
+                <img class="tracker-pet__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                <div class="tracker-pet__name">
+                  <h2>
+                    <%= tracker.petName %>
+                  </h2>
+                  <span>ID: <%= tracker.id %></span>
+                </div>
+              </div>
+              <div class="tracker-info__data">
+                <p>Estado: <%= tracker.state %>
+                </p>
+                <p>Modelo: <%= tracker.model %>
+                </p>
+                <p>Ultima posición: perdido</p>
+                <p>Comunicación: bipbip</p>
+              </div>
+            </div>
+            <div id="map" class="data-container__map"></div>
+
+          </div>
+
+          <div class="tracker-pos">
+            <h2>Últimas posiciones</h2>
+            <div class="tracker-pos__container">
+              <% const positionEvents=lastEvents.filter(e=> e.eventDesc === 'POSITION').slice(0, 5); %>
+              <% positionEvents.forEach(event=> { %>
+                <div class="tracker-pos__info" data-lat="<%= event.latitude %>" data-lon="<%= event.longitude %>">
+                  <div>
+                    <%= event.timestamp.toLocaleString('es-AR', {hour12: false}) %>
+                  </div>
+                  <div class="tracker-pos__latlon" data-latt="<%= event.latitude %>" data-lonn="<%= event.longitude %>">
+                    <p>Lat: <%= event.latitude %>
+                    </p>
+                    <p>Lon: <%= event.longitude %>
+                    </p>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="tab-configg" class="tab-configg tab-content">
+          <form class="tab-config" id="updateConfig">
+            <div class="tab-config__options">
+
+              <div class="tab-config__configuration">
+                <h2>Configuración</h2>
+                <div class="tab-config__identify">
+                  <img id="img-button" class="tracker-pet__img helper1" src="/img/petIcons/<%= tracker.image %>.jpg"
+                    alt="img"
+                    data-content='{"title": "Imagen", 
+                                                "data": "Esta opción permite elegir una imagen de stock para identificar a la mascota"}'>
+                  <div class="identify-name">
+                    <div>
+                      <input type="text" id="petName" name="petName" placeholder="Nombre: <%=tracker.petName %>">
+                      <input type="text" id="trackerId" placeholder="ID: <%= tracker.id %>" disabled>
+                      <span></span>
+                    </div>
+                  </div>
+                  <button class="delete-tracker-btn" id="delete-tracker-btn" type="button">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+
+                <div class="tab-config__optionss">
+                  <div class="option helper1"
+                    data-content='{"title": "Frecuencia", 
+                                      "data": "Esta opción permite ajustar con que frecuencia la estacion recibe eventos del dispositivos activo"}'>
+                    <label for="frequency">Frecuencia:</label>
+                    <input type="range" id="frequency" name="frequency" min="5" max="30"
+                      value="<%= tracker.frequency %>"
+                      oninput="document.getElementById('freqValue').textContent=this.value + 'min'">
+                    <span id="freqValue">
+                      <%= tracker.frequency %>min
+                    </span>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Frecuencia emergencia", 
+                                                "data": "Esta opcion permite ajustar la frecuencia de emergencia que se activa si el dispositivo detecta alguna anomalia"}'>
+                    <label for="frequency-emergency">Frecuencia emergencia:</label>
+                    <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency"
+                      min="1" max="10" value="<%= tracker.emergencyFrequency %>"
+                      oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
+                    <span id="freqEmergValue">
+                      <%= tracker.emergencyFrequency %>min
+                    </span>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Umbral de bateria", 
+                                                "data": "Esta opción permite ajustar el umbral de nivel de bateria para informar el estado del dispositivo"}'>
+                    <label for="battery">Umbral de bateria:</label>
+                    <input type="range" id="battery" name="lowBat" min="5" max="80" value="<%= tracker.lowBat %>"
+                      oninput="document.getElementById('batValue').textContent=this.value + '%'">
+                    <span id="batValue">
+                      <%= tracker.lowBat %>%
+                    </span>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Alerta de sonido", 
+                                                "data": "Esta opción permite elegir si activar las notificaciones importantes por sonido"}'>
+                    <label for="alert">Alerta de sonido: </label>
+                    <div class="option-radio">
+                      <label><input type="radio" name="alertSound" value="si" checked>Sí</label>
+                      <label><input type="radio" name="alertSound" value="no">No</label>
+                    </div>
+                  </div>
+
+                  <div class="option helper1"
+                    data-content='{"title": "Geo-fencing", 
+                                                "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
+                    <label for="geofencing">Geo-fencing: </label>
+                    <div class="option-radio">
+                      <label><input type="radio" name="geoEnable" value="si" checked>Sí</label>
+                      <label><input type="radio" name="geoEnable" value="no">No</label>
+                    </div>
+                  </div>
+
+                  <div class="option-btn">
+                    <button class="cargar-tracker-btn" type="submit">Confirmar</button>
+                  </div>
+                </div>
+
+              </div>
+
+
+
+            </div>
+
+            <div class="tab-config__geozone">
+              <div class="geozone__config">
+                <h2>Geo-fencing</h2>
+                <div class="tab-config__geo">
+                  <div class="geo-config">
+                    <div class="option-geo helper2"
+                      data-content='{"title": "Latitud", 
+                                                "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
+                      <label for="latitud">Latitud:</label>
+                      <input class="input-text" type="text" id="latitud" name="latitud"
+                        placeholder="<%= tracker.geofenceLat || -34.6037 %>">
+                    </div>
+                    <div class="option-geo helper2"
+                      data-content='{"title": "Longitud", 
+                                                "data": "Esta opción permite delimitar un area segura, si el dispositivo se encuentra fuera de esta se activa el modo de emergencia"}'>
+                      <label for="latitud">Longitud:</label>
+                      <input class="input-text" type="text" id="longitud" name="longitud"
+                        placeholder="<%= tracker.geofenceLon || -58.3816 %>">
+                    </div>
+                    <div class="option-geo helper2" data-content='{"title": "Radio", 
+                                                "data": "Esta opción permite definir el radio del area segura"}'>
+                      <label for="radio">Radio:</label>
+                      <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150"
+                        value="<%= tracker.geofenceRadius %>" oninput=updateRadio(this)>
+                      <span id="radioValue">
+                        <%= tracker.geofenceRadius %>m
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div id="geo-map" class="geozone__map"></div>
+              </div>
+
+            </div>
+
+            <div id="helper" class="helper">
+              <button class="helper-btn" id="helper-close">X</button>
+              <div id="content-helper">
+
+              </div>
+            </div>
+            <div id="helper-left" class="helper-left">
+              <button class="helper-btn" id="helper-left-close">X</button>
+              <div id="content-helper-left">
+
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="tab-log" class="tab-log tab-content">
+              <div class="filter-panel">
+                <select id="timestampFilter" class="filter-panel__option">
+                  <option value="0" selected>Historial completo</option>
+                  <option value="1">Ultima hora</option>
+                  <option value="2">Ultimas 24 horas</option>
+                  <option value="3">Ultimos 7 dias</option>
+                  <option value="4">Ultimos 30 dias</option>
+                </select>
+                <select id="eventFilter" class="filter-panel__option">
+                  <option value="0" selected>Todos los eventos</option>
+                  <option value="1">Posicion</option>
+                  <option value="2">Bateria baja</option>
+                </select>
+                <button id="filtrar" class="filter-panel__button">Filtrar</button>
+                <button id="download-button"><i class="bi bi-download" ></i></button>
+              </div>
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>Evento</th>
+                <th>Bateria</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="table-logs">
+              <% if (lastEvents && lastEvents.length> 0) { %>
+                <% lastEvents.forEach(event=> { %>
+                  <tr id="log-row">
+                    <td>
+                      <%= event.eventDesc %>
+                    </td>
+                    <td>
+                      <% if (event.batteryLvl) { %>
+                        <%= event.batteryLvl %>%
+                          <% } else { %>
+                            -
+                            <% } %>
+                    </td>
+                    <td>
+                      <% if (event.latitude) { %>
+                        <%= event.latitude %>
+                          <% } else { %>
+                            -
+                            <% } %>
+                    <td>
+                      <% if (event.longitude) { %>
+                        <%= event.longitude %>
+                          <% } else { %>
+                            -
+                            <% } %>
+                    </td>
+                    <td>
+                      <%= event.timestamp.toLocaleString("es-AR", {hour12: false}); %>
+                    </td>
+                  </tr>
+                  <% }) %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="5" style="text-align:center;">No hay registros recientes.</td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+</div>
+
+<style>
+  .tab-log {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .tab-log.active {
+    display: flex;
+  }
+
+
+
+  .log-container__table {
+    width: 100%;
+    font-size: .9rem;
+    font-family: sans-serif;
+  }
+
+  .log-container__table thead tr {
+    background-color: white;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table th,
+  .log-container__tabletd {
+    padding: .5rem 1rem;
+    white-space: nowrap;
+  }
+
+  .log-container__table td {
+    padding: .5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table tbody tr {
+    transition: all .25s ease;
+  }
+
+  .log-container__table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /*  */
+
+  .tab-configg {
+    display: none;
+    position: relative;
+    flex-direction: column;
+    flex: 1;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .tab-configg.active {
+    display: flex;
+  }
+
+  .tab-config {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+  }
+
+  .tab-config h2 {
+    align-self: center;
+    text-align: center;
+    font-size: 1.25rem;
+    padding: .25rem 0rem;
+    margin-bottom: .5rem;
+    width: 50%;
+    min-width: fit-content;
+
+    border-bottom: 1px solid #451321;
+    transition: all .25s ease-out;
+  }
+
+  .tab-config__options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+  }
+
+  .tab-config__options:hover h2 {
+    width: 100%;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__geozone:hover h2 {
+    width: 90%;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__alerts:hover h2 {
+    width: 100%;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__configuration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    height: 100%;
+    margin: .15rem 0rem;
+    padding: 0rem 2rem;
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #451321;
+  }
+
+  .tab-config__div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    flex: 1;
+  }
+
+  .tab-config__geozone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.15);
+
+  }
+
+  .geozone__config {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    flex: 1;
+    width: 90%;
+    margin: .65rem 0rem;
+    border-radius: 4px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #451321;
+  }
+
+  .tab-config__geo {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    margin: .15rem 0rem;
+    border-radius: 4px;
+
+
+    color: #451321;
+  }
+
+  .geo-config {
+    width: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-geo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% + 0rem);
+    padding: 0rem 1rem;
+    margin: .15rem 0rem;
+    min-height: 2rem;
+    transition: all .35s ease-in-out;
+  }
+
+  .option-geo:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .option-geo label {
+    text-align: right;
+    width: 25%;
+    white-space: nowrap;
+  }
+
+  .option-geo input {
+    width: 50%;
+    margin: 0rem 2rem;
+    align-self: center;
+  }
+
+  .option-geo-btn {
+    width: 45px;
+    height: 40px;
+    font-size: 1rem;
+    background-color: rgba(119, 51, 68, .1);
+    color: #451321;
+    border: none;
+    border-radius: 40px;
+    transition: all .5s ease-in-out;
+  }
+
+  .option-geo-btn:hover {
+    background-color: rgba(119, 51, 68, .2);
+  }
+
+  .input-text {
+    outline: none;
+    border: 1px solid #ddd;
+    padding: 0rem 1rem;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+  }
+
+  .input-range {
+    box-shadow: none;
+  }
+
+  #geo-map {
+    min-height: 45vh;
+    height: 100%;
+    width: 85%;
+    margin: 1rem auto;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    transition: all .5s ease-in;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); 
+  }
+
+  #geo-map:hover {
+    border: 1px solid rgba(69, 19, 33, 0.6);
+  }
+
+  .tab-config__identify {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: .5rem .5rem 1rem;
+    margin-bottom: .5rem;
+    border-bottom: 1px solid #451321;
+  }
+
+  .tab-config__identify input {
+    outline: none;
+    border: 1px solid #ddd;
+    padding: .25rem .75rem;
+    margin: .25rem;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    width: 100%;
+  }
+
+  .identify-name {
+    display: flex;
+    flex-direction: column;
+    padding: 0rem 2rem;
+  }
+
+  .tab-config__options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    margin: .5rem 0rem;
+    border-radius: 4px;
+    color: #451321;
+  }
+
+  .tab-config__optionss {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+
+  }
+
+
+  .option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% + 2rem);
+    padding: 0rem 1rem;
+    margin: .15rem 0rem;
+    min-height: 2rem;
+    transition: all .35s ease-in-out;
+  }
+
+  .option:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .option label {
+    text-align: right;
+    width: 35%;
+    white-space: nowrap;
+  }
+
+  .option select {
+    width: 50%;
+    margin: 0rem 1rem;
+  }
+
+  .option input {
+    width: 50%;
+    margin: 0rem 1rem;
+  }
+
+
+
+  .option-radio {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 50%;
+    white-space: nowrap;
+
+  }
+
+  .option-btn {
+    display: flex;
+    flex-direction: column;
+    height: stretch;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+  }
+
+  .delete-tracker-btn {
+    align-self: flex-start;
+    width: 50px;
+    height: 40px;
+    margin: .25rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    background-color: rgba(119, 51, 68, .1);
+    color: #451321;
+    border-radius: 40px;
+    border: none;
+    transition: all .5s ease-in-out;
+  }
+
+  .delete-tracker-btn:hover {
+    background-color: rgba(119, 51, 68, .2);
+  }
+
+  .cargar-tracker-btn {
+    width: calc(100% + 4rem);
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    background-color: white;
+    color: #451321;
+    border: 1px solid rgba(69, 19, 33, .2);
+    transition: all .5s ease-in-out;
+  }
+
+  .cargar-tracker-btn:hover {
+    background-color: rgba(69, 19, 33, .05);
+    border: 1px solid #451321;
+  }
+
+
+  /*  */
+  #map {
+    min-height: 50vh;
+    height: 100%;
+    width: 70%;
+    border-radius: 4px;
+    margin: .5rem 0rem 1rem;
+    border: 1px solid #aaa;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    transition: all .5s ease-in;
+  }
+
+  #map:hover {
+    border: 1px solid rgba(69, 19, 33, 0.6);
+  }
+
+  .tab-tracker {
+    display: none;
+    flex-direction: row;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+  .tab-tracker.active {
+    display: flex;
+  }
+
+  .tracker-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+
+  }
+
+  .tracker-info__div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+    margin: 1rem 0rem 0rem;
+    border-radius: 4px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #451321;
+  }
+
+  .tracker-info__div p {
+    margin-bottom: 0;
+  }
+
+  .tracker-info__pet {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: .5rem 1rem;
+    width: 90%;
+  }
+
+  .tracker-pet__img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 1px solid #451321;
+    background-color: #451321;
+    color: white;
+  }
+
+  .tracker-pet__name {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+    width: fit-content;
+
+  }
+
+  .tracker-info__pet h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  .tracker-info__data {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: .5rem 1rem;
+    border-top: 1px solid #451321;
+    width: 90%;
+    align-self: center;
+  }
+
+
+  .tracker-pos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    background-color: white;
+    color: #451321;
+    box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .tracker-pos h2 {
+    align-self: center;
+    text-align: center;
+    font-size: 1.25rem;
+    padding: .75rem 0rem 0.25rem;
+    margin-bottom: .5rem;
+    width: 20%;
+    min-width: fit-content;
+
+    border-bottom: 1px solid #451321;
+    transition: all .25s ease-out;
+  }
+
+  .tracker-pos:hover h2 {
+    width: 80%;
+  }
+
+  .tracker-pos__container {
+    width: 80%;
+  }
+  
+  .tracker-pos__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    min-height: 50px;
+    margin: .5rem;
+    padding: .5rem 1rem;
+    border-radius: 4px;
+    transition: all .3s ease;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.6);
+  }
+
+  .tracker-pos__info:hover {
+    background-color: rgba(69, 19, 33, 0.05);
+  }
+
+  .tracker-pos__latlon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    margin: 0;
+  }
+
+  .tracker-pos__latlon p {
+    text-align: center;
+    width: 80%;
+    overflow: hidden;
+    font-size: .8rem;
+
+    border-radius: 15px;
+    background-color: #451321;
+    color: white;
+    margin: .15rem;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  /*  */
+
+
+  .button-container {
+    display: flex;
+    background-color: #773344;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    min-width: calc(100%/3);
+    position: relative;
+    padding: 0.4rem .25rem 0.8rem;
+    text-align: center;
+    font-size: 1rem;
+    /* font-style: italic; */
+    /* line-height: 1.5px; */
+    /* font-weight: bold; */
+    background-color: #773344;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .tab-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .tab-btn::after {
+    content: "";
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5%;
+    height: 2px;
+    background-color: white;
+    border-radius: 2px;
+    transition: width 0.3s ease-in-out;
+  }
+
+  .tab-btn:hover::after {
+    width: 50%;
+  }
+
+  .tab-btn.active::after {
+    width: 50%;
+  }
+
+  .body-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+  }
+
+  .tabs-container {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+    padding-left: 10px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    background: #451321;
+    color: white;
+    padding: 8px 25px;
+    margin-right: 10px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .tab.disabled {
+    background: #61434c;
+  }
+
+  .tab.selected {
+    background: #691c32;
+  }
+
+  .tab:hover {
+    background: #691c32;
+    color: white;
+  }
+
+
+  .content1-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    box-shadow: 2px -2px 8px 2px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+
+    margin-top: -2px;
+  }
+
+  /*  */
+  .helper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding: 3rem;
+    width: 35%;
+    flex: 1;
+    height: 100%;
+    z-index: 2000;
+    /* background-color: rgba(105, 28, 50, 0.8); */
+    background-color: rgba(69, 19, 33, 0.8);
+    transition: all 1s ease-in-out;
+  }
+
+  .helper-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding: 3rem;
+    width: 35%;
+    flex: 1;
+    height: 100%;
+    z-index: 2000;
+    /* background-color: rgba(105, 28, 50, 0.8); */
+    background-color: rgba(69, 19, 33, 0.8);
+    transition: all 1s ease-in-out;
+  }
+
+  .helper-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 20px;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    font-weight: bold;
+    color: white;
+    background-color: transparent;
+    transition: all .15s ease-in-out;
+  }
+
+  .helper-btn:hover {
+    background-color: rgba(105, 28, 50, 1);
+  }
+</style>
+
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
+  const tracker = JSON.parse('<%- JSON.stringify(tracker) %>');
+  const events = JSON.parse('<%- JSON.stringify(lastEvents) %>');
+
+  const tracker_info = document.querySelectorAll('.tracker-pos__info');
+  const tracker_latlon = document.querySelectorAll('.tracker-pos__latlon');
+
+  let latitude = tracker.geofenceLat;
+  let longitude = tracker.geofenceLon;
+
+  if (tracker_latlon.length > 0) {
+    try {
+      const lastLatLon = tracker_latlon[0];
+      const latAttr = lastLatLon.getAttribute('data-latt');
+      const lonAttr = lastLatLon.getAttribute('data-lonn');
+
+      const lat = parseFloat(latAttr);
+      const lon = parseFloat(lonAttr);
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        latitude = lat;
+        longitude = lon;
+      }
+    } catch (err) {
+      console.warn("No se pudo obtener la última posición, usando geofence:", err);
+    }
+  }
+
+  const petIcon = L.icon({
+    iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+    iconSize: [48, 48],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -24]
+  });
+
+  const markers = [];
+  let map = L.map('map');
+  if (latitude || longitude) {
+    map.setView([latitude, longitude], 17);
+    const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
+    markers.push(marker);
+  }
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+  tracker_info.forEach(infoDiv => {
+    infoDiv.addEventListener('click', function () {
+      const lat = parseFloat(this.querySelector('.tracker-pos__latlon').getAttribute('data-latt'));
+      const lon = parseFloat(this.querySelector('.tracker-pos__latlon').getAttribute('data-lonn'));
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        pin.setLatLng([lat, lon]);
+        map.setView([lat, lon], 17);
+      } else {
+        console.warn('Posición inválida en este div');
+      }
+    });
+  });
+
+  let geomap = L.map('geo-map').setView([tracker.geofenceLat || -32.747711, tracker.geofenceLon || -60.734190], 19);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(geomap);
+
+  let circle
+  if (tracker.geofenceLat &&  tracker.geofenceLon) {
+    circle = L.circle([tracker.geofenceLat, tracker.geofenceLon], {
+      radius: tracker.geofenceRadius, 
+      color: "#691c32",
+      fillColor: "#f03",
+      fillOpacity: 0.15
+    }).addTo(geomap).bindPopup("Zona Segura");
+  }
+  function updateRadio(event) {
+    const radius = event.value;
+    document.getElementById('radioValue').textContent = radius + 'm';
+    circle.setRadius(radius);
+  }
+
+  geomap.on('click', (picker) => {
+    updateConfig.latitud.value = picker.latlng.lat;
+    updateConfig.longitud.value = picker.latlng.lng;
+    geomap.setView(picker.latlng);
+    circle.setLatLng(picker.latlng);
+  });
+
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      tabContents.forEach(c => c.classList.remove("active"));
+      const targetId = btn.getAttribute("data-target");
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.classList.add("active");
+
+      if (targetId === "tab-tracker") {
+        map.invalidateSize();
+      }
+      if (targetId === "tab-configg") {
+        geomap.invalidateSize();
+      }
+    });
+  });
+
+
+  const deleteBtn = document.getElementById('delete-tracker-btn');
+
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm('¿Seguro que quieres eliminar este tracker?')) return;
+
+    try {
+      alert(tracker.id);
+      const response = await fetch(`/api/trackers/${tracker.id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        alert('Tracker eliminado correctamente');
+        location.reload();
+      } else {
+        const data = await response.json();
+        alert('Error al eliminar tracker: ' + (data.message || 'Error desconocido'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error al conectar con el servidor');
+    }
+  });
+
+  const updateConfig = document.getElementById("updateConfig");
+  const imgButton = document.getElementById("img-button");
+
+  updateConfig.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const imgSrc = imgButton.getAttribute("src");
+    const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
+
+    const enableGeofence = updateConfig.geoEnable.value === "si";
+    const enableSoundAlert = updateConfig.alertSound.value === "si";
+
+    const payload = {
+      petName: updateConfig.petName.value || tracker.petName,
+      model: tracker.model,
+      image: imageName || tracker.image,
+      state: tracker.state,
+      frequency: Number(updateConfig.frequency.value) || tracker.frequency,
+      lowBat: Number(updateConfig.lowBat.value) || tracker.lowBat,
+      geofenceLat: Number(updateConfig.latitud.value) || tracker.geofenceLat,
+      geofenceLon: Number(updateConfig.longitud.value) || tracker.geofenceLon,
+      geofenceRadius: Number(updateConfig.geoRadio.value) || tracker.geofenceRadius,
+      enableGeofence: enableGeofence || tracker.enableGeofence,
+      emergencyFrequency: Number(updateConfig.frequencyEmergency.value) || tracker.emergencyFrequency,
+      enableSoundAlert: enableSoundAlert || tracker.enableSoundAlert
+    };
+
+    for (const key in payload) {
+      const value = payload[key];
+      if (value === "" || value === tracker[key])
+        delete payload[key];
+    }
+
+    if (Object.keys(payload) == false) return;
+
+    try {
+      const response = await fetch(`/api/trackers/${tracker.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Dispositivo actualizado correctamente");
+
+      } else {
+        alert("Error: " + result.error);
+      }
+
+      location.reload();
+    } catch (error) {
+      console.log("Error al actualizar dispositivo", error);
+      alert("Error al actualizar dispositivo");
+    }
+  });
+
+  document.querySelectorAll('.helper1').forEach(helper => {
+    helper.addEventListener('mouseenter', function () {
+      const content = JSON.parse(this.getAttribute('data-content'));
+      document.getElementById('content-helper').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+      document.getElementById('helper').style.opacity = '1';
+      document.getElementById('helper').style.visibility = 'visible';
+
+      document.getElementById('helper-left').style.opacity = '0';
+      document.getElementById('helper-left').style.visibility = 'hidden';
+    });
+
+    helper.addEventListener('mouseleave', function () {
+      document.getElementById('helper').style.opacity = '0';
+      document.getElementById('helper').style.visibility = 'hidden';
+    });
+    document.getElementById('helper-close').addEventListener('click', function () {
+      document.getElementById('helper').style.opacity = '0';
+      document.getElementById('helper').style.visibility = 'hidden';
+
+    });
+  });
+
+  document.querySelectorAll('.helper2').forEach(helper => {
+    helper.addEventListener('mouseenter', function () {
+      const content = JSON.parse(this.getAttribute('data-content'));
+      document.getElementById('content-helper-left').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+      document.getElementById('helper-left').style.opacity = '1';
+      document.getElementById('helper-left').style.visibility = 'visible';
+
+      document.getElementById('helper').style.opacity = '0';
+      document.getElementById('helper').style.visibility = 'hidden';
+    });
+
+    helper.addEventListener('mouseleave', function () {
+      document.getElementById('helper-left').style.opacity = '0';
+      document.getElementById('helper-left').style.visibility = 'hidden';
+    });
+    document.getElementById('helper-left-close').addEventListener('click', function () {
+      document.getElementById('helper-left').style.opacity = '0';
+      document.getElementById('helper-left').style.visibility = 'hidden';
+
+    });
+  });
+
+  const { hostname, port, pathname } = new URL(window.location.href);
+  const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+  socket.addEventListener('open', (event) => {
+    const trackerId = pathname.split('/').pop();
+    console.log(trackerId);
+    socket.send(JSON.stringify(trackerId));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const { latitude, longitude } = JSON.parse(event.data);
+
+    // limpiar todos los markers
+    for (let i = 0; i < markers.length; i++) {
+      map.removeLayer(markers[i]);
+      markers.splice(i, 1);
+    }
+
+    const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
+    markers.push(marker);
+
+    map.setView([latitude, longitude], 15);
+
+    events.unshift(JSON.parse(event.data));
+    const filteredEvents = filterEvents(events);
+    console.log(filteredEvents);
+    updateLogs(filteredEvents);
+    updateLastPositions();
+  });
+
+  const button = document.querySelector("#filtrar");
+  button.addEventListener("click", (event) => {
+    const filteredEvents = filterEvents(events);
+    updateLogs(filteredEvents);
+  });
+
+  function updateLastPositions() {
+    const lastPositions = document.querySelector(".tracker-pos__container");
+
+    const { latitude, longitude, timestamp } = events.filter(event => event.eventDesc == 'POSITION')[0];
+    const newCard = document.createElement("div");
+    newCard.className = "tracker-pos__info"
+    newCard.setAttribute("data-lat", latitude);
+    newCard.setAttribute("data-lon", longitude);
+
+    const timestampElem = document.createElement("div");
+    timestampElem.textContent = new Date(timestamp).toLocaleString('es-AR', {hour12: false});
+    newCard.appendChild(timestampElem);
+
+    const posElem = document.createElement("div");
+    posElem.className = "tracker-pos__latlon";
+    newCard.setAttribute("data-latt", latitude);
+    newCard.setAttribute("data-lonn", longitude);
+
+    const latElem = document.createElement("p");
+    latElem.textContent = "Lat: " + latitude;
+    posElem.appendChild(latElem);
+
+    const lonElem = document.createElement("p");
+    lonElem.textContent = "Lon: " + longitude;
+    posElem.appendChild(lonElem);
+
+    newCard.appendChild(posElem);
+
+    if (lastPositions.childElementCount === 5) {
+      lastPositions.lastElementChild.remove();
+    }
+    lastPositions.insertBefore(newCard, lastPositions.firstElementChild);
+  }
+
+  function filterEvents(events) {
+    const timesFilter = Number(document.querySelector("#timestampFilter").value);
+    const eventFilter = Number(document.querySelector("#eventFilter").value);
+
+    let newEvents = new Array(...events);
+    switch (timesFilter) {
+      case 1:
+        newEvents = newEvents.filter( 
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (60 * 60 * 1000)));
+        break;
+        
+      case 2:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (24 * 60 * 60 * 1000)));
+        break;
+
+      case 3:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (7 * 24 * 60 * 60 * 1000)));
+        break;
+
+      case 4:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (30 * 24 * 60 * 60 * 1000))
+        );
+        break;
+    }
+    
+    switch (eventFilter) {
+      case 1:
+        newEvents = newEvents.filter( event => event.eventDesc == 'POSITION')
+        break;
+    
+      case 2:
+        newEvents = newEvents.filter( event => event.eventDesc == 'BATTERY')
+        break;
+    }
+    return newEvents;
+  }
+  // hacer asyncrona para no bloquear la pagina
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const tableContent = document.querySelectorAll("#log-row");
+      tableContent.forEach(row => row.remove());
+      
+      for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log["eventDesc"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["batteryLvl"] + "%";
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["latitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["longitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log["timestamp"]).toLocaleString("es-AR", {hour12: false});
+        logElement.appendChild(column);
+
+        document.querySelector("#table-logs").appendChild(logElement);
+
+        resolve(true);
+      }
+    });
+  }
+
+  const downloadButton = document.querySelector("#download-button");
+  downloadButton.addEventListener("click", () => {
+    const filteredEvents = filterEvents(events);
+    createEventsDocument(filteredEvents);
+  });
+  
+  function createEventsDocument(events) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    doc.text("Eventos del tracker " + tracker.id + " " + tracker.petName, 10, 10);
+    
+    doc.setFontSize(11);
+    const columns = ["Timestamp", "Description", "Latitud", "Longitud", "Bateria"];
+    const rows = [];
+
+    for (const event of events) {
+      rows.push([
+        new Date(event.timestamp).toLocaleString('es-AR', { hour12: false }),
+        event.eventDesc,
+        event.latitude,
+        event.longitude,
+        event.batteryLvl
+      ]);
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
+</script>
+
+<%- include('../layouts/footer'); %>

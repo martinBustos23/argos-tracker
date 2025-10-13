@@ -1,0 +1,621 @@
+<%- include('../layouts/header', {title: 'general-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', { title: 'Dashboard' , subtitle: 'Vista general del sistema' }); %>
+
+    <div class="main-content__body">
+
+      <div class="main-content__map">
+        <div class="content__trackers">
+          <h2>Dispositivos vinculados</h2>
+          <span>Seleccione para filtrar</span>
+
+          <section class="tracker-list">
+            <% trackers.forEach( tracker=> { %>
+              <% if (tracker.active) { %>
+                <div class="tracker-list__btn" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
+                  data-lon="<%= tracker.geofenceLon %>">
+                  <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  <div class="tracker-list__info">
+                    <span class="label">
+                      <%= tracker.petName %>
+                    </span>
+                    <span class="label-name">
+                      <%= tracker.state %>
+                    </span>
+                  </div>
+                </div>
+              <% } else if (user.admin && config.devices.seeDisabled) { %>
+                <div class="tracker-list__btn tracker-list__disabled" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
+                  data-lon="<%= tracker.geofenceLon %>">
+                  <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  <div class="tracker-list__info">
+                    <span class="label">
+                      <%= tracker.petName %>
+                    </span>
+                    <span class="label-name">
+                      <%= tracker.state %>
+                    </span>
+                  </div>
+                </div>
+              <% } %>
+            <% }) %>
+            <a class="add-btn" href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
+
+          </section>
+
+        </div>
+
+        <div id="map"></div>
+      </div>
+
+      <div class="log-container">
+        <h2>Últimos datos recibidos</h2>
+        <div class="filter-panel">
+          <!-- <label for="disp" class="filter-panel__option">
+            <input type="number" name="disp" id="disp" min="1" placeholder="Todos los dispositivos" value="0">
+          </label> -->
+          <select id="disp" class="filter-panel__option">
+            <option value="0" disabled selected>Seleccionar dispositivo</option>
+            <option value="0">Todos los dispositivos</option>
+          </select>
+          <select id="timestampFilter" class="filter-panel__option">
+            <option value="0" selected>Historial completo</option>
+            <option value="1">Ultima hora</option>
+            <option value="2">Ultimas 24 horas</option>
+            <option value="3">Ultimos 7 dias</option>
+            <option value="4">Ultimos 30 dias</option>
+          </select>
+          <select id="eventFilter" class="filter-panel__option">
+            <option value="0" selected>Todos los eventos</option>
+            <option value="1">Posicion</option>
+            <option value="2">Bateria baja</option>
+          </select>
+          <button id="filtrar" class="filter-panel__button">Filtrar</button>
+          <button id="download-button"><i class="bi bi-download" ></i></button>
+        </div>
+        <table class="log-container__table">
+          <thead>
+            <tr>
+              <th>Dispositivo</th>
+              <th>Mascota</th>
+              <th>Evento</th>
+              <th>Bateria</th>
+              <th>Latitud</th>
+              <th>Longitud</th>
+              <th>Fecha</th>
+              <th>Ir al mapa</th>
+            </tr>
+          </thead>
+          <tbody id="table-logs">
+            <% if (events && events.length > 0) { %>
+              <% events.forEach(event=> { %>
+                <tr id="log-row">
+                  <td>
+                    <%= event.trackerId %>
+                  </td>
+                  <td>
+                    <%= event.petName %>
+                  </td>
+                  <td>
+                    <%= event.eventDesc %>
+                  </td>
+                  <td>
+                    <% if (event.batteryLvl) { %>
+                      <%= event.batteryLvl %>%
+                        <% } else { %>
+                          -
+                          <% } %>
+                  </td>
+                  <td>
+                    <% if (event.latitude) { %>
+                      <%= event.latitude %>
+                        <% } else { %>
+                          -
+                          <% } %>
+                  <td>
+                    <% if (event.longitude) { %>
+                      <%= event.longitude %>
+                        <% } else { %>
+                          -
+                          <% } %>
+                  </td>
+                  <td>
+                    <%= event.timestamp.toLocaleString('es-AR', {hour12: false}); %>
+                  </td>
+                  <td>
+                    -
+                  </td>
+                </tr>
+                <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="8" style="text-align:center;">No hay registros recientes.</td>
+                    </tr>
+                    <% } %>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+</div>
+
+<style>
+  .main-content__body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    padding: .5rem 0rem 0rem;
+    background-color: rgba(170, 170, 170, 0.2);
+
+  }
+
+  .main-content__map {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 90vh;
+  }
+
+  .content__trackers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    background-color: white;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    margin: 0rem .5rem .5rem 1rem;
+    border-radius: 5px;
+  }
+
+  .content__trackers h2 {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+    margin: .5rem 0rem 0rem;
+    color: #691c32;
+  }
+
+  .content__trackers span {
+    text-align: center;
+    font-size: 1rem;
+    color: #6d6d6d;
+    width: 100%;
+    padding-bottom: .25rem;
+
+  }
+
+
+  #map {
+    width: 80%;
+    height: calc(90vh - .5rem);
+    border-radius: 10px;
+    margin-right: 1rem;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid #aaa;
+    transition: all 0.25s ease-out;
+  }
+
+  #map:hover {
+    border: 1px solid rgba(69, 19, 33, 0.6);
+  }
+
+
+
+  .log-container {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    padding: 1rem 0rem;
+    z-index: 1000;
+    box-shadow: 0px -20px 50px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .log-container h2 {
+    text-align: center;
+
+    /* padding-left: 1rem; */
+
+    font-weight: bold;
+    font-size: x-large;
+  }
+
+
+  .log-container__table {
+    width: 100%;
+    font-size: .9rem;
+    font-family: sans-serif;
+  }
+
+  .log-container__table thead tr {
+    background-color: white;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+
+  .log-container__table th,
+  .log-container__table td {
+    padding: .5rem 1rem;
+    white-space: nowrap;
+  }
+
+
+  .log-container__table td {
+    padding: .5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .log-container__table tbody tr {
+    transition: all .25s ease;
+  }
+
+  .log-container__table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .log-container__table tbody td:last-child {
+    text-align: center;
+  }
+
+
+  .tracker-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+
+    margin: 1rem;
+    gap: 1rem;
+  }
+
+
+  .tracker-list__btn {
+    display: flex;
+    flex-direction: row;
+    align-items: right;
+
+    width: 75%;
+    height: 75px;
+    padding: 10px 15px;
+
+    background-color: #691c32;
+    color: #ffe7e3;
+
+    border-radius: 5px;
+
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+
+    transition: all 0.25s ease-out;
+  }
+
+  .tracker-list__btn:hover {
+    scale: 1.05;
+    box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .tracker-list__img {
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    /* delete */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+  }
+
+  .tracker-list__info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin-left: 1rem;
+  }
+
+  .tracker-list__info .label {
+    text-align: left;
+    font-weight: 500;
+    border-bottom: solid 1px #ffe7e3;
+    color: white;
+  }
+
+  .tracker-list__info .label-name {
+    text-align: center;
+    color: white;
+  }
+
+  .tracker-list__disabled {
+    background-color: #61434c;
+  }
+
+  .add-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+
+    min-width: 3.5rem;
+    max-height: 2rem;
+
+    /* padding: 0rem .25rem .3rem; */
+
+    font-weight: bold;
+    font-size: 1.5rem;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+
+    border: 1px solid #ccc;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease-in-out;
+  }
+
+  .add-btn:hover {
+    border-color: #691c32;
+
+    box-shadow: 1px 1px 15px rgba(212, 77, 92, 0.4);
+  }
+</style>
+
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
+
+  const trackers = JSON.parse('<%- JSON.stringify(trackers) %>');
+  const events = JSON.parse('<%- JSON.stringify(events) %>');
+
+  const defaultLat = -32.747711;
+  const defaultLon =  -60.734190;
+
+  const markers = [];
+
+  function getLatestPosition(trackerId) {
+    const event = events
+      .filter(e => e.trackerId === trackerId && e.latitude && e.longitude)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+
+    if (event) return { lat: event.latitude, lon: event.longitude };
+    
+    const tracker = trackers.find(t => t.id === trackerId);
+    if (tracker) return { lat: tracker.geofenceLat, lon: tracker.geofenceLon };
+
+    return { lat: defaultLat, lon: defaultLon };
+  }
+
+  const firstTrackerId = trackers[0]?.id;
+  const { lat: initialLat, lon: initialLon } = firstTrackerId ? getLatestPosition(firstTrackerId) : { lat: defaultLat, lon: defaultLon };
+
+  let map = L.map('map', { scrollWheelZoom: false }).setView([initialLat, initialLon], 16);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  trackers.forEach(tracker => {
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    const { lat, lon } = getLatestPosition(tracker.id);
+    const marker = L.marker([lat, lon], { icon: petIcon })
+      .addTo(map)
+      .bindPopup(tracker.petName);
+    markers.push({ marker, trackerId: tracker.id });
+  });
+
+  function updateMap(element) {
+    const trackerId = element.getAttribute('data-tracker-id');
+    const { lat, lon } = getLatestPosition(parseInt(trackerId));
+    pin.setLatLng([lat, lon]);
+    map.setView([lat, lon], 16);
+  }
+  
+  const { hostname, port } = new URL(window.location.href);
+  const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+  socket.addEventListener('open', () => {
+    socket.send(JSON.stringify('*'));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const { latitude, longitude, trackerId, petName } = JSON.parse(event.data);
+
+    if (typeof latitude !== 'number' || typeof longitude !== 'number') return;
+
+    // Eliminar marker antiguo del mismo tracker
+    for (let i = markers.length - 1; i >= 0; i--) {
+      if (markers[i].trackerId === trackerId) {
+        map.removeLayer(markers[i].marker);
+        markers.splice(i, 1);
+      }
+    }
+
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${trackers.find( tracker => tracker.id == trackerId).image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    
+    const marker = L.marker([latitude, longitude], { icon: petIcon})
+      .addTo(map)
+      .bindPopup(petName)
+      .openPopup();
+
+    markers.push({ marker, trackerId });
+
+    map.setView([latitude, longitude], 15);
+
+    events.unshift(JSON.parse(event.data));
+    const filteredEvents = filterEvents(events);
+    console.log(filteredEvents);
+    updateLogs(filteredEvents);
+  });
+
+  // ............
+
+  const trackerSelection = document.getElementById("disp")
+  
+  trackers.forEach(tracker => {
+    const option = document.createElement('option');
+    option.value = tracker.id;
+    option.textContent = tracker.petName;
+
+    trackerSelection.appendChild(option);
+  });
+  
+  const button = document.querySelector("#filtrar");
+  button.addEventListener("click", (event) => {
+    const filteredEvents = filterEvents(events);
+    updateLogs(filteredEvents);
+  });
+
+  function filterEvents(events) {
+    const timesFilter = Number(document.querySelector("#timestampFilter").value);
+    const dispFilter = Number(document.querySelector("#disp").value);
+    const eventFilter = Number(document.querySelector("#eventFilter").value);
+
+    let newEvents = new Array(...events);
+    switch (timesFilter) {
+      case 1:
+        newEvents = newEvents.filter( 
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (60 * 60 * 1000)));
+        break;
+        
+      case 2:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (24 * 60 * 60 * 1000)));
+        break;
+
+      case 3:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (7 * 24 * 60 * 60 * 1000)));
+        break;
+
+      case 4:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (30 * 24 * 60 * 60 * 1000))
+        );
+        break;
+    }
+
+    if (dispFilter != 0)
+      newEvents = newEvents.filter( event => event.trackerId == dispFilter );
+    
+    switch (eventFilter) {
+      case 1:
+        newEvents = newEvents.filter( event => event.eventDesc == 'POSITION')
+        break;
+    
+      case 2:
+        newEvents = newEvents.filter( event => event.eventDesc == 'BATTERY')
+        break;
+    }
+    return newEvents;
+  }
+  // hacer asyncrona para no bloquear la pagina
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const tableContent = document.querySelectorAll("#log-row");
+      tableContent.forEach(row => row.remove());
+      
+      for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log["trackerId"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["petName"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["eventDesc"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["batteryLvl"] + "%";
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["latitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["longitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log["timestamp"]).toLocaleString("es-AR", {hour12: false});
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = "-";
+        logElement.appendChild(column);
+
+        document.querySelector("#table-logs").appendChild(logElement);
+
+        resolve(true);
+      }
+    });
+  }
+
+  const downloadButton = document.querySelector("#download-button");
+  downloadButton.addEventListener("click", () => {
+    const filteredEvents = filterEvents(events);
+    createEventsDocument(filteredEvents);
+  });
+  
+  function createEventsDocument(events) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    doc.text("Eventos de todos los trackers", 10, 10);
+    
+    doc.setFontSize(11);
+    const columns = ["Timestamp", "Description", "Id de tracker", "Mascota", "Latitud", "Longitud", "Bateria"];
+    const rows = [];
+
+    for (const event of events) {
+      rows.push([
+        new Date(event.timestamp).toLocaleString('es-AR', { hour12: false }),
+        event.eventDesc,
+        event.trackerId,
+        event.petName,
+        event.latitude,
+        event.longitude,
+        event.batteryLvl
+      ]);
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
+
+</script>
+
+<%- include('../layouts/footer'); %>

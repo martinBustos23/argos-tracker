@@ -1,0 +1,432 @@
+[
+  {
+    "name": "users",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "username",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "password",
+        "type": "varchar(256)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "image",
+        "type": "varchar(256)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "admin",
+        "type": "bool",
+        "key": null,
+        "nullable": false,
+        "default": 0,
+        "extra": null
+      },
+      {
+        "name": "status",
+        "type": "enum('active', 'disabled', 'blocked', 'pwd_change')",
+        "key": null,
+        "nullable": false,
+        "default": "'active'",
+        "extra": null
+      },
+      {
+        "name": "lastLogin",
+        "type": "datetime",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "timeout",
+        "type": "datetime",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      }
+    ]
+  },
+  {
+    "name": "trackers",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "petName",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "model",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "image",
+        "type": "varchar(256)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "state",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "frequency",
+        "type": "int",
+        "key": null,
+        "nullable": false,
+        "default": 5,
+        "extra": null
+      },
+      {
+        "name": "lowBat",
+        "type": "int",
+        "key": null,
+        "nullable": false,
+        "default": 15,
+        "extra": null
+      },
+      {
+        "name": "geofenceLat",
+        "type": "double",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "geofenceLon",
+        "type": "double",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "geofenceRadius",
+        "type": "int",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "active",
+        "type": "bool",
+        "key": null,
+        "nullable": false,
+        "default": 1,
+        "extra": null
+      },
+      {
+        "name": "enableGeofence",
+        "type": "bool",
+        "key": null,
+        "nullable": false,
+        "default": 0,
+        "extra": null
+      },
+      {
+        "name": "emergencyFrequency",
+        "type": "int",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "enableSoundAlert",
+        "type": "bool",
+        "key": null,
+        "nullable": false,
+        "default": 1,
+        "extra": null
+      }
+    ]
+  },
+  {
+    "name": "logUsers",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "key": null,
+        "nullable": false,
+        "default": "current_timestamp()",
+        "extra": null
+      },
+      {
+        "name": "level",
+        "type": "varchar(10)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "source",
+        "type": "int",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "action",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "description",
+        "type": "varchar(128)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "name": "user",
+        "column": "source",
+        "reference_table": "users",
+        "reference_column": "id"
+      }
+    ]
+  },
+  {
+    "name": "trackerEvents",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "key": null,
+        "nullable": false,
+        "default": "current_timestamp()",
+        "extra": null
+      },
+      {
+        "name": "trackerId",
+        "type": "int",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "eventDesc",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "latitude",
+        "type": "DOUBLE",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "longitude",
+        "type": "DOUBLE",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "batteryLvl",
+        "type": "DOUBLE",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "name": "tracker",
+        "column": "trackerId",
+        "reference_table": "trackers",
+        "reference_column": "id"
+      }
+    ]
+  },
+  {
+    "name": "logTrackers",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "key": null,
+        "nullable": false,
+        "default": "current_timestamp()",
+        "extra": null
+      },
+      {
+        "name": "level",
+        "type": "varchar(10)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "source",
+        "type": "int",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "action",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "description",
+        "type": "varchar(128)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "name": "trackerLog",
+        "column": "source",
+        "reference_table": "trackers",
+        "reference_column": "id"
+      }
+    ]
+  },
+  {
+    "name": "logSystem",
+    "fields": [
+      {
+        "name": "id",
+        "type": "int",
+        "key": "primary key",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "key": null,
+        "nullable": false,
+        "default": "current_timestamp()",
+        "extra": null
+      },
+      {
+        "name": "level",
+        "type": "varchar(10)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "source",
+        "type": "varchar(64)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "action",
+        "type": "varchar(32)",
+        "key": null,
+        "nullable": false,
+        "default": null,
+        "extra": null
+      },
+      {
+        "name": "description",
+        "type": "varchar(128)",
+        "key": null,
+        "nullable": true,
+        "default": null,
+        "extra": null
+      }
+    ]
+  }
+]
