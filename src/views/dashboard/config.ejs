@@ -539,7 +539,7 @@
     const actionFilter = Number(table.querySelector("#actionFilter").value);
     const levelFilter = Number(table.querySelector("#levelFilter").value);
     const sourceFilter = activeSection.dataset.target != 'system' ? 
-      Number(table.querySelector("#sourceFilter").value) : 0;
+      Number(table.querySelector(".sourceFilter").value) : 0;
 
     let newLogs = new Array(...logs);
     
