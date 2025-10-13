@@ -474,7 +474,7 @@
       sections.forEach(section => section.style.display = "none");
       const target = document.getElementById(opt.dataset.target);
       opt.classList.add("active");
-      console.log(target);
+
       if (target.id == "configuracion" || target.id == "ayuda"){
         target.style.display = "block";
         return;
@@ -485,6 +485,21 @@
       filteredLogs = logs;
       updateLogs(logs);
       target.style.display = "block";
+
+      const sourceSelect = target.querySelector(".sourceFilter");
+
+      if (sourceSelect) {
+        sourceSelect.innerHTML = '<option value="">Todos</option>';
+        
+        const uniqueSources = [...new Set(logs.map(log => log.source))];
+        
+        uniqueSources.forEach(source => {
+          const option = document.createElement("option");
+          option.value = source;
+          option.textContent = source;
+          sourceSelect.appendChild(option);
+        });
+      }
     });
   });
 
@@ -511,7 +526,7 @@
     const actionFilter = Number(table.querySelector("#actionFilter").value);
     const levelFilter = Number(table.querySelector("#levelFilter").value);
     const sourceFilter = activeSection.dataset.target != 'system' ? 
-      Number(table.querySelector("#sourceFilter").value) : 0;
+      Number(table.querySelector(".sourceFilter").value) : 0;
 
     let newLogs = new Array(...logs);
     
@@ -544,13 +559,8 @@
       const activeTable = document.querySelector(`#${activeSection.dataset.target}`);
       const tableContent = activeTable.querySelectorAll("#log-row");
 
-      const sourceFilter = activeTable.querySelector(".sourceFilter");
-
       if (tableContent)
         tableContent.forEach(row => row.remove());
-
-      if (sourceFilter) 
-        sourceFilter.innerHTML = '<option value="0">Todos</option>';
       
         for (const log of logs) {
         const logElement = document.createElement("tr");
@@ -583,17 +593,6 @@
         logElement.appendChild(column);
 
         activeTable.querySelector("tbody").appendChild(logElement);
-      }
-
-      if (sourceFilter && logs.length) {
-        const uniqueSources = [...new Set(logs.map(log => log.source))];
-
-        uniqueSources.forEach(source => {
-            const option = document.createElement("option");
-            option.value = source;
-            option.textContent = source;
-            sourceFilter.appendChild(option);
-        });
       }
 
       resolve(true);
