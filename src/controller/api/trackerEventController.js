@@ -55,7 +55,6 @@ export default class TrackerEventController {
     }
   }
 
-
   async getEventsByTrackerId(trackerId, limit) {
     try {
       const tracker = await this.#trackerController.find(trackerId);

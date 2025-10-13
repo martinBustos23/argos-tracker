@@ -55,7 +55,7 @@ export default class UserDAO {
   }
 
   async getAllInactive() {
-    const [rows] = await this.#db.execute('SELECT * FROM users WHERE status = \'disabled\'');
+    const [rows] = await this.#db.execute("SELECT * FROM users WHERE status = 'disabled'");
     return rows.map((row) => new UserDTO(row));
   }
 }

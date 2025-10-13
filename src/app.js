@@ -62,10 +62,7 @@ export default async function createApp(db, webSocketclients) {
 
   const userRouter = createUserRouter(userController);
   const trackerRouter = createTrackerRouter(trackerController, userController);
-  const trackerEventRouter = createTrackerEventRouter(
-    trackerEventController,
-    webSocketclients
-  );
+  const trackerEventRouter = createTrackerEventRouter(trackerEventController, webSocketclients);
 
   const authRouter = createAuthRouter(userController);
   const dashboardRouter = createDashboardRouter(
@@ -103,7 +100,7 @@ export default async function createApp(db, webSocketclients) {
     trackerLogRouter,
     trackerEventRouter,
     systemConfigRouter,
-    systemLogRouter,
+    systemLogRouter
   );
 
   const swaggerDocument = YAML.load('./src/docs/swagger.yml');

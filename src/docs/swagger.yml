@@ -4,7 +4,7 @@ info:
   description: |-
     Argos Tracker es un sistema de rastreo y gestion de mascotas diseñado para que cada usuario pueda administrar
     sus collares de rastreo y obtener informacion en tiempo real desde la estacion base.
-    
+
     La API permite a las aplicaciones cliente (movil o web) interactuar con el sistema de rastreo, gestionar usuarios, dispositivos y sus eventos. 
 
     Algunas funcionalidades clave: 
@@ -12,18 +12,17 @@ info:
       - Gestion de collares asociados a mascotas 
       - Configuracion de collares 
       - Consulta de historial de eventos
-    
+
     Links utiles:
     - [Repositorio argos-tracker](https://github.com/martinBustos23/argos-tracker)
     - [Documentacion del proyecyo](https://github.com/martinBustos23/argos-tracker)
-    
+
     Desarrolladores:
     - Martin Bustos: bustiger@argos-tracker.com
     - Maximiliano Ariza: gaspanzer@argos-tracker.com 
 
     Esta definicion esta basada en el estandar OpenAPI 3.0 y servira como base de documentacion y pruebas en Swagger.
   version: 1.0.0
-
   contact:
     name: the team
     email: soporte@argos-tracker.com
@@ -41,7 +40,7 @@ tags:
     description: Operaciones relacionadas con los eventos de cada dispositivo de rastreo
 
 paths:
-# -- USERS --
+  # -- USERS --
 
   /api/users:
     post:
@@ -55,7 +54,7 @@ paths:
       requestBody:
         description: Datos del nuevo usuario.
         required: true
-        content: 
+        content:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreate'
@@ -63,14 +62,14 @@ paths:
               usuario_normal:
                 summary: Usuario normal
                 value:
-                  username: "Juan"
-                  password: "Constraseña123"
+                  username: 'Juan'
+                  password: 'Constraseña123'
                   admin: false
               usuario_admin:
                 summary: Usuario administrador
                 value:
-                  username: "admin_nuevo"
-                  password: "admin"
+                  username: 'admin_nuevo'
+                  password: 'admin'
                   admin: true
       responses:
         '201':
@@ -88,10 +87,10 @@ paths:
               examples:
                 faltan_parametros:
                   value:
-                    error: "Faltan parametros"
+                    error: 'Faltan parametros'
                 password_debil:
                   value:
-                    error: "La contraseña no cumple con los requisitos minimos"
+                    error: 'La contraseña no cumple con los requisitos minimos'
         '401':
           description: No autorizado
           content:
@@ -99,7 +98,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '403':
           description: Prohibido
           content:
@@ -107,7 +106,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
         '409':
           description: Conflicto
           content:
@@ -115,7 +114,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario ya registrado"
+                error: 'Usuario ya registrado'
         '500':
           description: Error interno del servidor
           content:
@@ -142,10 +141,10 @@ paths:
             default: true
           examples:
             activos:
-              value: "true"
+              value: 'true'
               summary: Usuarios activos
             inactivos:
-              value: "false"
+              value: 'false'
               summary: Usuarios inactivos
       responses:
         '200':
@@ -161,18 +160,18 @@ paths:
                   summary: Ejemplo de usuarios activos
                   value:
                     - id: 1
-                      username: "admin"
-                      image: "default"
+                      username: 'admin'
+                      image: 'default'
                       admin: true
                       active: true
-                      lastLogin: "2025-10-04T12:55:40.000Z"
+                      lastLogin: '2025-10-04T12:55:40.000Z'
                       timeout: null
                     - id: 2
-                      username: "Juan"
-                      image: "default"
+                      username: 'Juan'
+                      image: 'default'
                       admin: false
                       active: true
-                      lastLogin: "2025-10-03T18:30:15.000Z"
+                      lastLogin: '2025-10-03T18:30:15.000Z'
                       timeout: null
         '401':
           description: No autorizado
@@ -181,7 +180,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '500':
           description: Error interno del servidor
           content:
@@ -221,7 +220,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "ID de usuario invalido"
+                error: 'ID de usuario invalido'
         '401':
           description: No autorizado
           content:
@@ -229,7 +228,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '404':
           description: Usuario no encontrado
           content:
@@ -237,7 +236,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El usuario (2) no fue encontrado"
+                error: 'El usuario (2) no fue encontrado'
         '500':
           description: Error interno del servidor
           content:
@@ -273,18 +272,18 @@ paths:
               cambiar_completo:
                 summary: Modificar usuario por completo
                 value:
-                  username: "NuevoPepe"
-                  password: "Nuevacontraseña123"
-                  image: "default"
+                  username: 'NuevoPepe'
+                  password: 'Nuevacontraseña123'
+                  image: 'default'
                   admin: true
               cambiar_password:
                 summary: Cambiar contraseña
                 value:
-                  password: "Nuevacontraseña123"
+                  password: 'Nuevacontraseña123'
               actualizar_imagen:
                 summary: Actualizar imagen
                 value:
-                  image: "default"
+                  image: 'default'
               cambiar_rol:
                 summary: Cambiar a administrador
                 value:
@@ -303,7 +302,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Parametros de entradas invalidos" #probablemente haya que corregir este error... testear
+                error: 'Parametros de entradas invalidos' #probablemente haya que corregir este error... testear
         '401':
           description: No autorizado
           content:
@@ -311,7 +310,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '403':
           description: Prohibido
           content:
@@ -319,7 +318,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
         '404':
           description: Usuario no encontrado
           content:
@@ -327,7 +326,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El usuario (2) no fue encontrado"
+                error: 'El usuario (2) no fue encontrado'
         '500':
           description: Error interno del servidor
           content:
@@ -362,7 +361,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Usuario deshabilitado correctamente"
+                    example: 'Usuario deshabilitado correctamente'
                   user:
                     $ref: '#/components/schemas/UserResponse'
         '400':
@@ -372,7 +371,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Parametros de entradas invalidos" #probablemente haya que corregir este error... testear
+                error: 'Parametros de entradas invalidos' #probablemente haya que corregir este error... testear
         '401':
           description: No autorizado o no se puede eliminar el ultimo administrador
           content:
@@ -382,10 +381,10 @@ paths:
               examples:
                 no_autorizado:
                   value:
-                    error: "Usuario no autorizado"
+                    error: 'Usuario no autorizado'
                 ultimo_admin:
                   value:
-                    error: "No se puede eliminar el ultimo administrador"
+                    error: 'No se puede eliminar el ultimo administrador'
         '403':
           description: Prohibido
           content:
@@ -393,7 +392,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
         '404':
           description: Usuario no encontrado
           content:
@@ -401,7 +400,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El usuario (2) no fue encontrado"
+                error: 'El usuario (2) no fue encontrado'
         '500':
           description: Error interno del servidor
           content:
@@ -409,7 +408,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-# -- TRACKERS --
+  # -- TRACKERS --
 
   /api/trackers:
     post:
@@ -423,7 +422,7 @@ paths:
       requestBody:
         description: Datos del tracker
         required: true
-        content: 
+        content:
           application/json:
             schema:
               $ref: '#/components/schemas/TrackerCreate'
@@ -431,17 +430,17 @@ paths:
               tracker_basico:
                 summary: Tracker basico
                 value:
-                  petName: "Toto"
-                  model: "verLoRa"
+                  petName: 'Toto'
+                  model: 'verLoRa'
                   frequency: 30
                   emergencyFrequency: 5
                   lowBat: 20
               tracker_completo:
                 summary: Tracker completo
                 value:
-                  petName: "Mona"
-                  model: "verLoRa"
-                  image: "perro1"
+                  petName: 'Mona'
+                  model: 'verLoRa'
+                  image: 'perro1'
                   frequency: 30
                   emergencyFrequency: 5
                   lowBat: 25
@@ -466,10 +465,10 @@ paths:
               examples:
                 faltan_parametros:
                   value:
-                    error: "Faltan parametros"
+                    error: 'Faltan parametros'
                 fuera_de_rango:
                   value:
-                    error: "Valores fuera de rango"
+                    error: 'Valores fuera de rango'
         '401':
           description: No autorizado
           content:
@@ -477,7 +476,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '403':
           description: Prohibido
           content:
@@ -485,7 +484,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
         '500':
           description: Error interno del servidor
           content:
@@ -515,9 +514,9 @@ paths:
                   summary: Trackers activos
                   value:
                     - id: 1
-                      petName: "Toto"
-                      model: "verLoRa"
-                      image: "perro2"
+                      petName: 'Toto'
+                      model: 'verLoRa'
+                      image: 'perro2'
                       state: false
                       frequency: 30
                       emergencyFrequency: 5
@@ -529,9 +528,9 @@ paths:
                       enableSoundAlert: true
                       active: true
                     - id: 2
-                      petName: "Mona"
-                      model: "verLoRa"
-                      image: "perro1"
+                      petName: 'Mona'
+                      model: 'verLoRa'
+                      image: 'perro1'
                       state: false
                       frequency: 15
                       emergencyFrequency: 3
@@ -549,7 +548,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '500':
           description: Error interno del servidor
           content:
@@ -557,7 +556,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
 
   /api/trackers/{id}:
     get:
@@ -591,7 +590,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "ID de tracker invalido"
+                error: 'ID de tracker invalido'
         '401':
           description: No autorizado
           content:
@@ -599,7 +598,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '404':
           description: Tracker no encontrado
           content:
@@ -607,7 +606,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El tracker (1) no fue encontrado"
+                error: 'El tracker (1) no fue encontrado'
         '500':
           description: Error interno del servidor
           content:
@@ -655,11 +654,11 @@ paths:
               cambiar_imagen:
                 summary: Cambiar imagen
                 value:
-                  image: "perro3"
+                  image: 'perro3'
               cambiar_nombre:
                 summary: Cambiar nombre de mascota
                 value:
-                  petName: "Totito"
+                  petName: 'Totito'
       responses:
         '200':
           description: Tracker actualizado exitosamente
@@ -676,10 +675,10 @@ paths:
               examples:
                 id_invalido:
                   value:
-                    error: "ID de tracker invalido"
+                    error: 'ID de tracker invalido'
                 fuera_de_rango:
                   value:
-                    error: "Valores fuera de rango: El radio de la zona segura debe estar entre 10 y 200 metros"
+                    error: 'Valores fuera de rango: El radio de la zona segura debe estar entre 10 y 200 metros'
         '401':
           description: No autorizado
           content:
@@ -687,7 +686,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '403':
           description: Prohibido
           content:
@@ -695,7 +694,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
         '404':
           description: Tracker no encontrado
           content:
@@ -703,7 +702,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El tracker (1) no fue encontrado"
+                error: 'El tracker (1) no fue encontrado'
         '500':
           description: Error interno del servidor
           content:
@@ -738,7 +737,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Tracker deshabilitado correctamente"
+                    example: 'Tracker deshabilitado correctamente'
                   tracker:
                     $ref: '#/components/schemas/TrackerResponse'
         '400':
@@ -748,7 +747,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "ID de tracker invalido"
+                error: 'ID de tracker invalido'
         '401':
           description: No autorizado
           content:
@@ -756,7 +755,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
+                error: 'Usuario no autorizado'
         '403':
           description: Prohibido
           content:
@@ -764,7 +763,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no es administrador"
+                error: 'Usuario no es administrador'
         '404':
           description: Tracker no encontrado
           content:
@@ -772,7 +771,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El tracker (1) no fue encontrado"
+                error: 'El tracker (1) no fue encontrado'
         '500':
           description: Error interno del servidor
           content:
@@ -780,7 +779,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-# -- EVENTS --
+  # -- EVENTS --
 
   /api/trackerEvents/{id}:
     post:
@@ -833,9 +832,9 @@ paths:
           description: Descripcion del evento
           schema:
             type: string
-            example: "POSITION"
+            example: 'POSITION'
       responses:
-        "201":
+        '201':
           description: Evento registrado correctamente
           content:
             application/json:
@@ -850,9 +849,9 @@ paths:
                     lat: -34.6037
                     lon: -58.3816
                     bat: 67
-                    body: "POSITION"
-                    createdAt: "2025-03-25T12:45:32.000Z"
-        "400":
+                    body: 'POSITION'
+                    createdAt: '2025-03-25T12:45:32.000Z'
+        '400':
           description: Datos de entrada invalidos
           content:
             application/json:
@@ -862,35 +861,35 @@ paths:
                 missingParams:
                   summary: Faltan parametros requeridos
                   value:
-                    error: "Faltan parametros requeridos"
+                    error: 'Faltan parametros requeridos'
                 invalidData:
                   summary: Datos invalidos
                   value:
-                    error: "Datos invalidos"
-        "401":
+                    error: 'Datos invalidos'
+        '401':
           description: No autorizado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
-        "404":
+                error: 'Usuario no autorizado'
+        '404':
           description: Tracker no encontrado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El tracker (1) no fue encontrado"
-        "500":
+                error: 'El tracker (1) no fue encontrado'
+        '500':
           description: Error interno del servidor
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Error interno del servidor"
+                error: 'Error interno del servidor'
 
     get:
       tags:
@@ -916,7 +915,7 @@ paths:
             type: integer
             example: 5
       responses:
-        "200":
+        '200':
           description: Lista de eventos del tracker
           content:
             application/json:
@@ -930,47 +929,47 @@ paths:
                   lat: -34.6042
                   lon: -58.3825
                   bat: 90
-                  body: "POSITION"
-                  createdAt: "2025-09-23T10:25:00.000Z"
+                  body: 'POSITION'
+                  createdAt: '2025-09-23T10:25:00.000Z'
                 - id: 55
                   trackerId: 1
                   lat: -34.6039
                   lon: -58.3819
                   bat: null
-                  body: "POSITION"
-                  createdAt: "2025-09-23T10:05:00.000Z"
-        "400":
+                  body: 'POSITION'
+                  createdAt: '2025-09-23T10:05:00.000Z'
+        '400':
           description: Datos de entrada invalidos
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Datos invalidos"
-        "401":
+                error: 'Datos invalidos'
+        '401':
           description: No autorizado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
-        "404":
+                error: 'Usuario no autorizado'
+        '404':
           description: Tracker no encontrado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "El tracker (1) no fue encontrado"
-        "500":
+                error: 'El tracker (1) no fue encontrado'
+        '500':
           description: Error interno del servidor
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Error al obtener eventos del tracker"
+                error: 'Error al obtener eventos del tracker'
 
   /api/trackerEvents:
     get:
@@ -982,7 +981,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Lista completa de eventos del sistema
           content:
             application/json:
@@ -996,38 +995,38 @@ paths:
                   lat: -34.6042
                   lon: -58.3825
                   bat: 90
-                  body: "POSITION"
-                  createdAt: "2025-09-23T10:30:00.000Z"
+                  body: 'POSITION'
+                  createdAt: '2025-09-23T10:30:00.000Z'
                 - id: 56
                   trackerId: 2
                   lat: -34.6042
                   lon: -58.3825
                   bat: 90
-                  body: "POSITION"
-                  createdAt: "2025-09-23T10:25:00.000Z"
+                  body: 'POSITION'
+                  createdAt: '2025-09-23T10:25:00.000Z'
                 - id: 55
                   trackerId: 1
                   lat: -34.6039
                   lon: -58.3819
                   bat: null
-                  body: "POSITION"
-                  createdAt: "2025-09-23T10:05:00.000Z"
-        "401":
+                  body: 'POSITION'
+                  createdAt: '2025-09-23T10:05:00.000Z'
+        '401':
           description: No autorizado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Usuario no autorizado"
-        "500":
+                error: 'Usuario no autorizado'
+        '500':
           description: Error interno del servidor
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                error: "Error al obtener todos los eventos"
+                error: 'Error al obtener todos los eventos'
 
 components:
   securitySchemes:
@@ -1049,18 +1048,18 @@ components:
           minLength: 1
           maxLength: 32
           description: Nombre de usuario
-          example: "Juan"
+          example: 'Juan'
         password:
           type: string
           minLength: 8
           maxLength: 256
           description: Contraseña del usuario
-          example: "Contraseña123"
+          example: 'Contraseña123'
         image:
           type: string
           description: Nombre de la imagen del usuario para la URL (default si no se especifica)
-          default: "default"
-          example: "default"
+          default: 'default'
+          example: 'default'
         # admin:
         #   type: boolean
         #   description: Define si el usuario tiene rol de administrador
@@ -1075,17 +1074,17 @@ components:
           minLength: 1
           maxLength: 32
           description: Nombre de usuario
-          example: "Juan actualizado"
+          example: 'Juan actualizado'
         password:
           type: string
           minLength: 8
           maxLength: 256
           description: Nueva contraseña del usuario
-          example: "Nuevacontraseña123"
+          example: 'Nuevacontraseña123'
         image:
           type: string
           description: Nombre de la imagen del usuario para la URL
-          example: "default"
+          example: 'default'
         admin:
           type: boolean
           description: Cambiar rol de administrador
@@ -1107,11 +1106,11 @@ components:
         username:
           type: string
           description: Nombre de usuario
-          example: "Juan"
+          example: 'Juan'
         image:
           type: string
           description: Nombre de la imagen del usuario para la URL
-          example: "default"
+          example: 'default'
         admin:
           type: boolean
           description: Indica si el usuario es administrador
@@ -1125,7 +1124,7 @@ components:
           format: date-time
           nullable: true
           description: Fecha del ultimo inicio de sesión
-          example: "2025-10-04T12:55:40.000Z"
+          example: '2025-10-04T12:55:40.000Z'
         timeout:
           type: string
           format: date-time
@@ -1145,16 +1144,16 @@ components:
           minLength: 1
           maxLength: 32
           description: Nombre de la mascota
-          example: "Toto"
+          example: 'Toto'
         model:
           type: string
           description: Modelo del dispositivo tracker
-          example: "verLoRa"
+          example: 'verLoRa'
         image:
           type: string
           description: Nombre de la imagen del tracker (opcional, default si no se especifica)
-          default: "default"
-          example: "perro1"
+          default: 'default'
+          example: 'perro1'
         state:
           type: boolean
           description: Estado de emergencia actual del tracker
@@ -1217,15 +1216,15 @@ components:
           minLength: 1
           maxLength: 32
           description: Nombre de la mascota
-          example: "Toto actualizado"
+          example: 'Toto actualizado'
         model:
           type: string
           description: Modelo del dispositivo tracker
-          example: "verLoRa"
+          example: 'verLoRa'
         image:
           type: string
           description: Nombre de la imagen del tracker
-          example: "perro4"
+          example: 'perro4'
         state:
           type: boolean
           description: Estado del tracker
@@ -1289,15 +1288,15 @@ components:
         petName:
           type: string
           description: Nombre de la mascota
-          example: "Toto"
+          example: 'Toto'
         model:
           type: string
           description: Modelo del dispositivo tracker
-          example: "verLoRa"
+          example: 'verLoRa'
         image:
           type: string
           description: Nombre de la imagen del tracker
-          example: "perro3"
+          example: 'perro3'
         state:
           type: boolean
           description: Estado del tracker (encendido/apagado)
@@ -1338,7 +1337,7 @@ components:
           type: boolean
           description: Indica si el tracker esta activo o no en el sismtema
           example: true
-      
+
     TrackerEventCreate:
       type: object
       required:
@@ -1368,7 +1367,7 @@ components:
         eventDesc:
           type: string
           description: Descripcion del evento
-          example: "POSITION"
+          example: 'POSITION'
 
     TrackerEvent:
       type: object
@@ -1397,12 +1396,12 @@ components:
         eventDesc:
           type: string
           description: Descripcion del evento
-          example: "POSITION"
+          example: 'POSITION'
         createdAt:
           type: string
           description: Fecha y hora de creacion del evento
-          example: "2025-10-07T12:45:32.000Z"
-          
+          example: '2025-10-07T12:45:32.000Z'
+
     Error:
       type: object
       required:
@@ -1411,4 +1410,4 @@ components:
         error:
           type: string
           description: Mensaje de error descriptivo
-          example: "Error interno del servidor"
+          example: 'Error interno del servidor'

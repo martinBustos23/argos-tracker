@@ -48,11 +48,12 @@ export default function createUserRouter(UserController) {
     try {
       let originUid = token ? getUserIdFromToken(token) : req.params.uid;
 
-      if (!token) { // si no hay token, entonces debemos validar el usuario con una contrasenia
+      if (!token) {
+        // si no hay token, entonces debemos validar el usuario con una contrasenia
         console.log(req.body);
         const user = await UserController.find(originUid);
         if (!(await bcrypt.compare(req.body.password, user.password)))
-          return res.status(404).json({ message: 'Su contrasenia actual no es correcta'});
+          return res.status(404).json({ message: 'Su contrasenia actual no es correcta' });
         req.body.password = req.body.newPassword;
       }
 

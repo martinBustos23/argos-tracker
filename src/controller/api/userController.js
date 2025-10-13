@@ -28,7 +28,9 @@ export default class UserController {
       if (exists) throw new Conflict('Usuario ya registrado');
 
       if (!validatePassword(newUser.password))
-        throw new BadRequest('La contraseña es demasiado corta, o no posee mayusculas, minusculas o numeros');
+        throw new BadRequest(
+          'La contraseña es demasiado corta, o no posee mayusculas, minusculas o numeros'
+        );
       newUser.password = await this.#genPasswordHash(newUser.password); // actualizar la contrasenia para que sea el hash
 
       const result = await this.#userDAO.create(new UserDTO(newUser));
@@ -83,29 +85,30 @@ export default class UserController {
     }
   }
 
-  async update(originUid, mods, destinationUid=originUid) {
+  async update(originUid, mods, destinationUid = originUid) {
     try {
       const updatingUser = await this.#userDAO.find(originUid);
       if (!updatingUser) throw new NotFound(`El usuario (${originUid}) no fue encontrado`);
-      const updatedUser = destinationUid == originUid ? updatingUser : await this.#userDAO.find(destinationUid);
+      const updatedUser =
+        destinationUid == originUid ? updatingUser : await this.#userDAO.find(destinationUid);
       if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
-      if (!updatingUser.admin && (updatingUser.id != destinationUid))
+      if (!updatingUser.admin && updatingUser.id != destinationUid)
         throw new Forbidden('No estas autorizado');
       if (Object.keys(mods).length == 0) throw new BadRequest('Faltan parametros');
 
       // si se actualiza la contrasenia hashearla
       if (mods.password) {
-        if (!validatePassword(mods.password)) 
-          throw new BadRequest('La contraseña es demasiado corta, o no posee masculas, minusculas o numeros');
+        if (!validatePassword(mods.password))
+          throw new BadRequest(
+            'La contraseña es demasiado corta, o no posee masculas, minusculas o numeros'
+          );
         // si es forzado a cambiar la contrasenia, cambiar su estado a activo
-        if (updatedUser.status === 'pwd_change')
-          mods.status = 'active';
+        if (updatedUser.status === 'pwd_change') mods.status = 'active';
         mods.password = await this.#genPasswordHash(mods.password);
       }
 
       // si el usuario esta bloqueado y se lo quiere activar, forzarlo a cambiar la contrasenia
-      if (updatedUser.status === 'blocked' && mods.status === 'active') 
-        mods.status = 'pwd_change';
+      if (updatedUser.status === 'blocked' && mods.status === 'active') mods.status = 'pwd_change';
 
       const result = await this.#userDAO.update(destinationUid, new UserDTO(mods));
       await this.#userLogController.addLog(
@@ -140,7 +143,7 @@ export default class UserController {
   async disable(originUid, destinationUid = originUid) {
     try {
       const updatingUser = await this.#userDAO.find(originUid);
-      if (!updatingUser.admin && (updatingUser.id != destinationUid))
+      if (!updatingUser.admin && updatingUser.id != destinationUid)
         throw new Forbidden('No estas autorizado');
       const exist = await this.#userDAO.find(destinationUid);
       if (!exist) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
@@ -172,8 +175,7 @@ export default class UserController {
 
       const users = await this.getAll();
       const admins = users.filter((user) => user.admin == true);
-      if (admins.length <= 1)
-        throw new Forbidden('No se puede borrar todos los administradores');
+      if (admins.length <= 1) throw new Forbidden('No se puede borrar todos los administradores');
 
       const result = await this.#userDAO.delete(id);
       await this.#userLogController.addLog(
@@ -210,9 +212,7 @@ export default class UserController {
         this.#userDAO.update(exist.id, { timeout: null });
       } else if (exist.timeout) {
         throw new Forbidden(
-          'Espere ' +
-            Math.floor((exist.timeout.getTime() - utcNow) / 1000 / 60) +
-            ' minutos'
+          'Espere ' + Math.floor((exist.timeout.getTime() - utcNow) / 1000 / 60) + ' minutos'
         );
       }
 
@@ -225,9 +225,13 @@ export default class UserController {
         // obtener todos los logs desde su ultimo inicio de sesion, si no existe, obtener todos los logs
         const logsSinceLastLogin = await this.#userLogController.getAllSince(1 || lastLogin.id);
         // todos los intentos de login del usuario desde la ultima vez que inicio sesion
-        const loginTries = logsSinceLastLogin.filter((log) => log.source === exist.id && log.action === USER_ACTIONS.LOGIN);
+        const loginTries = logsSinceLastLogin.filter(
+          (log) => log.source === exist.id && log.action === USER_ACTIONS.LOGIN
+        );
         // cantidad de timeouts de usuario desde la ultima vez que inicio sesion
-        const timeouts = logsSinceLastLogin.filter((log) => log.source === exist.id && log.action === USER_ACTIONS.DISABLED).length;
+        const timeouts = logsSinceLastLogin.filter(
+          (log) => log.source === exist.id && log.action === USER_ACTIONS.DISABLED
+        ).length;
 
         if (
           loginTries.length >= USER_TRIES.BLOCK_TRIES &&
@@ -235,9 +239,7 @@ export default class UserController {
           loginTries.slice(0, USER_TRIES.BLOCK_TRIES).every((log) => log.level === LEVEL.ERROR)
         ) {
           this.#blockUser(exist.id);
-          throw new Forbidden(
-            `Demasiados intentos, su cuenta se bloqueo`
-          );
+          throw new Forbidden(`Demasiados intentos, su cuenta se bloqueo`);
         }
 
         if (

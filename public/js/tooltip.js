@@ -47,7 +47,7 @@ function showStep(index) {
   const rect = targetBox.getBoundingClientRect();
   const position = targetBox.dataset.position;
   const gap = 20;
-  let top; 
+  let top;
   let left;
 
   const tooltip = document.createElement('div');

@@ -40,7 +40,7 @@ export default (
       res.render('./dashboard/general', {
         user,
         config,
-        trackers: trackers.sort((a, b) => (a.active===b.active) ? 0 : (a.active ? -1 : 1)),
+        trackers: trackers.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)),
         events: sortedEvents,
       });
     } catch (error) {
@@ -169,10 +169,7 @@ export default (
     const token = req.cookies.authorization;
     const id = getUserIdFromToken(token);
     const user = await userController.find(id);
-    user.lastLogin = new Date(user.lastLogin + ' UTC').toLocaleString(
-      'es-AR',
-      { hour12: false }
-    );
+    user.lastLogin = new Date(user.lastLogin + ' UTC').toLocaleString('es-AR', { hour12: false });
     res.render('./dashboard/profile', { user });
   });
 

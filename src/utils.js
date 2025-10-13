@@ -16,11 +16,9 @@ export const generateToken = (id) => {
 export const authToken = async (req, res, next, userController) => {
   const token = req.cookies.authorization;
   try {
-    
     if (!token && req.body.username && req.body.password) {
       const user = await userController.login(req.body);
-      if (!user)
-        return res.status(401).json({ error: 'Usuario no autenticado' });
+      if (!user) return res.status(401).json({ error: 'Usuario no autenticado' });
       req.id = user.id;
     }
 
@@ -31,14 +29,14 @@ export const authToken = async (req, res, next, userController) => {
       });
 
     next();
-  } catch (error){
+  } catch (error) {
     next(error);
   }
 };
 
 export function validatePassword(password) {
   if (password.length < 8) return false;
-  const expressions = [/[a-z]/g,/[A-Z]/g,/[0-9]/g];
+  const expressions = [/[a-z]/g, /[A-Z]/g, /[0-9]/g];
   for (const expression of expressions) {
     const result = expression.test(password);
     if (result === false) return false;
@@ -64,9 +62,9 @@ export function deletePasswordMiddleware(req, res, next) {
   res.json = function (body) {
     if (body.password) delete body.password;
     originalJson.call(this, body);
-  }
+  };
   next();
-} 
+}
 
 export const getUserIdFromToken = (token) => {
   let id;
