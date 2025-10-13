@@ -236,7 +236,7 @@
         <div class="log-container" id="tracker">
           <h2>Registro de auditoría de dispositivos</h2>
           <div class="filter-panel">
-            <select id="sourceFilter" class="filter-panel__option">
+            <select class="sourceFilter filter-panel__option">
               <option value="0" disabled selected>Dispositivo</option>
               <option value="0">Todos </option>
             </select>
@@ -286,7 +286,7 @@
         <div class="log-container" id="user">
           <h2>Registro de auditoría de usuarios</h2>
           <div class="filter-panel">
-            <select id="sourceFilter" class="filter-panel__option">
+            <select class="sourceFilter filter-panel__option">
               <option value="0" disabled selected>Usuario</option>
               <option value="0">Todos</option>
             </select>
@@ -572,13 +572,15 @@
       const activeTable = document.querySelector(`#${activeSection.dataset.target}`);
       const tableContent = activeTable.querySelectorAll("#log-row");
 
-      const option = document.createElement('option');
-      const userSelection = document.getElementById("sourceFilter")
+      const sourceFilter = activeTable.querySelector(".sourceFilter");
 
       if (tableContent)
         tableContent.forEach(row => row.remove());
+
+      if (sourceFilter) 
+        sourceFilter.innerHTML = '<option value="0">Todos</option>';
       
-      for (const log of logs) {
+        for (const log of logs) {
         const logElement = document.createElement("tr");
         logElement.id = "log-row";
         
@@ -609,15 +611,20 @@
         logElement.appendChild(column);
 
         activeTable.querySelector("tbody").appendChild(logElement);
-
-      
-        option.value = log.source;
-        option.textContent = log.source;
-        userSelection.appendChild(option);
-
-
-        resolve(true);
       }
+
+      if (sourceFilter && logs.length) {
+        const uniqueSources = [...new Set(logs.map(log => log.source))];
+
+        uniqueSources.forEach(source => {
+            const option = document.createElement("option");
+            option.value = source;
+            option.textContent = source;
+            sourceFilter.appendChild(option);
+        });
+      }
+
+      resolve(true);
     });
   }
 
