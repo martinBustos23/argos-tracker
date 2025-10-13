@@ -1,4 +1,4 @@
-import { InternalError, NotFound } from '../utils.js';
+import { BadRequest, InternalError, NotFound } from '../utils.js';
 import LogDTO from '../dto/logDTO.js';
 
 export default class LogController {
@@ -26,6 +26,7 @@ export default class LogController {
 
   async getLatest(n) {
     try {
+      if (n < 1) throw new BadRequest('Cantidad de logs invalida');
       return await this.#logDAO.getLatest(n);
     } catch (error) {
       throw error;

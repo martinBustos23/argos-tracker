@@ -60,6 +60,7 @@ export default class TrackerEventController {
     try {
       const tracker = await this.#trackerController.find(trackerId);
       if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
+      if (limit < 1) throw new BadRequest('Cantidad de eventos invalida');
       return await this.#trackerEventDAO.getByTrackerId(trackerId, limit);
     } catch (error) {
       throw error;
