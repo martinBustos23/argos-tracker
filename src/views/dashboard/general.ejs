@@ -435,7 +435,8 @@
   });
 
   socket.addEventListener('message', (event) => {
-    const { latitude, longitude, trackerId, petName } = JSON.parse(event.data);
+    const { latitude, longitude, trackerId} = JSON.parse(event.data);
+    const petName = trackers.find(tracker => tracker.id === trackerId).petName;
 
     if (typeof latitude !== 'number' || typeof longitude !== 'number') return;
 
@@ -463,7 +464,7 @@
 
     map.setView([latitude, longitude], 15);
 
-    events.unshift(JSON.parse(event.data));
+    events.unshift({ ...JSON.parse(event.data), petName });
     const filteredEvents = filterEvents(events);
     console.log(filteredEvents);
     updateLogs(filteredEvents);
