@@ -86,11 +86,12 @@ export default class UserController {
   async update(originUid, mods, destinationUid=originUid) {
     try {
       const updatingUser = await this.#userDAO.find(originUid);
+      if (!updatingUser) throw new NotFound(`El usuario (${originUid}) no fue encontrado`);
       const updatedUser = destinationUid == originUid ? updatingUser : await this.#userDAO.find(destinationUid);
+      if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
       if (!updatingUser.admin && (updatingUser.id != destinationUid))
         throw new Unauthorized('No estas autorizado');
       if (Object.keys(mods).length == 0) throw new BadRequest('Faltan parametros');
-      if (!updatedUser) throw new NotFound(`El usuario (${destinationUid}) no fue encontrado`);
 
       // si se actualiza la contrasenia hashearla
       if (mods.password) {
@@ -167,7 +168,6 @@ export default class UserController {
   async delete(id) {
     try {
       const exist = await this.#userDAO.find(id);
-
       if (!exist) throw new NotFound(`El usuario (${id}) no fue encontrado`);
 
       const users = await this.getAll();
