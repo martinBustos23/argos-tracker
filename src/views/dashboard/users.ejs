@@ -587,7 +587,7 @@
     if (isConfirmed) {
     try {
       const response = await fetch(editForm.action, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

@@ -10,12 +10,14 @@
     <div class="body-content">
       <!-- <div class="tabs-container" id="tabs"></div> -->
       <div class="tabs-container">
-        <% trackers.forEach(Tracker=> { %>
-          <a href="/dashboard/devices/<%= Tracker.id %>"
-            class="tab <%= tracker.id === Tracker.id ? 'active' : '' %>">
-            <%= Tracker.petName %>
-          </a>
-          <% }) %>
+        <% trackers.forEach(Tracker => { %>
+          <% if (Tracker.active || (user.admin && systemConfig.devices.seeDisabled)) { %>
+            <a href="/dashboard/devices/<%= Tracker.id %>"
+              class="tab <%= Tracker.active === true ? '' : 'disabled' %> <%= tracker.id === Tracker.id ? 'selected' : '' %>">
+              <%= Tracker.petName %>
+            </a>
+          <% } %>
+        <% }) %>
       </div>
 
       <div class="content1-container">
@@ -915,7 +917,11 @@
     text-decoration: none;
   }
 
-  .tab.active {
+  .tab.disabled {
+    background: #61434c;
+  }
+
+  .tab.selected {
     background: #691c32;
   }
 
@@ -1144,28 +1150,35 @@
     const imgSrc = imgButton.getAttribute("src");
     const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
 
-    const enableGeofence = updateConfig.geoEnable.value === "si" ? 1 : 0;
-    const enableSoundAlert = updateConfig.alertSound.value === "si" ? 1 : 0;
+    const enableGeofence = updateConfig.geoEnable.value === "si";
+    const enableSoundAlert = updateConfig.alertSound.value === "si";
 
     const payload = {
       petName: updateConfig.petName.value || tracker.petName,
       model: tracker.model,
       image: imageName || tracker.image,
       state: tracker.state,
-      frequency: updateConfig.frequency.value || tracker.frequency,
-      lowBat: updateConfig.lowBat.value || tracker.lowBat,
-      geofenceLat: updateConfig.latitud.value || tracker.geofenceLat,
-      geofenceLon: updateConfig.longitud.value || tracker.geofenceLon,
-      geofenceRadius: updateConfig.geoRadio.value || tracker.geofenceRadius,
-      active: 1,
+      frequency: Number(updateConfig.frequency.value) || tracker.frequency,
+      lowBat: Number(updateConfig.lowBat.value) || tracker.lowBat,
+      geofenceLat: Number(updateConfig.latitud.value) || tracker.geofenceLat,
+      geofenceLon: Number(updateConfig.longitud.value) || tracker.geofenceLon,
+      geofenceRadius: Number(updateConfig.geoRadio.value) || tracker.geofenceRadius,
       enableGeofence: enableGeofence || tracker.enableGeofence,
-      emergencyFrequency: updateConfig.frequencyEmergency.value || tracker.emergencyFrequency,
+      emergencyFrequency: Number(updateConfig.frequencyEmergency.value) || tracker.emergencyFrequency,
       enableSoundAlert: enableSoundAlert || tracker.enableSoundAlert
     };
 
+    for (const key in payload) {
+      const value = payload[key];
+      if (value === "" || value === tracker[key])
+        delete payload[key];
+    }
+
+    if (Object.keys(payload) == false) return;
+
     try {
       const response = await fetch(`/api/trackers/${tracker.id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });

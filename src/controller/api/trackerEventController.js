@@ -3,8 +3,10 @@ import TrackerEventDTO from '../../dto/trackerEventDTO.js';
 
 export default class TrackerEventController {
   #trackerEventDAO;
-  constructor(trackerEventDAO) {
+  #trackerController;
+  constructor(trackerEventDAO, trackerController) {
     this.#trackerEventDAO = trackerEventDAO;
+    this.#trackerController = trackerController;
   }
 
   #validateEvent(event) {
@@ -39,6 +41,9 @@ export default class TrackerEventController {
         batteryLvl,
       };
 
+      const tracker = await this.#trackerController.find(trackerId);
+      if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
+
       if (!this.#validateEvent(event)) throw new BadRequest('Datos del evento invalidos');
       const result = this.#trackerEventDAO.create(new TrackerEventDTO(event));
       return result;
@@ -53,6 +58,9 @@ export default class TrackerEventController {
 
   async getEventsByTrackerId(trackerId, limit) {
     try {
+      const tracker = await this.#trackerController.find(trackerId);
+      if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
+      if (limit < 1) throw new BadRequest('Cantidad de eventos invalida');
       return await this.#trackerEventDAO.getByTrackerId(trackerId, limit);
     } catch (error) {
       throw error;

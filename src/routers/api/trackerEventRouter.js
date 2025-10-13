@@ -3,7 +3,6 @@ import { authToken, BadRequest, Conflict, NotFound, broadcastWSEvent } from '../
 
 export default function createTrackerEventRouter(
   trackerEventController,
-  trackerController,
   webSocketclients
 ) {
   const router = express.Router();
@@ -12,8 +11,6 @@ export default function createTrackerEventRouter(
   router.post('/trackerEvents/:id', async (req, res, next) => {
     try {
       const trackerId = req.params.id;
-      const tracker = await trackerController.find(trackerId);
-      if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
 
       const { eventDesc, lat, lon, bat } = req.query;
       const event = await trackerEventController.addEvent(trackerId, lat, lon, bat, eventDesc);
@@ -30,8 +27,6 @@ export default function createTrackerEventRouter(
   router.get('/trackerEvents/:id', async (req, res, next) => {
     try {
       const trackerId = req.params.id;
-      const tracker = await trackerController.find(trackerId);
-      if (!tracker) throw new NotFound(`El tracker ${trackerId} no fue encontrado`);
       const limit = req.query.n ? parseInt(req.query.n) : null;
       const events = await trackerEventController.getEventsByTrackerId(trackerId, limit);
 

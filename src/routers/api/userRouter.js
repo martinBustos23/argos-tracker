@@ -43,7 +43,7 @@ export default function createUserRouter(UserController) {
     }
   });
 
-  router.put('/users/:uid', async (req, res, next) => {
+  router.patch('/users/:uid', async (req, res, next) => {
     const token = req.cookies.authorization;
     try {
       let originUid = token ? getUserIdFromToken(token) : req.params.uid;

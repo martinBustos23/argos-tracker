@@ -7,7 +7,7 @@ export default function createTrackerRouter(trackerController, userController) {
 
   router.post('/trackers', isAdmin(userController), async (req, res, next) => {
     try {
-      const tracker = await trackerController.createTracker(req.body);
+      const tracker = await trackerController.create(req.body);
 
       res.status(201).json(tracker);
     } catch (error) {
@@ -35,9 +35,9 @@ export default function createTrackerRouter(trackerController, userController) {
     }
   });
 
-  router.put('/trackers/:id', isAdmin(userController), async (req, res, next) => {
+  router.patch('/trackers/:id', isAdmin(userController), async (req, res, next) => {
     try {
-      const updatedTracker = await trackerController.updateTracker(req.params.id, req.body);
+      const updatedTracker = await trackerController.update(req.params.id, req.body);
 
       res.status(200).json(updatedTracker);
     } catch (error) {
