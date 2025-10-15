@@ -4,98 +4,155 @@
 
 <div class="main-content">
 
-  <%- include('../layouts/navbar', { title: 'Gestión de Usuarios' ,
-    subtitle: 'Lista de todos los usuarios registrados' }); %>
+  <%- include('../layouts/navbar', { title: 'Usuarios' ,
+    subtitle: 'Configuración de los usuarios registrados' }); %>
 
-    <div class="main-content__body">
+    <div class="user-management">
 
       <% if (user.admin) { %>
-        <div class="register-container" id="registerContainer">
-          <div class="register-modal__btn" id="registerBtn">
+        <section class="user-register help-box" id="registerContainer"
+                  data-message="Desde aca podés crear nuevos usuarios."
+                  data-position="top">
+
+          <div class="user-register__toggle help-box" id="registerBtn" 
+                data-message="Hacé clic para desplegar el formulario de registro."
+                data-position="right">
             <span>Crear nuevo usuario</span><i class="bi bi-arrow-down"></i>
           </div>
 
-          <h2 class="form-title__h2">Registro</h2>
+          <h2 class="user-register__title">Registro</h2>
 
+          <form class="user-register__form" id="registerForm">
+            <div class="user-register__content">
 
-          <form class="register-form" id="registerForm">
-            <div class="register-form__div">
-              <button class="img-placeholder image-btn">
+              <!-- este ver que onda y reemplazar icono por default...-->
+              <button class="img-placeholder image-btn help-box"
+                        data-message="Podés asignar una imagen de perfil."
+                        data-position="left"
+                        data-target="#registerContainer">
                 <i><i class="bi bi-person-fill "></i></i>
               </button>
 
-              <div class="form-group">
+              <div class="form-group help-box"
+                    data-message="Ingresá un nombre de usuario."
+                    data-position="left"
+                    data-target="#registerContainer">
                 <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" placeholder="Escribir usuario" required />
+                <input type="text" id="username" name="username" placeholder="Ingresar usuario" required />
               </div>
-              <div class="form-group">
+
+              <div class="form-group help-box"
+                    data-message="Asigná una contraseña (mínimo 8 caracteres, 1 número, 1 minúscula y 1 mayúscula)."
+                    data-position="left"
+                    data-target="#registerContainer">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="Escribir contraseña" required />
+                <input type="password" id="password" name="password" placeholder="Ingresar contraseña" required />
               </div>
-              <div class="form-group">
-                <label for="admin">Rol</label>
-                <select class="input-text" id="Rol">
+
+              <div class="form-group help-box"
+                    data-message="Definí el rol del usuario."
+                    data-position="left"
+                    data-target="#registerContainer"
+                <label for="role">Rol</label>
+                <select id="role" name="admin" class="input-text">
                   <option value="false">Usuario</option>
                   <option value="true">Administrador</option>
                 </select>
               </div>
-              <button type="submit" class="confirm-btn">Confirmar</button>
+
+              <button class="confirm-btn help-box" type="submit" 
+                        data-message="Presioná para registrar el usuario."
+                        data-position="right"
+                        data-target="#registerContainer">
+                Confirmar
+              </button>
+
             </div>
           </form>
-
-
-        </div>
+        </section>
       <% } %>
 
-      <div class="user-container">
-        <% users.forEach(user=> { %>
-          <div class="user-container__div">
+      <section class="user-list help-box"
+                data-message="Aca se muestran todos los usuarios del sistema. Podés editarlos o eliminarlos."
+                data-position="top">
+
+        <% users.forEach(user => { %>
+          <div class="user-card help-box"
+                data-message="Este bloque representa un usuario."
+                data-position="left">
+
+            <!-- ver que poner en imagen y quitar icono -->
             <div class="img-placeholder">
               <i><i class="bi bi-person-fill "></i></i>
             </div>
-            <div class="user-info">
-              <div>
-                <p>
-                  <%= user.username %> - <%= user.admin ? "Administrador" : "Usuario" %>
-                </p>
-                <span>Activo: <%= user.status %></span>
 
-              </div>
-
-              <p class="last">Última conexión: <%= user.lastLogin %>
-              </p>
+            <div class="user-card__info">
+              <p><strong><%= user.username %></strong></p>
+              <!-- agregar lo de profile -->
+              <span><strong>Rol:</strong> <%= user.admin ? "Administrador" : "Usuario" %></span>
+              <span>
+                <strong>Estado:</strong>
+                <%
+                  if (user.status === 'active') {
+                    %> Cuenta activa <%
+                  } else if (user.status === 'disabled') {
+                    %> Cuenta deshabilitada <%
+                  } else if (user.status === 'blocked') {
+                    %> Cuenta bloqueada <%
+                  } else if (user.status === 'pwd_change') {
+                    %> Cambio de contraseña pendiente <%
+                  }
+                %>
+              </span>
             </div>
-            <button class="open-edit-btn" data-id="<%= user.id %>">
-              <i class="bi bi-pencil-square"></i>
+            
+            <span class="user-card__last-login">Última conexión: <%= user.lastLogin %></span>
+            
+            <button class="user-card__edit-btn " 
+                      data-id="<%= user.id %>">
+              <i class="bi bi-pencil-square help-box" 
+                  data-message="Editá los datos de este usuario."
+                  data-position="top">
+              </i>
             </button>
+
           </div>
-          <% }) %>
-      </div>
+        <% }) %>
+      </section>
 
-      <div id="edit-user-modal" class="edit-user-modal">
-        <!-- formulario editar usuario en base uid || en caso de no colocar algo, es decir no querer editar, contemplar eso-->
-        <div class="edit-user">
-          <span id="close-modal" class="cerrar"><i class="bi bi-x"></i></span>
+      <div class="modal-edit-user" id="modal-edit-user">
+        <div class="modal-edit-user__content">
 
-          <h2 id="edit-username-title" class="modal-title">Editar usuario </h2>
-          <form class="edit-user__form" id="editForm">
+          <button class="modal-edit-user__close-btn" id="closeUserModal">
+            <i class="bi bi-x"></i>
+          </button>
 
-            <div class="edit-user__div">
-              <div class="edit-option-img">
-                <div class="img-placeholder img-edit">
+          <h2 class="modal-edit-user__title" id="edit-username-title" >Editar usuario </h2>
+
+          <form class="modal-edit-user__form" id="editForm">
+            <div class="modal-edit-user__form-content">
+
+              <!-- ver img y otro div adentro de otro div? raro ver... -->
+              <div class="edit-option-img "
+                    data-message="Imagen del usuario seleccionado."
+                    data-position="top">
+                <div class="img-placeholder">
                   <i><i class="bi bi-person-fill "></i></i>
                 </div>
               </div>
               
               <div class="edit-option">
+
                 <div class="form-group">
                   <label for="username">Usuario</label>
                   <input type="text" id="username_edit" name="username" />
                 </div>
+
                 <div class="form-group">
                   <label for="password">Contraseña</label>
                   <input type="password" id="password_edit" name="password" placeholder="Editar contraseña" />
                 </div>
+
                 <div class="form-group">
                   <label for="rol">Rol</label>
                   <select id="rol" name="rol">
@@ -104,409 +161,42 @@
                     <option value="1">Administrador</option>
                   </select>
                 </div>
+
                 <div class="form-group">
                   <label for="status">Estado de cuenta</label>
                   <select id="status" name="status">
-                    <option id="message" value="" disabled selected>Selecciona un rol</option>
+                    <option id="message" value="" disabled selected>Habilitar cuenta</option>
                     <option value="active">Habilitar</option>
                     <option value="blocked">Bloquear</option>
                   </select>
                 </div>
+
               </div>
             </div>
             
-            <button type="submit" class="confirm-btn">Confirmar</button>
+            <button class="confirm-btn" type="submit" 
+                      data-message="Guardá los cambios realizados."
+                      data-position="bottom">
+              Confirmar cambios
+            </button>
           </form>
-          <!-- formulario eliminar usuario en base uid -->
-          <form class="delete-user-form" id="deleteForm">
-            <button class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+
+          <form class="modal-delete-user__form" id="deleteUserForm"
+                  data-message="Este botón elimina definitivamente al usuario."
+                  data-position="left">
+            <button class="delete-btn" type="submit">
+              <i class="bi bi-trash"></i>
+            </button>
           </form>
 
         </div>
-
       </div>
 
     </div>
+
 </div>
 
-<style>
-  .register-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 45%;
-    max-height: 2.5rem;
-    margin: 1rem;
-    background-color: white;
-    color: #691c32;
-    border-radius: 15px;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    transition: all 0.5s ease;
-  }
 
-  .register-container:hover {
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
-  }
-
-  .register-container.active {
-    max-height: 500px;
-  }
-
-  .register-container i {
-    rotate: 0deg;
-    transition: all 0.25s ease;
-  }
-
-  .register-container.active .register-modal__btn i {
-    rotate: -180deg;
-  }
-
-  .register-modal__btn {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    min-height: 2.5rem;
-    padding: .5rem 1rem;
-    font-size: 1rem;
-    background-color: #691c32;
-    color: white;
-  }
-
-  .register-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 90%;
-    padding: 1rem 0;
-  }
-
-  .register-form__div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-
-  .form-title__h2 {
-    width: 90%;
-    margin: .5rem 0rem 0rem;
-    padding-bottom: 5px;
-    font-size: 1.5rem;
-    border-bottom: 1px solid #691c32;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .form-group label {
-    margin: 0.25rem 0;
-
-    font-weight: 450;
-    font-size: large;
-  }
-
-  .form-group input {
-    padding: 0.25rem 1rem;
-
-    border: 1px solid #ced4da;
-    border-radius: 10px;
-
-    outline: none;
-  }
-
-  .form-group input:focus {
-    border-color: #691c32;
-    box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
-  }
-
-
-  .confirm-btn {
-    margin: 1rem 0;
-    padding: .5rem 2rem;
-
-    font-weight: 400;
-
-    background-color: #451321;
-    color: white;
-
-    border: none;
-    border-radius: 15px;
-
-    cursor: pointer;
-
-    transition: all 0.25s ease-in-out;
-  }
-
-  .confirm-btn:hover {
-    background-color: #691c32;
-  }
-
-  /* -----tabla de usuarios----- */
-  .user-container {
-    display: grid;
-    grid-template-columns: auto auto auto;
-
-    width: auto;
-    height: auto;
-    padding: 1rem;
-    margin: auto 1rem;
-
-    background-color: white;
-    border-radius: 5px;
-
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-
-    overflow: hidden;
-  }
-
-  .user-container__div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    position: relative;
-
-    width: 350px;
-    height: fit-content;
-    padding: .5rem;
-    margin: 5px;
-
-    background-color: white;
-    border: 1px solid #691c32;
-    color: black;
-
-    border-radius: 5px;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-
-    transition: all 0.2s ease;
-  }
-
-  .user-container__div:hover {
-    scale: 1.02;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-  }
-
-  .img-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 5rem;
-    height: 5rem;
-    padding-bottom: 5px;
-    margin: .5rem;
-
-    text-align: center;
-    font-size: 4rem;
-
-    border-radius: 50%;
-    border: 1px solid black;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-    height: 100%;
-    margin: .5rem;
-  }
-
-  .user-info .last {
-    margin-top: 1rem;
-    font-size: .8rem;
-    border: none;
-    color: #691c32;
-    ;
-    font-style: italic;
-  }
-
-  .user-info p {
-    margin: 0px;
-    border-bottom: 1px solid black;
-  }
-
-  .open-edit-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-
-    font-size: 1rem;
-
-    background-color: white;
-    color: black;
-
-    border-radius: 50%;
-
-    border: none;
-    cursor: pointer;
-
-    transition: all 0.25s ease;
-  }
-
-  .open-edit-btn:hover {
-    background-color: rgba(105, 28, 50, 0.3);
-  }
-
-  .image-btn {
-    justify-self: center;
-    margin: 0;
-    padding-bottom: 15px;
-    font-size: 6rem;
-    width:  7rem;
-    height: 7rem;
-  }
-
-  /* -----modal de editar usuario----- */
-
-  .edit-user-modal {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    z-index: 500;
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  .edit-user {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-
-    min-width: 50%;
-
-    padding: .5rem 1rem 0;
-
-    background-color: white;
-    color: #451321;
-
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-  }
-
-  .edit-user__form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .edit-user__div {
-    display: flex;
-    width: 100%;
-    padding: .5rem 0 0;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-  }
-
-  .edit-user__div button {
-    align-self: flex-end;
-  }
-
-  .edit-option-img {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .img-edit{
-    color: black;
-    margin: 0 2.5rem 0 1.5rem;
-    padding-bottom: 15px;
-    font-size: 8rem;
-    width:  9rem;
-    height: 9rem;
-  }
-  
-  .edit-option{
-    width: 50%;
-    padding: .5rem 1rem;
-    margin: 0;
-    border-left: 1px solid #451321;
-  }
-
-  .modal-title {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-    border-bottom: 1px solid #451321;
-  }
-
-  .form-group select {
-    padding: 0.5rem;
-
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-
-    outline: none;
-  }
-
-  .form-group select:focus {
-    border-color: #691c32;
-
-    box-shadow: 0 0 5px rgba(212, 77, 92, 0.4);
-  }
-
-
-  .cerrar {
-    position: absolute;
-    top: 5px;
-    right: 30px;
-
-    font-size: 1.5rem;
-
-    color: #333;
-
-    cursor: pointer;
-  }
-
-  .delete-user-form {
-    position: absolute;
-    top: 60px;
-    right: 25px;
-  }
-
-  .modal-title.delete {
-    border-bottom: none;
-  }
-
-  .delete-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: center;
-    font-size: 1rem;
-    width: 35px;
-    height: 35px;
-
-    padding: .5rem;
-
-    background-color: #451321;
-    color: white;
-
-    border-radius: 50%;
-    border: none;
-
-    cursor: pointer;
-
-    transition: all 0.25s ease-in-out;
-  }
-
-  .delete-btn:hover {
-    background-color: #691c32;
-  }
-</style>
 
 <script>
   const users = JSON.parse('<%- JSON.stringify(users) %>');
@@ -516,6 +206,46 @@
   registerBtn.addEventListener("click", () => {
     registerContainer.classList.toggle("active");
   });
+
+  document.querySelectorAll(".user-card__edit-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+      const user = users.find(user => user.id == id);
+      document.getElementById("modal-edit-user").style.display = "flex";
+      document.getElementById("edit-username-title").textContent = "Editar usuario: " + user.username;
+      document.getElementById("username_edit").placeholder = user.username;
+      document.getElementById("password_edit").placeholder = "Contraseña";
+
+      const rolSelect = document.getElementById("rol");
+      rolSelect.value = user.admin ? "1" : "0"; 
+
+      let statusMessage;
+      switch (user.status) {
+        case 'active':
+          statusMessage = "Usuario habilitado";
+          break;
+        case 'disabled':
+          statusMessage = "Usuario deshabilitado";
+          break;
+        case 'blocked':
+          statusMessage = "Usuario bloqueado";
+          break;
+        case 'pwd_change':
+          statusMessage = "Usuario debe cambiar la contraseña";
+          break;
+        default:
+          statusMessage = "Estado desconocido";
+      }
+      document.getElementById("message").textContent = statusMessage; 
+
+      document.querySelector(".modal-edit-user__form").action = "/api/users/" + id;
+      document.querySelector(".modal-delete-user__form").action = "/api/users/" + id;
+    });
+  });
+
+  document.getElementById("closeUserModal").addEventListener("click", () => {
+    document.getElementById("modal-edit-user").style.display = "none";
+  })
 
   const registerForm = document.getElementById("registerForm");
   registerForm.addEventListener("submit", async (event) => {
@@ -562,7 +292,6 @@
       });
     }
   });
-
 
   const editForm = document.getElementById("editForm");
   editForm.addEventListener("submit", async (event) => {
@@ -624,8 +353,8 @@
     }
   });
 
-  const deleteForm = document.getElementById("deleteForm");
-  deleteForm.addEventListener("submit", async (event) => {
+  const deleteUserForm = document.getElementById("deleteUserForm");
+  deleteUserForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const { isConfirmed } = await Swal.fire({
@@ -639,7 +368,7 @@
 
     if (isConfirmed) {
     try {
-      const response = await fetch(deleteForm.action, { method: "DELETE" });
+      const response = await fetch(deleteUserForm.action, { method: "DELETE" });
       const result = await response.json();
 
       if (response.ok) {
@@ -670,47 +399,6 @@
       }
     }
   });
-
-  document.querySelectorAll(".open-edit-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      const id = e.currentTarget.dataset.id;
-      const user = users.find(user => user.id == id);
-      document.getElementById("edit-user-modal").style.display = "flex";
-      document.getElementById("edit-username-title").textContent = "Editar usuario: " + user.username;
-      document.getElementById("username_edit").placeholder = user.username;
-      document.getElementById("password_edit").placeholder = "Contraseña";
-
-      const rolSelect = document.getElementById("rol");
-      rolSelect.value = user.admin ? "1" : "0"; 
-
-      let statusMessage;
-      switch (user.status) {
-        case 'active':
-          statusMessage = "Usuario habilitado";
-          break;
-        case 'disabled':
-          statusMessage = "Usuario deshabilitado";
-          break;
-        case 'blocked':
-          statusMessage = "Usuario bloqueado";
-          break;
-        case 'pwd_change':
-          statusMessage = "Usuario debe cambiar la contraseña";
-          break;
-        default:
-          statusMessage = "Estado desconocido";
-      }
-      document.getElementById("message").textContent = statusMessage; 
-
-      document.querySelector(".edit-user__form").action = "/api/users/" + id;
-      document.querySelector(".delete-user-form").action = "/api/users/" + id;
-    });
-  });
-
-  document.getElementById("close-modal").addEventListener("click", () => {
-    document.getElementById("edit-user-modal").style.display = "none";
-  })
-
 
 </script>
 

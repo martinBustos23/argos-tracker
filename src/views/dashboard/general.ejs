@@ -4,138 +4,174 @@
 
 <div class="main-content">
 
-  <%- include('../layouts/navbar', { title: 'Dashboard' , subtitle: 'Vista general del sistema' }); %>
+  <%- include('../layouts/navbar', { title: 'General' , subtitle: 'Vista general del sistema' }); %>
 
-    <div class="main-content__body">
+    <div class="general-dashboard">
 
-      <div class="main-content__map">
-        <div class="content__trackers">
+      <div class="general-dashboard__content help-box" 
+            data-message="Este es el panel principal con el mapa y tus dispositivos vinculados." 
+            data-position="top">
+
+        <div class="general-dashboard__trackers help-box" 
+              data-message="En esta sección se muestran los dispositivos vinculados a tu Estación Base " 
+              data-position="right">
+
           <h2>Dispositivos vinculados</h2>
           <span>Seleccione para filtrar</span>
 
-          <section class="tracker-list">
+          <section class="tracker-list help-box" 
+                    data-message="Cada tarjeta representa un dispositivo. Podés hacer clic para centrarlo en el mapa." 
+                    data-position="right">
+
             <% trackers.forEach( tracker=> { %>
               <% if (tracker.active) { %>
-                <div class="tracker-list__btn" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
-                  data-lon="<%= tracker.geofenceLon %>">
-                  <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                <div class="tracker-list__card help-box" 
+                      data-message="Dispositivo activo." 
+                      data-position="right" 
+                      onclick="updateMap(this)" 
+                      data-tracker-id="<%= tracker.id %>"
+                      data-lon="<%= tracker.geofenceLon %>">
+
+                  <img class="tracker-list__image" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  
                   <div class="tracker-list__info">
-                    <span class="label">
+                    <span class="tracker-list__petName help-box" 
+                            data-message="Nombre de la mascota." 
+                            data-position="top">
                       <%= tracker.petName %>
                     </span>
-                    <span class="label-name">
+                    <span class="tracker-list__state help-box" 
+                            data-message="Estado de conexion del dispositivo" 
+                            data-position="bottom">
                       <%= tracker.state %>
                     </span>
                   </div>
+
                 </div>
               <% } else if (user.admin && config.devices.seeDisabled) { %>
-                <div class="tracker-list__btn tracker-list__disabled" onclick="updateMap(this)" data-tracker-id="<%= tracker.id %>"
-                  data-lon="<%= tracker.geofenceLon %>">
-                  <img class="tracker-list__img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                <div class="tracker-list__card tracker-list__card--disabled help-box" 
+                      data-message="Dispositivo desactivado." 
+                      data-position="right" 
+                      onclick="updateMap(this)" 
+                      data-tracker-id="<%= tracker.id %>"
+                      data-lon="<%= tracker.geofenceLon %>">
+
+                  <img class="tracker-list__image" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
                   <div class="tracker-list__info">
-                    <span class="label">
+                    <span class="tracker-list__petName">
                       <%= tracker.petName %>
                     </span>
-                    <span class="label-name">
+                    <span class="tracker-list__state">
                       <%= tracker.state %>
                     </span>
                   </div>
                 </div>
               <% } %>
             <% }) %>
-            <a class="add-btn" href="/dashboard/vincular" style="text-decoration: none; color:#691c32">+</a>
+
+            <a class="add-btn help-box" 
+                data-message="Agregá un nuevo dispositivo desde esta opción." 
+                data-position="right" 
+                href="/dashboard/vincular" 
+                style="text-decoration: none; color:#691c32">+</a>
 
           </section>
 
         </div>
 
-        <div id="map"></div>
+        <div class="help-box" id="map" 
+              data-message="Mapa principal donde se muestran las ultimas ubicaciones de tus mascotas." 
+              data-position="left">
+        </div>
+
       </div>
 
-      <div class="log-container">
+      <div class="log-container help-box" 
+            data-message="Aquí se muestran los últimos eventos registrados por tus dispositivos." 
+            data-position="top">
+
         <h2>Últimos datos recibidos</h2>
-        <div class="filter-panel">
-          <!-- <label for="disp" class="filter-panel__option">
-            <input type="number" name="disp" id="disp" min="1" placeholder="Todos los dispositivos" value="0">
-          </label> -->
-          <select id="disp" class="filter-panel__option">
-            <option value="0" disabled selected>Seleccionar dispositivo</option>
-            <option value="0">Todos los dispositivos</option>
-          </select>
-          <select id="timestampFilter" class="filter-panel__option">
-            <option value="0" selected>Historial completo</option>
-            <option value="1">Ultima hora</option>
-            <option value="2">Ultimas 24 horas</option>
-            <option value="3">Ultimos 7 dias</option>
-            <option value="4">Ultimos 30 dias</option>
-          </select>
-          <select id="eventFilter" class="filter-panel__option">
-            <option value="0" selected>Todos los eventos</option>
-            <option value="1">Posicion</option>
-            <option value="2">Bateria baja</option>
-          </select>
-          <button id="filtrar" class="filter-panel__button">Filtrar</button>
-          <button id="download-button"><i class="bi bi-download" ></i></button>
+
+        <div class="filter-panel " 
+              data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+              data-position="right">
+
+          <div class="filter-buttons">
+            <select class="filter-panel__option help-box" id="disp" 
+                      data-message="Seleccioná un dispositivo específico o mostrálos todos." 
+                      data-position="bottom">
+              <option value="0" disabled selected>Seleccionar dispositivo</option>
+              <option value="0">Todos los dispositivos</option>
+            </select>
+  
+            <select class="filter-panel__option help-box" id="timestampFilter" 
+                      data-message="Filtrá los datos según el periodo de tiempo deseado." 
+                      data-position="bottom">
+              <option value="0" selected>Historial completo</option>
+              <option value="1">Última hora</option>
+              <option value="2">Últimas 24 horas</option>
+              <option value="3">Últimos 7 dias</option>
+              <option value="4">Últimos 30 dias</option>
+            </select>
+  
+            <select class="filter-panel__option help-box" id="eventFilter" 
+                      data-message="Filtrá los eventos según su tipo." 
+                      data-position="bottom">
+              <option value="0" selected>Todos los eventos</option>
+              <option value="1">Posicion</option>
+              <option value="2">Bateria baja</option>
+            </select>
+  
+            <button class="filter-panel__button help-box" id="filtrar" 
+                      data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                      data-position="bottom">
+              Filtrar
+            </button>
+          </div>
+
+          <button class="help-box" id="download-button" 
+                    data-message="Descargá los registros visibles en PDF." 
+                    data-position="left">
+            <i class="bi bi-download"></i>
+          </button>
         </div>
+
         <table class="log-container__table">
+          
           <thead>
             <tr>
-              <th>Dispositivo</th>
+              <!-- <th>Dispositivo</th> -->
               <th>Mascota</th>
               <th>Evento</th>
               <th>Bateria</th>
               <th>Latitud</th>
               <th>Longitud</th>
               <th>Fecha</th>
-              <th>Ir al mapa</th>
+              <!-- <th>Ir al mapa</th> -->
             </tr>
           </thead>
+
           <tbody id="table-logs">
             <% if (events && events.length > 0) { %>
               <% events.forEach(event=> { %>
-                <tr id="log-row">
-                  <td>
-                    <%= event.trackerId %>
-                  </td>
-                  <td>
-                    <%= event.petName %>
-                  </td>
-                  <td>
-                    <%= event.eventDesc %>
-                  </td>
-                  <td>
-                    <% if (event.batteryLvl) { %>
-                      <%= event.batteryLvl %>%
-                        <% } else { %>
-                          -
-                          <% } %>
-                  </td>
-                  <td>
-                    <% if (event.latitude) { %>
-                      <%= event.latitude %>
-                        <% } else { %>
-                          -
-                          <% } %>
-                  <td>
-                    <% if (event.longitude) { %>
-                      <%= event.longitude %>
-                        <% } else { %>
-                          -
-                          <% } %>
-                  </td>
-                  <td>
-                    <%= event.timestamp.toLocaleString('es-AR', {hour12: false}); %>
-                  </td>
-                  <td>
-                    -
-                  </td>
+                <tr class="" id="log-row"
+                      data-message="Cada fila muestra la información completa de un evento recibido." 
+                      data-position="right">
+                  <!-- <td><%= event.trackerId %></td> -->
+                  <td data-label="Mascota"><%= event.petName %></td>
+                  <td data-label="Evento"><%= event.eventDesc %></td>
+                  <td data-label="Batería"><%= event.batteryLvl ? event.batteryLvl + '%' : '-' %></td>
+                  <td data-label="Latitud"><%= event.latitude || '-' %></td>
+                  <td data-label="Longitud"><%= event.longitude || '-' %></td>
+                  <td data-label="Fecha"><%= event.timestamp.toLocaleString('es-AR', {hour12: false}); %></td>
+                  <!-- <td>-</td> -->
                 </tr>
-                <% }) %>
-                  <% } else { %>
-                    <tr>
-                      <td colspan="8" style="text-align:center;">No hay registros recientes.</td>
-                    </tr>
-                    <% } %>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="6" style="text-align:center;">No hay registros recientes.</td>
+              </tr>
+            <% } %>
           </tbody>
 
         </table>
@@ -144,230 +180,6 @@
     </div>
 
 </div>
-
-<style>
-  .main-content__body {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    flex: 1;
-    padding: .5rem 0rem 0rem;
-    background-color: rgba(170, 170, 170, 0.2);
-
-  }
-
-  .main-content__map {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    min-height: 90vh;
-  }
-
-  .content__trackers {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 30%;
-    background-color: white;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    margin: 0rem .5rem .5rem 1rem;
-    border-radius: 5px;
-  }
-
-  .content__trackers h2 {
-    width: 100%;
-    text-align: center;
-    font-size: 1.5rem;
-    margin: .5rem 0rem 0rem;
-    color: #691c32;
-  }
-
-  .content__trackers span {
-    text-align: center;
-    font-size: 1rem;
-    color: #6d6d6d;
-    width: 100%;
-    padding-bottom: .25rem;
-
-  }
-
-
-  #map {
-    width: 80%;
-    height: calc(90vh - .5rem);
-    border-radius: 10px;
-    margin-right: 1rem;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    border: 1px solid #aaa;
-    transition: all 0.25s ease-out;
-  }
-
-  #map:hover {
-    border: 1px solid rgba(69, 19, 33, 0.6);
-  }
-
-
-
-  .log-container {
-    display: block;
-    width: 100%;
-    height: 100vh;
-    padding: 1rem 0rem;
-    z-index: 1000;
-    box-shadow: 0px -20px 50px 25px rgba(0, 0, 0, 0.4);
-  }
-
-  .log-container h2 {
-    text-align: center;
-
-    /* padding-left: 1rem; */
-
-    font-weight: bold;
-    font-size: x-large;
-  }
-
-
-  .log-container__table {
-    width: 100%;
-    font-size: .9rem;
-    font-family: sans-serif;
-  }
-
-  .log-container__table thead tr {
-    background-color: white;
-    text-align: left;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  }
-
-
-  .log-container__table th,
-  .log-container__table td {
-    padding: .5rem 1rem;
-    white-space: nowrap;
-  }
-
-
-  .log-container__table td {
-    padding: .5rem 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .log-container__table tbody tr {
-    transition: all .25s ease;
-  }
-
-  .log-container__table tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-
-  .log-container__table tbody td:last-child {
-    text-align: center;
-  }
-
-
-  .tracker-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    width: 100%;
-
-    margin: 1rem;
-    gap: 1rem;
-  }
-
-
-  .tracker-list__btn {
-    display: flex;
-    flex-direction: row;
-    align-items: right;
-
-    width: 75%;
-    height: 75px;
-    padding: 10px 15px;
-
-    background-color: #691c32;
-    color: #ffe7e3;
-
-    border-radius: 5px;
-
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-
-    cursor: pointer;
-
-    transition: all 0.25s ease-out;
-  }
-
-  .tracker-list__btn:hover {
-    scale: 1.05;
-    box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .tracker-list__img {
-    width: 50px;
-    height: 50px;
-    background-color: white;
-    border-radius: 50%;
-    /* delete */
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: black;
-  }
-
-  .tracker-list__info {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    margin-left: 1rem;
-  }
-
-  .tracker-list__info .label {
-    text-align: left;
-    font-weight: 500;
-    border-bottom: solid 1px #ffe7e3;
-    color: white;
-  }
-
-  .tracker-list__info .label-name {
-    text-align: center;
-    color: white;
-  }
-
-  .tracker-list__disabled {
-    background-color: #61434c;
-  }
-
-  .add-btn {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-
-    min-width: 3.5rem;
-    max-height: 2rem;
-
-    /* padding: 0rem .25rem .3rem; */
-
-    font-weight: bold;
-    font-size: 1.5rem;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-
-    border: 1px solid #ccc;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease-in-out;
-  }
-
-  .add-btn:hover {
-    border-color: #691c32;
-
-    box-shadow: 1px 1px 15px rgba(212, 77, 92, 0.4);
-  }
-</style>
 
 <script src="/js/jspdf.umd.min.js"></script>
 <script src="/js/jspdf.plugin.autotable.min.js"></script>

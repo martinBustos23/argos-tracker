@@ -1,0 +1,4 @@
+ .body-content .log-container {
+    box-shadow: none;
+    border-left: solid 1px black;
+}

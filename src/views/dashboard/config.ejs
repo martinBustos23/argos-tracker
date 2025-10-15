@@ -105,29 +105,54 @@
 
         <div class="log-container" id="system">
           <h2>Registro de auditoría del sistema</h2>
-          <div class="filter-panel">
-            <select id="timestampFilter" class="filter-panel__option">
-              <option value="0" selected>Historial completo</option>
-              <option value="1">Ultima hora</option>
-              <option value="2">Ultimas 24 horas</option>
-              <option value="3">Ultimos 7 dias</option>
-              <option value="4">Ultimos 30 dias</option>
-            </select>
-            <select id="levelFilter" class="filter-panel__option">
-              <option value="0" selected>Todos los niveles</option>
-              <option value="1">Info</option>
-              <option value="2">Error</option>
-              <option value="3">Warning</option>
-            </select>
-            <select id="actionFilter" class="filter-panel__option">
-              <option value="0" selected>Todos las acciones</option>
-              <option value="1">Create</option>
-              <option value="2">Connect</option>
-              <option value="3">Update config</option>
-            </select>
-            <button id="filtrar" class="filter-panel__button">Filtrar</button>
-            <button id="download-button"><i class="bi bi-download" ></i></button>
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom">
+
+            <div class="filter-buttons"> 
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los registros según el periodo de tiempo deseado." 
+                        data-position="bottom">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="levelFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos los niveles</option>
+                <option value="1">Info</option>
+                <option value="2">Error</option>
+                <option value="3">Warning</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="actionFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos las acciones</option>
+                <option value="1">Create</option>
+                <option value="2">Connect</option>
+                <option value="3">Update config</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato CSV o Excel." 
+                      data-position="bottom">
+              <i class="bi bi-download"></i>
+            </button>
           </div>
+
           <table class="log-container__table">
             <thead>
               <tr>
@@ -146,38 +171,63 @@
 
         <div class="log-container" id="tracker">
           <h2>Registro de auditoría de dispositivos</h2>
-          <div class="filter-panel">
-            <select class="sourceFilter filter-panel__option">
-              <option value="0" disabled selected>Dispositivo</option>
-              <option value="0">Todos </option>
-            </select>
-            <select id="timestampFilter" class="filter-panel__option">
-              <option value="0" selected>Historial completo</option>
-              <option value="1">Ultima hora</option>
-              <option value="2">Ultimas 24 horas</option>
-              <option value="3">Ultimos 7 dias</option>
-              <option value="4">Ultimos 30 dias</option>
-            </select>
-            <select id="levelFilter" class="filter-panel__option">
-              <option value="0" selected>Todos los niveles</option>
-              <option value="1">Info</option>
-              <option value="2">Error</option>
-              <option value="3">Warning</option>
-            </select>
-            <!-- <label for="disp" class="filter-panel__option">
-              <input type="number" name="disp" id="sourceFilter" min="1" placeholder="Todos los dispositivos" value="0">
-            </label> -->
-            <select id="actionFilter" class="filter-panel__option">
-              <option value="0" selected>Todos las acciones</option>
-              <option value="1">Link</option>
-              <option value="2">Unlink</option>
-              <option value="3">Disable</option>
-              <option value="4">Update</option>
-              <option value="5">Create</option>
-            </select>
-            <button id="filtrar" class="filter-panel__button">Filtrar</button>
-            <button id="download-button"><i class="bi bi-download" ></i></button>
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom">
+
+            <div class="filter-buttons"> 
+              <select class="filter-panel__option help-box sourceFilter"
+                        data-message="Seleccioná un dispositivo específico o mostrálos todos." 
+                        data-position="bottom">
+                <option value="0" disabled selected>Dispositivo</option>
+                <option value="0">Todos </option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los registros según el periodo de tiempo deseado." 
+                        data-position="bottom">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="levelFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos los niveles</option>
+                <option value="1">Info</option>
+                <option value="2">Error</option>
+                <option value="3">Warning</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="actionFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos las acciones</option>
+                <option value="1">Link</option>
+                <option value="2">Unlink</option>
+                <option value="3">Disable</option>
+                <option value="4">Update</option>
+                <option value="5">Create</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato CSV o Excel." 
+                      data-position="bottom">
+              <i class="bi bi-download"></i>
+            </button>
           </div>
+
           <table class="log-container__table">
             <thead>
               <tr>
@@ -196,39 +246,64 @@
 
         <div class="log-container" id="user">
           <h2>Registro de auditoría de usuarios</h2>
-          <div class="filter-panel">
-            <select class="sourceFilter filter-panel__option">
-              <option value="0" disabled selected>Usuario</option>
-              <option value="0">Todos</option>
-            </select>
-            <select id="timestampFilter" class="filter-panel__option">
-              <option value="0" selected>Historial completo</option>
-              <option value="1">Ultima hora</option>
-              <option value="2">Ultimas 24 horas</option>
-              <option value="3">Ultimos 7 dias</option>
-              <option value="4">Ultimos 30 dias</option>
-            </select>
-            <select id="levelFilter" class="filter-panel__option">
-              <option value="0" selected>Todos los niveles</option>
-              <option value="1">Info</option>
-              <option value="2">Error</option>
-              <option value="3">Warning</option>
-            </select>
-            <!-- <label for="uid" class="filter-panel__option">
-              <input type="number" name="uid" id="sourceFilter" min="1" placeholder="Todos los usuarios" value="0">
-            </label> -->
-            <select id="actionFilter" class="filter-panel__option">
-              <option value="0" selected>Todos las acciones</option>
-              <option value="1">Login</option>
-              <option value="2">Logout</option>
-              <option value="3">Create</option>
-              <option value="4">Update</option>
-              <option value="5">Block</option>
-              <option value="6">Disable</option>
-            </select>
-            <button id="filtrar" class="filter-panel__button">Filtrar</button>
-            <button id="download-button"><i class="bi bi-download" ></i></button>
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom">
+
+            <div class="filter-buttons"> 
+              <select class="filter-panel__option help-box sourceFilter"
+                        data-message="Seleccioná un dispositivo específico o mostrálos todos." 
+                        data-position="bottom">
+                <option value="0" disabled selected>Usuario</option>
+                <option value="0">Todos</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los registros según el periodo de tiempo deseado." 
+                        data-position="bottom">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="levelFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos los niveles</option>
+                <option value="1">Info</option>
+                <option value="2">Error</option>
+                <option value="3">Warning</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="actionFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos las acciones</option>
+                <option value="1">Login</option>
+                <option value="2">Logout</option>
+                <option value="3">Create</option>
+                <option value="4">Update</option>
+                <option value="5">Block</option>
+                <option value="6">Disable</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato CSV o Excel." 
+                      data-position="bottom">
+              <i class="bi bi-download"></i>
+            </button>
           </div>
+
           <table class="log-container__table">
             <thead>
               <tr>

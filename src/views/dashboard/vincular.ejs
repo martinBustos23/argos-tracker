@@ -4,139 +4,159 @@
 
 <div class="main-content">
 
-    <%- include('../layouts/navbar', { title: 'Vincular dispositivo' ,
-        subtitle: 'Complete el formulario para crear nuevo vinculo' }); %>
+    <%- include('../layouts/navbar', { title: 'Vincular' ,
+        subtitle: 'Crear dispositivos en el sistema' }); %>
 
-        <div class="main-content__body">
+        <div class="vincular-dashboard">
 
-            <form class="vincular-form" id="vincularForm">
-                <h2>Registrar dispositivo</h2>
-                <div class="vincular-form__tab">
+            <form class="vincular-form help-box" id="vincularForm"
+                    data-message="Formulario para registrar un dispositivo de rastreo." 
+                    data-position="top">
 
-                    <div class="vincular-form__config">
+                <h2>
+                  Registrar dispositivo
+                </h2>
 
-                        <img id="img-button" class="img-tracker helper1" src="/img/petIcons/default.jpg" alt="img"
-                            data-content='{"title": "Imagen", 
-                                            "data": "Esta opción permite elegir una imagen de stock para identificar a la mascota"}'
-                        >
+                <div class="vincular-form__content">
 
-                        <input class="input-petname helper1" type="text" name="petName"
-                            placeholder="Nombre de mascota..." required 
-                            data-content='{"title": "Nombre", 
-                                            "data": "Esta opción permite ingresar un nombre vinculado a la mascota que utilizará el dispositivo"}'>
+                    <div class="vincular-form__general help-box" 
+                          data-message="Configura la información básica del dispositivo y su comportamiento." 
+                          data-position="right">
 
-                        <div class="option helper1"
-                            data-content='{"title": "ID", 
-                                            "data": "Este ID se asigna automáticamente por el sistema y actúa como un identificador único para el dispositivo. No es necesario modificarlo"}'>
-                            <label>ID:</label>
-                            <input class="input-text" type="text" name="id" disabled
-                                placeholder="Se asigna automáticamente">
+                        <img class="img-tracker help-box" id="img-button" 
+                              data-message="Haz clic para elegir una imagen de stock para identificar a la mascota." 
+                              data-position="right"
+                              src="/img/petIcons/default.jpg" alt="Imagen del dispositivo">
+
+                        <input class="input-petname help-box" id="petName" 
+                                data-message="Ingresa el nombre de la mascota asociada al dispositivo." 
+                                data-position="bottom"
+                                type="text" name="petName" placeholder="Nombre de mascota..." required>
+
+
+                        <!-- <div class="form-group help-box" 
+                              data-message="El ID se asigna automáticamente y no puede modificarse." 
+                              data-position="bottom">
+                          <label for="deviceId">ID:</label>
+                          <input id="deviceId" class="input-text" type="text" name="id" disabled placeholder="Se asigna automáticamente">
+                        </div> -->
+
+                        <div class="form-group help-box" 
+                              data-message="Selecciona el modelo de dispositivo que estás utilizando." 
+                              data-position="bottom">
+                          <label for="model">Modelo</label>
+                          <select id="model" class="input-text">
+                            <option value="1">verLoRa</option>
+                            <option value="2">verGSM</option>
+                            <option value="3">verGSM-LoRa</option>
+                          </select>
                         </div>
 
-                        <div class="option helper1" 
-                            data-content='{"title": "Modelo", 
-                                            "data": "Selecciona el modelo del dispositivo que estás utilizando. Cada modelo puede tener características y funcionalidades diferentes"}'>
-                            <label for="model">Modelo:</label>
-                            <select class="input-text" id="model">
-                                <option value="1">verLoRa</option>
-                                <option value="2">verGSM</option>
-                                <option value="3">verGSM-LoRa</option>
-                            </select>
-                        </div>
+                        <div class="form-group help-box" 
+                              data-message="Ajusta la frecuencia con la que el dispositivo envía datos al sistema." 
+                              data-position="bottom">
+                          <label for="frequency">Frecuencia</label>
 
-                        <div class="option helper1" 
-                            data-content='{"title": "Frecuencia", 
-                                            "data": "Ajusta la frecuencia con la que la estación recibe eventos del dispositivo activo. Un valor más bajo significa más actualizaciones a costa de un mayor consumo de batería"}'>
-                            <label for="frequency">Frecuencia:</label>
+                          <span id="freqValue">
                             <input type="range" id="frequency" name="frequency" min="5" max="30" value="10"
-                            oninput="document.getElementById('freqValue').textContent=this.value + 'min'">
-                            <span id="freqValue">5min</span>
+                                oninput="document.getElementById('freqValue').textContent=this.value + 'min'"> 
+                            10min
+                          </span>
                         </div>
 
-                        <div class="option helper1" 
-                            data-content='{"title": "Frecuencia emergencia", 
-                                            "data": "Ajusta la frecuencia de emergencia que se activa si el dispositivo detecta alguna anomalía. Esto determina cuán rápido se notificará el problema"}'>
-                            <label for="frequency-emergency">Frecuencia emergencia:</label>
-                            <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency" min="1" max="10" value="3"
+                        <div class="form-group help-box" 
+                              data-message="Ajusta la frecuencia de emergencia, usada ante detección de anomalías." 
+                              data-position="bottom">
+                          <label for="frequencyEmergency">Frecuencia de emergencia</label>
+                          
+                          <span id="freqEmergValue">
+                            <input type="range" id="frequencyEmergency" name="frequencyEmergency" min="1" max="10" value="3"
                                 oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
-                            <span id="freqEmergValue">3min</span>
+                            3min
+                          </span>
                         </div>
 
-                        <div class="option helper1" 
-                            data-content='{"title": "Umbral de bateria", 
-                                            "data": "Ajusta el umbral de nivel de batería para recibir notificaciones sobre el estado del dispositivo"}'>
-                            <label for="battery">Umbral de bateria:</label>
-                            <input type="range" id="battery" name="lowBat" min="5" max="80" value="20"
+                        <div class="form-group help-box" 
+                              data-message="Establece el nivel de batería a partir del cual recibirás alertas de batería baja." 
+                              data-position="bottom">
+                          <label for="batteryThreshold">Umbral de batería</label>
+                          
+                          <span id="batValue">
+                            <input type="range" id="batteryThreshold" name="lowBat" min="5" max="80" value="20"
                                 oninput="document.getElementById('batValue').textContent=this.value + '%'">
-                            <span id="batValue">20%</span>
+                            20%
+                          </span>
                         </div>
 
-                        <div class="option helper1" 
-                            data-content='{"title": "Alerta de sonido", 
-                                            "data": "Esta opción permite elegir si activar las notificaciones importantes por sonido"}'>
-                            <label for="alert">Alerta de sonido: </label>
-                            <div class="option-radio">
-                                <label><input type="radio" name="alertSound" value="si" checked>Sí</label>
-                                <label><input type="radio" name="alertSound" value="no">No</label>
-                            </div>
+                        <div class="form-group help-box" 
+                              data-message="Activa o desactiva las notificaciones de alerta por sonido." 
+                              data-position="bottom">
+                          <label>Alerta de sonido</label>
+                          <div class="option-radio">
+                            <label><input type="radio" name="alertSound" value="si" checked> Sí</label>
+                            <label><input type="radio" name="alertSound" value="no"> No</label>
+                          </div>
                         </div>
 
-                        <div class="option helper1" 
-                            data-content='{"title": "Geo-fencing", 
-                                            "data": "Delimita un área segura. Si el dispositivo se encuentra fuera de esta área, se activa el modo de emergencia. Asegúrate de configurar correctamente los límites"}'>
-                            <label for="geofencing">Geo-fencing: </label>
-                            <div class="option-radio">
-                                <label><input type="radio" name="geoEnable" value="si" checked>Sí</label>
-                                <label><input type="radio" name="geoEnable" value="no" >No</label>
-                            </div>
+                        <div class="form-group help-box" 
+                              data-message="Activa la función de zona segura para delimitar un área segura." 
+                              data-position="bottom">
+                          <label>Zona segura</label>
+                          <div class="option-radio">
+                            <label><input type="radio" name="geoEnable" value="si" checked> Sí</label>
+                            <label><input type="radio" name="geoEnable" value="no"> No</label>
+                          </div>
                         </div>
 
-                        <button class="crear-tracker-btn helper1" type="submit">Crear</button>
+                        <button class="crear-tracker-btn help-box" type="submit" 
+                                  data-message="Haz clic para crear y registrar el nuevo dispositivo." 
+                                  data-position="top">
+                          Crear
+                        </button>
 
                     </div>
 
-                    <div class="vincular-form__geofencing">
-                        <h3>Geo-fencing</h3>
+                    <div class="vincular-form__geofencing help-box" 
+                          data-message="Define la zona segura (geo-fence) para el dispositivo." 
+                          data-position="left">
 
-                        <div class="option-geo helper2" 
-                            data-content='{"title": "Latitud", 
-                                            "data": "La latitud es la medida angular que indica la posición de un punto al norte o al sur del ecuador. Esta opción permite delimitar un área segura; si el dispositivo se encuentra fuera de esta, se activa el modo de emergencia"}'>
-                            <label for="latitud">Latitud:</label>
-                            <input class="input-text" type="text" id="latitud" name="latitud" placeholder="-34.6037">
-                        </div>
-                        <div class="option-geo helper2" 
-                            data-content='{"title": "Longitud", 
-                                            "data": "La longitud es la medida angular que indica la posición de un punto al este o al oeste del meridiano de Greenwich. Esta opción permite delimitar un área segura; si el dispositivo se encuentra fuera de esta, se activa el modo de emergencia"}'>
-                            <label for="latitud">Longitud:</label>
-                            <input class="input-text" type="text" id="longitud" name="longitud" placeholder="-58.3816">
-                        </div>
-                        <div class="option-geo helper2"  
-                            data-content='{"title": "Radio", 
-                                            "data": "Esta opción permite definir el radio del área segura en metros. Un radio más grande significa que el dispositivo puede moverse más lejos de la ubicación central antes de activar el modo de emergencia. Ajusta el control deslizante para establecer el radio deseado"}'>
-                            <label for="radio">Radio:</label>
-                            <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150" value="20"
-                                oninput=updateRadio(this)>
-                            <span id="radioValue">10m</span>
-                        </div>
+                      <h3>Zona segura</h3>
 
-                        <div id="geo-map" class="geozone__map helper2"></div>
+                      <div class="form-group help-box" 
+                            data-message="Latitud de la ubicación central del área segura." 
+                            data-position="bottom">
+                        <label for="latitude">Latitud</label>
+                        <input id="latitude" class="input-text" type="text" name="latitud" placeholder="-34.6037">
+                      </div>
+
+                      <div class="form-group help-box" 
+                            data-message="Longitud de la ubicación central del área segura." 
+                            data-position="bottom">
+                        <label for="longitude">Longitud</label>
+                        <input id="longitude" class="input-text" type="text" name="longitud" placeholder="-58.3816">
+                      </div>
+
+                      <div class="form-group help-box" 
+                            data-message="Define el radio del área segura en metros. Cuanto mayor sea, más grande será el perímetro permitido." 
+                            data-position="bottom">
+                        <label for="geoRadio">Radio</label>
+                        
+                        <span id="radioValue">
+                          <input id="geoRadio" class="input-range" type="range" name="geoRadio" min="10" max="150" value="20" oninput="updateRadio(this)">
+                          20m
+                        </span>
+                      </div>
+
+                      <div class="geozone__map help-box" id="geoMap" 
+                            data-message="Mapa interactivo para visualizar y ajustar el área segura (geo-fence). Realizar un clic en un punto del mapa para asignar la latitud y longitud de la ubicación seleccionada" 
+                            data-position="left">
+                      </div>
+
                     </div>
+
                 </div>
             </form>
 
-
-            <div id="helper" class="helper">
-                <button class="helper-btn" id="helper-close">X</button>
-                <div id="content-helper">
-
-                </div>
-            </div>
-            <div id="helper-left" class="helper-left">
-                <button class="helper-btn" id="helper-left-close">X</button>
-                <div id="content-helper-left">
-
-                </div>
-            </div>
 
             <div id="img-selector" class="img-selector">
                 <div class="img-options">
@@ -157,401 +177,8 @@
 
 </div>
 
-<style>
-    #geo-map {
-        min-height: 45vh;
-        height: 100%;
-        width: 95%;
-        border-radius: 4px;
-        margin: 1rem;
-        border: 1px solid #aaa;
-        transition: all .5s ease-in;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    #geo-map:hover {
-        border: 1px solid rgba(69, 19, 33, 0.6);
-    }
-
-    .main-content__body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        background-color: rgba(170, 170, 170, 0.2);
-
-    }
-
-    .helper {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        position: absolute;
-        right: 0;
-        opacity: 0;
-        visibility: hidden;
-        padding: 3rem;
-        width: 35%;
-        height: 90%;
-        z-index: 2000;
-        /* background-color: rgba(105, 28, 50, 0.8); */
-        background-color: rgba(69, 19, 33, 0.8);
-        transition: all 1s ease-in-out;
-    }
-
-    .helper-left {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        position: absolute;
-        left: 250px;
-        opacity: 0;
-        visibility: hidden;
-        padding: 3rem;
-        width: 35%;
-        height: 90%;
-        z-index: 2000;
-        /* background-color: rgba(105, 28, 50, 0.8); */
-        background-color: rgba(69, 19, 33, 0.8);
-        transition: all 1s ease-in-out;
-    }
-
-    .vincular-form {
-        display: flex;
-        flex-direction: column;
-        width: 90%;
-        flex: 1;
-        background-color: rgba(255, 255, 255, 0.6);
-        color: #691c32;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        padding: .5rem;
-        margin: .5rem;
-        border-radius: 5px;
-    }
-
-    .vincular-form h2 {
-        font-size: 1.5rem;
-        padding: .5rem;
-        margin: .25rem;
-        border-bottom: 1px solid #691c32;
-    }
-
-    .vincular-form__tab {
-        display: flex;
-        flex-direction: row;
-        height: 100%;
-        flex: 1;
-    }
-
-    .vincular-form__config {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex: 1;
-        background-color: white;
-        border-radius: 5px;
-        margin: .25rem;
-        padding: .5rem 1rem 0rem;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .vincular-form__identify {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-    }
-
-    .img-tracker {
-        display: flex;
-        align-self: center;
-        width: 150px;
-        height: 150px;
-        margin: .5rem 0rem .5rem;
-        border-radius: 50%;
-        border: 1px solid #451321;
-        color: white;
-    }
-
-    .petName-tracker {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .petName-tracker div {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .confirm-btn {
-        width: 50%;
-        max-height: 3rem;
-
-        margin: 1rem 25% 0;
-        padding: .5rem 2rem;
-
-        font-weight: 400;
-
-        background-color: #691c32;
-        color: white;
-
-        border: none;
-        border-radius: 15px;
-
-        cursor: pointer;
-
-        transition: all 0.25s ease-in-out;
-    }
-
-    .confirm-btn:hover {
-        background-color: #451321;
-    }
-
-    .option {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        width: calc(100% + 2rem);
-        padding: 0rem 1rem;
-        margin: .15rem 0rem;
-        min-height: 2rem;
-        transition: all .35s ease-in-out;
-    }
-
-    .option:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .option label {
-        text-align: right;
-        width: 35%;
-        white-space: nowrap;
-    }
-
-    .option select {
-        width: 50%;
-        margin: 0rem 1rem;
-    }
-
-    .option input {
-        width: 50%;
-        margin: 0rem 1rem;
-    }
-
-    .option-radio {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        width: 50%;
-        white-space: nowrap;
-        
-    }
-
-    .input-petname {
-        display: flex;
-        flex-direction: row;
-        align-self: center;
-        justify-content: space-between;
-        width: 50%;
-        padding: 0rem 1rem;
-        margin: .15rem 0rem 1.5rem;
-        min-height: 2rem;
-        outline: none;
-        border: 1px solid #ddd;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        border-radius: 25px;
-        padding: 0rem 1rem;
-        transition: all .35s ease-in-out;
-    }
-
-    .option:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .input-text {
-        outline: none;
-        border: 1px solid #ddd;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-        border-radius: 25px;
-        padding: 0rem 1rem;
-    }
-
-    .input-range {
-        box-shadow: none;
-    }
-
-    .crear-tracker-btn {
-        display: flex;
-        align-self: center;
-        justify-content: center;
-        width: calc(100% + 2rem);
-        margin: auto 0rem 0rem;
-        padding: 1rem 1.5rem;
-        font-size: 1.25rem;
-        font-weight: 500;
-        background-color: white;
-        color: #451321;
-        border-radius: 0px 0px 5px 5px;
-        border: 1px solid rgba(69, 19, 33, .2);
-        transition: all .5s ease-in-out;
-    }
-
-    .crear-tracker-btn:hover {
-        background-color: rgba(69, 19, 33, .05);
-        border: 1px solid #451321;
-    }
-
-    .vincular-form__geofencing {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        flex: 1;
-        background-color: white;
-        border-radius: 5px;
-        margin: .25rem;
-        padding: .5rem 1rem 0;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .option-geo {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        width: calc(100% + 2rem);
-        padding: 0rem 1rem;
-        margin: .15rem 0rem;
-        min-height: 2rem;
-        transition: all .35s ease-in-out;
-    }
-
-    .option-geo:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .option-geo label {
-        text-align: right;
-        width: 25%;
-        white-space: nowrap;
-    }
-
-    .option-geo input {
-        width: 50%;
-        margin: 0rem .5rem 0 1rem;
-        align-self: center;
-    }
-
-    .option-geo-btn {
-        width: 45px;
-        height: 40px;
-        font-size: 1rem;
-        margin: 0 auto;
-        background-color: rgba(119, 51, 68, .1);
-        color: #451321;
-        border: none;
-        border-radius: 40px;
-        transition: all .5s ease-in-out;
-    }
-
-    .option-geo-btn:hover {
-        background-color: rgba(119, 51, 68, .2);
-    }
-    
-    .img-selector{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        position:absolute;
-        opacity: 0;
-        visibility: hidden;
-
-        width: calc(100% - 250px);
-        height: calc(100% - 10vh);
-        z-index: 2000;
-
-        background-color: rgba(0, 0, 0, 0.6);
-        /* background-color: rgba(0, 0, 0, 0.8); */
-        transition: all 1s ease-in-out;
-    }
-
-    .img-options{
-        display: grid;
-        grid-template-columns: auto auto auto auto auto;
-        grid-template-rows: auto;
-        position: relative;
-        width: auto;
-        height: auto;
-        padding: 2rem;
-        background-color: white;
-        border-radius: 10px;
-    }
-
-    .img{
-        display: flex;
-        align-self: center;
-        overflow: hidden;
-        width: 100px;
-        height: 100px;
-        border-radius: none;
-        margin: 1rem;
-        border-radius: 50%;
-        border: 1px solid rgba(105, 28, 50, .1);
-        background-color: #451321;
-        color: white;
-        transition: all .25s ease-in-out;
-    }
-
-    .img:hover{
-        border: 1px solid rgba(105, 28, 50, 1);
-        scale: 1.1;
-    }
-
-    .close-btn{
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 20px;
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        font-weight: bold;
-        border: none;
-        background-color: rgba(105, 28, 50, .15);
-        transition: all .15s ease-in-out;
-    }
-
-    .close-btn:hover{
-        background-color: rgba(105, 28, 50, .3);
-    }
-
-    .helper-btn{
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 20px;
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        border: none;
-        font-weight: bold;
-        color: white;
-        background-color: transparent;
-        transition: all .15s ease-in-out;
-    }
-
-    .helper-btn:hover{
-        background-color: rgba(105, 28, 50, 1);
-    }
-</style>
-
 <script>
-    let geomap = L.map('geo-map').setView([-32.747711, -60.734190], 16);
+    let geomap = L.map('geoMap').setView([-32.747711, -60.734190], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
     }).addTo(geomap);

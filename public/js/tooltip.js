@@ -34,6 +34,19 @@ function endHelp() {
   document.querySelectorAll('.tooltip').forEach((t) => t.remove());
 }
 
+function isTargetVisible(targetBox) {
+  const targetSelector = targetBox.dataset.target;
+  
+  if (!targetSelector) return true;
+  
+  const targetElement = document.querySelector(targetSelector);
+  
+  if (!targetElement) return true;
+  
+  return targetElement.classList.contains('active') || 
+         targetElement.classList.contains('tab--active');
+}
+
 function showStep(index) {
   if (index >= helpBoxes.length || index < 0) return endHelp();
 
@@ -43,10 +56,15 @@ function showStep(index) {
   const targetBox = helpBoxes[index];
   if (!targetBox) return endHelp();
 
+  if (!isTargetVisible(targetBox)) {
+    currentStep++;
+    return showStep(currentStep);
+  }
+
   targetBox.classList.add('help-highlight');
   const rect = targetBox.getBoundingClientRect();
   const position = targetBox.dataset.position;
-  const gap = 20;
+  const gap = 5;
   let top;
   let left;
 
@@ -56,29 +74,39 @@ function showStep(index) {
 
   document.body.appendChild(tooltip);
 
-  switch (position) {
-    case 'right':
-      left = rect.right + gap;
-      top = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
-      break;
-    case 'left':
-      left = rect.left - tooltip.offsetWidth - gap;
-      top = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
-      break;
-    case 'top':
-      left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
-      top = rect.top - tooltip.offsetHeight - gap;
-      break;
-    case 'bottom':
-      left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
-      top = rect.bottom + gap;
-      break;
-    default:
-      left = rect.right + gap;
-      top = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
-  }
-  tooltip.style.top = `${top}px`;
-  tooltip.style.left = `${left}px`;
+    if (window.innerWidth < 700) {
+      tooltip.style.top = `10px`;
+      tooltip.style.left = `50px`;
+    }  else {
+      switch (position) {
+        case 'right':
+          left = rect.right + gap;
+          top = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
+          break;
+        case 'left':
+          left = rect.left - tooltip.offsetWidth - gap;
+          top = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
+          break;
+        case 'top':
+          left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
+          top = rect.top - tooltip.offsetHeight - gap;
+          break;
+        case 'bottom':
+          left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
+          top = rect.bottom + gap;
+          break;
+        case 'bottom-mobile':
+          left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
+          top = rect.bottom + gap;
+          break;
+        default:
+          left = rect.right + gap;
+          top = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
+      }
+          
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+    }
 }
 
 function nextStep() {

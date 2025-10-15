@@ -2,13 +2,13 @@
 <%- include('../layouts/sidebar', {user: user}); %>
 
 <div class="main-content">
-  <%- include('../layouts/navbar', { title: 'Perfil de Usuario', subtitle: 'Editar datos de tu cuenta' }); %>
+  <%- include('../layouts/navbar', { title: 'Mi perfil', subtitle: 'Editar datos de tu cuenta' }); %>
 
   <div class="user-dashboard">
 
-    <section  class="profile-card help-box" 
-          data-message="Esta es tu tarjeta de usuario: acá podes ver tu información y editar tu perfil" 
-          data-position="right">
+    <section class="profile-card help-box" 
+              data-message="Esta es tu tarjeta de usuario: acá podes ver tu información y editar tu perfil" 
+              data-position="right">
       
       <div class="profile-card__img help-box" 
             data-message="Esta es tu imagen de perfil!" 
@@ -63,153 +63,21 @@
 
           <button class="confirm-btn help-box" type="submit" 
                     data-message="Presioná este botón para guardar tus cambios"
-                    data-position="bottom">Guardar cambios</button>
+                    data-position="bottom">Guardar</button>
         </form>
 
       </div>
 
-      <form class="profile-delete help-box" id="deleteProfileForm" action="/api/users/<%= user.id %>"
+      <form class="profile-delete" id="deleteProfileForm" action="/api/users/<%= user.id %>">
+      <button class="delete-btn help-box" type="submit"
               data-message="Si querés eliminar tu cuenta, podés hacerlo acá. ¡Cuidado, esta acción no se puede deshacer!"
               data-position="top">
-      <button class="delete-btn" type="submit"><i class="bi bi-trash"></i></button>
+        <i class="bi bi-trash"></i></button>
       </form>
 
     </section >
   </div>
 </div>
-
-<style>
-  .user-dashboard {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(170, 170, 170, 0.2);
-    min-height: 90vh;
-    min-width: 100%;
-  }
-
-  .profile-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    background: #691c32;
-    color: white;
-    position: relative;
-    margin-bottom: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    overflow: hidden;
-  }
-
-
-  .profile-card__img {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    color: black;
-    margin-top: 1rem;
-    width: 5rem;
-    height: 5rem;
-    font-size: 4rem;
-    padding-bottom: 5px;
-    border-radius: 50%;
-    border: 1px solid white;
-  }
-
-  .profile-card__info p {
-    margin: 0;
-  }
-
-  
-  .profile-edit {
-    background-color: white;
-    color: #451321;
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .profile-edit__form{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: white;
-    padding: 1rem;
-    margin: 0;
-    gap: .5rem;
-    height: 100%;
-    border-radius: 10px;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-  }
-
-  .profile-edit__form input{
-    outline: none;
-    border: 1px solid #ddd;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 25px;
-    padding: 0rem 1rem;
-  }
-
-  .profile-edit__title {
-    margin-bottom: .5rem;
-    font-size: 1.3rem;
-    border-bottom: 1px solid #691c32;
-  }
-
-  .form-group{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 20px
-  }
-
-  .confirm-btn{
-    margin: 1rem 0 0;
-    margin-left: 50%;
-    transform: translateX(-50%);
-    background: #451321;
-    color: white;
-    font-size: 1rem;
-    padding: .5rem;
-    border-radius: 1rem 1rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-
-  .confirm-btn:hover {
-    background: #691c32;
-  }
-
-
-  .profile-delete {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-  
-  .delete-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    color: #451321;
-    width: 35px;
-    height: 35px;
-    font-size: 1rem;
-    padding: .5rem;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-
-  .delete-btn:hover {
-    background: rgba(255, 255, 255, 0.5);
-  }
-</style>
 
 <script>
   const editForm = document.getElementById("editProfileForm");

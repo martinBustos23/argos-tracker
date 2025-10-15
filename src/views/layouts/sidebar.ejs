@@ -1,23 +1,22 @@
-<div class="sidebar">
-  <div>
+<div class="sidebar-space">
+  <div class="sidebar">
     <div class="logo">
       <i class="bi bi-eye"></i>
       <h3>argos tracker</h3>
     </div>
-
+  
     <nav>
-      <a href="/dashboard/"><i class="bi bi-broadcast"></i> General</a>
-      <a href="/dashboard/devices"><i class="bi bi-grid"></i> Dispositivos</a>
-      <a href="/dashboard/profile"><i class="bi bi-person-lines-fill"></i> Mi perfil</a>
+      <a href="/dashboard/"><i class="bi bi-broadcast"></i>                 <span>General</span></a>
+      <a href="/dashboard/devices"><i class="bi bi-grid"></i>               <span>Dispositivos</span></a>
+      <a href="/dashboard/profile"><i class="bi bi-person-lines-fill"></i>  <span>Mi perfil</span></a>
       <% if (user.admin) { %>
-        <a href="/dashboard/users"><i class="bi bi-people-fill"></i> Usuarios</a>
-        <a href="/dashboard/config"><i class="bi bi-gear"></i> Configuración</a>
-        <a href="/dashboard/vincular"><i class="bi bi-link-45deg"></i> Vincular</a>
+        <a href="/dashboard/users"><i class="bi bi-people-fill"></i>        <span>Usuarios</span></a>
+        <a href="/dashboard/config"><i class="bi bi-gear"></i>              <span>Configuración</span></a>
+      <a href="/dashboard/vincular"><i class="bi bi-link-45deg"></i>        <span>Vincular</span></a>
       <% } %>
+  
+      <a href="/logout" class="logout"><i class="bi bi-box-arrow-left"></i>         <span>Cerrar sesión</span></a>
     </nav>
   </div>
 
-  <div class="logout">
-    <a href="/logout"><i class="bi bi-box-arrow-left"></i> Cerrar sesión</a>
-  </div>
 </div>
