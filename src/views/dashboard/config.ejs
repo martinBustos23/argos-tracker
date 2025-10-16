@@ -26,7 +26,7 @@
           <h2>Ayuda</h2>
         </div>
         <div class="config-sidebar__option ultimo">
-          <h2>Restaurar de fábrica</h2>
+          <h2></h2>
         </div>
       </div>
 
@@ -34,6 +34,7 @@
 
         <div class="log-container" id="configuracion" style="display: block;">
           <h2>Configuración del sistema</h2>
+
           <form id="configForm">
             <fieldset id="general">
               <legend>General</legend>
@@ -59,8 +60,8 @@
             <fieldset id="devices">
               <legend>Dispositivos</legend>
               <div class="config-row">
-                <label for="mostrarDeshabilitados">Mostrar disp. deshabilitados</label>
-                <input type="checkbox" name="mostrarDeshabilitados" id="mostrarDeshabilitados">
+                <label for="mostrarDeshabilitados">Mostrar dispositivos deshabilitados</label>
+                <input type="checkbox" name="mostrarDeshabilitados" id="mostrarDeshabilitados" class="checkbox">
               </div>
             </fieldset>
             <fieldset id="location">
@@ -70,7 +71,7 @@
                 <input type="text" class="input-default" name="zona" id="zona" placeholder="San Lorenzo" value="<%= config.location.zone %>">
               </div>
               <div class="config-row">
-                <label for="geocerca">Geocerca (zoom)</label>
+                <label for="geocerca">Nivel de zoom del mapa</label>
                 <input type="number" class="input-default" name="geocerca" id="geocerca" value="<%= config.location.zoom %>">
               </div>
             </fieldset>
@@ -337,8 +338,8 @@
   .body-content {
     display: flex;
     flex-direction: row;
-    min-height: 90vh;
-    overflow: hidden;
+    max-height: calc(100% - 70px);
+    min-width: 100%;
   }
 
   .config-sidebar {
@@ -347,8 +348,8 @@
     background-color: white;
     box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
     z-index: 100;
-    width: 20%;
-    max-height:90vh;
+    min-width: 250px;
+    height: auto;
   }
 
   .config-sidebar__option {
@@ -356,7 +357,6 @@
     padding: .8rem 1rem;
     cursor: pointer;
     transition: all 0.25s ease;
-
     border-right: 5px solid transparent;
   }
 
@@ -373,18 +373,19 @@
     font-size: 1rem;
     font-weight: 400;
     margin: 0;
+    white-space: nowrap;
   }
 
   .ultimo {
     margin-top: auto;
+    display: none;
   }
 
   .config-content {
-    left: 20%;
     display: flex;
     flex-direction: column;
-    width: 80%;
-    max-height:90vh;
+    width: 100%;
+    max-height: 100%;
     background-color: rgba(170, 170, 170, 0.2);
   }
 
@@ -448,28 +449,66 @@
     padding: 0rem 1rem;
     transition: all .35s ease-in-out;
   }
-  .input-btn{
-    padding: 0rem 1rem;
-    background-color: white;
-    min-height: 2rem;
-    outline: none;
-    border: 1px solid #ddd;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 25px;
-    padding: 0rem 1rem;
-    transition: all .35s ease-in-out;
-  }
-  .input-btn:hover{
-    border: 1px solid #691c32;
+
+  @media (max-width: 768px) {
+    .config-row div {
+      flex-direction: column;
+    }
+
+    .input-default {
+      min-width: 100%;
+    }
+
+    /* apaño por ahora jeeee */
+
+.config-sidebar {
+    flex-direction: row;
+    min-width: 100%;
+    max-height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: wrap;
+    justify-content: center;
+    border-bottom: 1px solid #e5e7eb;
   }
 
-  .sumbit-btn{
-    display: flex; 
-    align-items: center;
-    justify-self: center;
-    margin: 1rem;
-
+  .config-sidebar__option {
+    flex-shrink: 0;
+    width: auto;
+    padding: 1rem 1.2rem;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    text-align: center;
   }
+
+  .config-sidebar__option:hover {
+    background-color: transparent;
+    border-bottom-color: rgba(105, 28, 50, 0.3);
+  }
+
+  .config-sidebar__option.active {
+    background-color: transparent;
+    border-left: none;
+    border-bottom: 3px solid #691c32;
+  }
+
+  .config-sidebar__option h2 {
+    font-size: 0.9rem;
+  }
+
+  .config-row div {
+    flex-direction: column;
+  }
+
+  .input-default {
+    min-width: 100%;
+  }
+
+  .body-content {
+    flex-direction: column;
+  }
+  }
+
 </style>
 
 <script src="/js/jspdf.umd.min.js"></script>

@@ -280,6 +280,8 @@
 .history-item__body{
   display: flex;
   flex-direction: column;
+  align-items: center;
+  overflow: hidden;
   gap: 5px;
   padding: 0 1rem;
 }

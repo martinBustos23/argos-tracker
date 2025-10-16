@@ -62,11 +62,12 @@
                 <div class="tracker__pet-info">
                   <h2 class="tracker__pet-name"><%= tracker.petName %></h2>
                   <span class="tracker__pet-id">ID: <%= tracker.id %></span>
+                  <span class="tracker__pet-id"><%= tracker.active === true ? '' : 'Tracker [eliminado]' %></span>
                 </div>
               </div>
 
               <div class="tracker__data">
-                <p><strong>Estado: </strong><%= tracker.active === true ? 'Conectado' : 'Desconectado' %></p>
+                <p><strong>Estado: </strong><%= tracker.status === true ? 'Conectado' : 'Desconectado' %></p>
                 <p><strong>Modelo: </strong><%= tracker.model %></p>
                 <p><strong>Alertas de sonido: </strong><%= tracker.enableSoundAlert === true ? 'Habilitadas' : 'Deshabilitadas' %></p>
                 <p><strong>Zona segura: </strong><%= tracker.enableGeofence === true ? 'Habilitada' : 'Deshabilitada' %></p>
@@ -102,7 +103,7 @@
                         </div>
                       <% } %>
                     </div>
-                    <div class="history-item__coords" data-lat="<%= event.latitude %>" data-lan="<%= event.longitude %>">
+                    <div class="history-item__coords" data-lat="<%= event.latitude %>" data-lon="<%= event.longitude %>">
                       <p><strong>LAT</strong> <%= event.latitude %></p>
                       <p><strong>LON</strong> <%= event.longitude %></p>
                     </div>
@@ -250,7 +251,7 @@
 
                       <label for="latitud">Latitud </label>
                       <input class="input-text" type="text" id="latitud" name="latitud"
-                        placeholder="<%= tracker.geofenceLat || 'Latitud' %>">
+                        placeholder="<%= tracker.geofenceLat %>">
                     </div>
 
                     <div class="form-group help-box"
@@ -260,7 +261,7 @@
 
                       <label for="latitud">Longitud </label>
                       <input class="input-text" type="text" id="longitud" name="longitud"
-                        placeholder="<%= tracker.geofenceLon || 'Longitud' %>">
+                        placeholder="<%= tracker.geofenceLon %>">
                     </div>
 
                     <div class="form-group help-box"
@@ -396,7 +397,7 @@
   const events = JSON.parse('<%- JSON.stringify(lastEvents) %>');
 
   const tracker_info = document.querySelectorAll('.tracker-history__item');
-  const tracker_latlon = document.querySelectorAll('.tracker-history__coords');
+  const tracker_latlon = document.querySelectorAll('.history-item__coords');
 
   let latitude = tracker.geofenceLat;
   let longitude = tracker.geofenceLon;
@@ -405,7 +406,7 @@
     try {
       const lastLatLon = tracker_latlon[0];
       const latAttr = lastLatLon.getAttribute('data-lat');
-      const lonAttr = lastLatLon.getAttribute('data-lan');
+      const lonAttr = lastLatLon.getAttribute('data-lon');
 
       const lat = parseFloat(latAttr);
       const lon = parseFloat(lonAttr);
@@ -428,8 +429,10 @@
 
   const markers = [];
   let map = L.map('deviceMap');
+  let pin = null; 
   
   let msgWaitingPosition;
+
   if (events.length > 0) {
     map.setView([events[0].latitude, events[0].longitude], 19);
     const marker = L.marker([events[0].latitude, events[0].longitude], { icon: petIcon }).addTo(map);
@@ -446,11 +449,15 @@
 
   tracker_info.forEach(infoDiv => {
     infoDiv.addEventListener('click', function () {
-      const lat = parseFloat(this.querySelector('.tracker-history__coords').getAttribute('data-lat'));
-      const lon = parseFloat(this.querySelector('.tracker-history__coords').getAttribute('data-lan'));
+      const lat = parseFloat(this.querySelector('.history-item__coords').getAttribute('data-lat'));
+      const lon = parseFloat(this.querySelector('.history-item__coords').getAttribute('data-lon'));
 
       if (!isNaN(lat) && !isNaN(lon)) {
-        pin.setLatLng([lat, lon]);
+        if (pin) {
+          pin.setLatLng([lat, lon]);
+        } else {
+          pin = L.marker([lat, lon], { icon: petIcon }).addTo(map);
+        }
         map.setView([lat, lon], 17);
       } else {
         console.warn('Posición inválida en este div');
@@ -519,26 +526,48 @@
 
 
   const deleteBtn = document.getElementById('delete-tracker-btn');
-
   deleteBtn.addEventListener('click', async () => {
-    if (!confirm('¿Seguro que quieres eliminar este tracker?')) return;
+    event.preventDefault();
 
-    try {
-      alert(tracker.id);
-      const response = await fetch(`/api/trackers/${tracker.id}`, {
-        method: 'DELETE'
-      });
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas eliminar el dispositivo?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
 
-      if (response.ok) {
-        alert('Tracker eliminado correctamente');
-        location.reload();
-      } else {
-        const data = await response.json();
-        alert('Error al eliminar tracker: ' + (data.message || 'Error desconocido'));
+    if (isConfirmed) {
+      try {
+        const response = await fetch(`/api/trackers/${tracker.id}`, { method: 'DELETE'});
+  
+        if (response.ok) {
+            Swal.fire({
+              title: "Tracker eliminado",
+              text: "Tu dispositivo ha sido eliminado con exito.",
+              confirmButtonColor: "#451321",
+              icon: "success"
+            }).then( () => {
+          location.reload();
+            });   
+        } else {
+            Swal.fire({
+                title: "¡Ocurrio un error!",
+                text: "Error al eliminar el tracker.",
+                confirmButtonColor: "#451321",
+                icon: "error"
+            });
+        }
+      } catch (error) {
+        console.error("Error al eliminar tracker:", error);
+          Swal.fire({
+              title: "¡Ocurrio un error!",
+              text: "Error al intentar eliminar el dispositivo.",
+              confirmButtonColor: "#451321",
+              icon: "error"
+          });
       }
-    } catch (err) {
-      console.error(err);
-      alert('Error al conectar con el servidor');
     }
   });
 
@@ -581,6 +610,19 @@
 
     if (Object.keys(payload) == false) return;
 
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas modificar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+
+    }
     try {
       const response = await fetch(`/api/trackers/${tracker.id}`, {
         method: "PATCH",
@@ -591,63 +633,34 @@
       const result = await response.json();
 
       if (response.ok) {
-        alert("Dispositivo actualizado correctamente");
-
+        Swal.fire({
+          title: "¡Tracker modificado!",
+          text: "Tu dispositivo ha sido modificado con exito.",
+          confirmButtonColor: "#451321",
+          icon: "success"
+        }).then( () => {
+          location.reload();
+        });
       } else {
-        alert("Error: " + result.error);
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: result.error,
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
       }
-
-      location.reload();
     } catch (error) {
-      console.log("Error al actualizar dispositivo", error);
-      alert("Error al actualizar dispositivo");
+      console.error("Error al modificar el dispositivo:", error);
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: "Error al modificar el dispositivo.",
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
     }
   });
 
-  document.querySelectorAll('.helper1').forEach(helper => {
-    helper.addEventListener('mouseenter', function () {
-      const content = JSON.parse(this.getAttribute('data-content'));
-      document.getElementById('content-helper').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
-      document.getElementById('helper').style.opacity = '1';
-      document.getElementById('helper').style.visibility = 'visible';
-
-      document.getElementById('helper-left').style.opacity = '0';
-      document.getElementById('helper-left').style.visibility = 'hidden';
-    });
-
-    helper.addEventListener('mouseleave', function () {
-      document.getElementById('helper').style.opacity = '0';
-      document.getElementById('helper').style.visibility = 'hidden';
-    });
-    document.getElementById('helper-close').addEventListener('click', function () {
-      document.getElementById('helper').style.opacity = '0';
-      document.getElementById('helper').style.visibility = 'hidden';
-
-    });
-  });
-
-  document.querySelectorAll('.helper2').forEach(helper => {
-    helper.addEventListener('mouseenter', function () {
-      const content = JSON.parse(this.getAttribute('data-content'));
-      document.getElementById('content-helper-left').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
-      document.getElementById('helper-left').style.opacity = '1';
-      document.getElementById('helper-left').style.visibility = 'visible';
-
-      document.getElementById('helper').style.opacity = '0';
-      document.getElementById('helper').style.visibility = 'hidden';
-    });
-
-    helper.addEventListener('mouseleave', function () {
-      document.getElementById('helper-left').style.opacity = '0';
-      document.getElementById('helper-left').style.visibility = 'hidden';
-    });
-    document.getElementById('helper-left-close').addEventListener('click', function () {
-      document.getElementById('helper-left').style.opacity = '0';
-      document.getElementById('helper-left').style.visibility = 'hidden';
-
-    });
-  });
-
+  //----------
   const { hostname, port, pathname } = new URL(window.location.href);
   const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
 
@@ -705,7 +718,7 @@
     const posElem = document.createElement("div");
     posElem.className = "tracker-history__coords";
     newCard.setAttribute("data-lat", latitude);
-    newCard.setAttribute("data-lan", longitude);
+    newCard.setAttribute("data-lon", longitude);
 
     const latElem = document.createElement("p");
     latElem.textContent = "Lat: " + latitude;

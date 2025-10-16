@@ -806,7 +806,7 @@ paths:
             type: number
             minimum: -90
             maximum: 90
-            example: -34.6037
+            example: -32.74595899097869
         - name: lon
           in: query
           required: true
@@ -815,7 +815,7 @@ paths:
             type: number
             minimum: -180
             maximum: 180
-            example: -58.3816
+            example: -60.72988214535664
         - name: bat
           in: query
           required: false
@@ -846,8 +846,8 @@ paths:
                   value:
                     id: 58
                     trackerId: 1
-                    lat: -34.6037
-                    lon: -58.3816
+                    lat: -32.74595899097869
+                    lon: -60.72988214535664
                     bat: 67
                     body: 'POSITION'
                     createdAt: '2025-03-25T12:45:32.000Z'
@@ -1350,13 +1350,13 @@ components:
           minimum: -90
           maximum: 90
           description: Latitud de la posicion del tracker
-          example: -34.6037
+          example: -32.74595899097869
         lon:
           type: number
           minimum: -180
           maximum: 180
           description: Longitud de la posicion del tracker
-          example: -58.3816
+          example: -60.72988214535664
         bat:
           type: integer
           minimum: 1
@@ -1383,11 +1383,11 @@ components:
         lat:
           type: number
           description: Latitud de la posicion
-          example: -34.6037
+          example: -32.74595899097869
         lon:
           type: number
           description: Longitud de la posicion
-          example: -58.3816
+          example: -60.72988214535664
         bat:
           type: integer
           nullable: true

@@ -1,8 +1,8 @@
 {
   "general": {
-    "language": "en",
+    "language": "es",
     "timezone": "GMT-3",
-    "12/24hs": "12h"
+    "12/24hs": "24h"
   },
   "devices": {
     "showDisabled": true
@@ -14,7 +14,7 @@
   "network": {
     "wifi-client__ssid": "nombre",
     "wifi-client__pwd": "password",
-    "mode": "ap",
+    "mode": "auto",
     "wifi-ap__ssid": "nombre",
     "wifi-ap__pwd": "password"
   }

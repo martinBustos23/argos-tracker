@@ -195,6 +195,7 @@
   const defaultLon =  -60.734190;
 
   const markers = [];
+  let pin = null;
 
   function getLatestPosition(trackerId) {
     const event = events
@@ -235,7 +236,20 @@
   function updateMap(element) {
     const trackerId = element.getAttribute('data-tracker-id');
     const { lat, lon } = getLatestPosition(parseInt(trackerId));
-    pin.setLatLng([lat, lon]);
+
+    if (pin) {
+      pin.setLatLng([lat, lon]);
+    } else {
+      const tracker = trackers.find(t => t.id === parseInt(trackerId));
+      const petIcon = L.icon({
+        iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+        popupAnchor: [0, -24]
+      });
+      pin = L.marker([lat, lon], { icon: petIcon }).addTo(map);
+    }
+    
     map.setView([lat, lon], 16);
   }
   
@@ -354,36 +368,35 @@
         logElement.id = "log-row";
         
         let column = document.createElement("td");
-        column.textContent = log["trackerId"];
-        logElement.appendChild(column);
-
-        column = document.createElement("td");
         column.textContent = log["petName"];
+        column.setAttribute("data-label", "Mascota");
         logElement.appendChild(column);
 
         column = document.createElement("td");
         column.textContent = log["eventDesc"];
+        column.setAttribute("data-label", "Evento");
         logElement.appendChild(column);
 
         column = document.createElement("td");
         column.textContent = log["batteryLvl"] + "%";
+        column.setAttribute("data-label", "Batería");
         logElement.appendChild(column);
 
         column = document.createElement("td");
         column.textContent = log["latitude"];
+        column.setAttribute("data-label", "Latitud");
         logElement.appendChild(column);
 
         column = document.createElement("td");
         column.textContent = log["longitude"];
+        column.setAttribute("data-label", "Longitud");
         logElement.appendChild(column);
 
         column = document.createElement("td");
         column.textContent = new Date(log["timestamp"]).toLocaleString("es-AR", {hour12: false});
+        column.setAttribute("data-label", "Fecha");
         logElement.appendChild(column);
 
-        column = document.createElement("td");
-        column.textContent = "-";
-        logElement.appendChild(column);
 
         document.querySelector("#table-logs").appendChild(logElement);
 

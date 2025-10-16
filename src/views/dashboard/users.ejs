@@ -324,31 +324,31 @@
       const result = await response.json();
 
       if (response.ok) {
-          Swal.fire({
-            title: "¡Usuario modificado!",
-            text: "Tu usuario ha sido modificado con exito.",
-            confirmButtonColor: "#451321",
-            icon: "success"
-          }).then( () => {
-        location.reload();
-          });
+        Swal.fire({
+          title: "¡Usuario modificado!",
+          text: "Tu usuario ha sido modificado con exito.",
+          confirmButtonColor: "#451321",
+          icon: "success"
+        }).then( () => {
+          location.reload();
+        });
       } else {
-          Swal.fire({
-            title: "¡Ocurrio un error!",
-            text: result.error,
-            confirmButtonColor: "#451321",
-            icon: "error"
-          });
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: result.error,
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
       }
     } catch (error) {
       console.error("Error al modificar usuario:", error);
         Swal.fire({
-            title: "¡Ocurrio un error!",
-            text: "Error al modificar el perfil.",
-            confirmButtonColor: "#451321",
-            icon: "error"
+          title: "¡Ocurrio un error!",
+          text: "Error al modificar el perfil.",
+          confirmButtonColor: "#451321",
+          icon: "error"
         });
-      }
+    }
       
     }
   });
@@ -367,35 +367,35 @@
     });
 
     if (isConfirmed) {
-    try {
-      const response = await fetch(deleteUserForm.action, { method: "DELETE" });
-      const result = await response.json();
+      try {
+        const response = await fetch(deleteUserForm.action, { method: "DELETE" });
+        const result = await response.json();
 
-      if (response.ok) {
-          Swal.fire({
-            title: "Usuario eliminado",
-            text: "Tu usuario ha sido eliminado con exito.",
-            confirmButtonColor: "#451321",
-            icon: "success"
-          }).then( () => {
-        location.reload();
-          });   
-      } else {
+        if (response.ok) {
+            Swal.fire({
+              title: "Usuario eliminado",
+              text: "Tu usuario ha sido eliminado con exito.",
+              confirmButtonColor: "#451321",
+              icon: "success"
+            }).then( () => {
+          location.reload();
+            });   
+        } else {
+            Swal.fire({
+                title: "¡Ocurrio un error!",
+                text: "Error al eliminar el perfil.",
+                confirmButtonColor: "#451321",
+                icon: "error"
+            });
+        }
+      } catch (error) {
+        console.error("Error al eliminar usuario:", error);
           Swal.fire({
               title: "¡Ocurrio un error!",
-              text: "Error al eliminar el perfil.",
+              text: "Error intentar eliminar el perfil.",
               confirmButtonColor: "#451321",
               icon: "error"
           });
-      }
-    } catch (error) {
-      console.error("Error al eliminar usuario:", error);
-        Swal.fire({
-            title: "¡Ocurrio un error!",
-            text: "Error al modificar el perfil.",
-            confirmButtonColor: "#451321",
-            icon: "error"
-        });
       }
     }
   });
