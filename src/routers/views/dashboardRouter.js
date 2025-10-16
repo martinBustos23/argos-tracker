@@ -40,7 +40,7 @@ export default (
       res.render('./dashboard/general', {
         user,
         config,
-        trackers: trackers.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)),
+        trackers,
         events: sortedEvents,
       });
     } catch (error) {
@@ -57,7 +57,7 @@ export default (
       if (trackers.length == 0) {
         return res.redirect(`/dashboard/vincular`);
       }
-      const firstTracker = trackers[0];
+      const firstTracker = trackers.filter(tracker => tracker.active)[0];
       return res.redirect(`/dashboard/devices/${firstTracker.id}`);
     } catch (error) {
       res.status(500).send('Error al ingresar a devices: ' + error.message);
