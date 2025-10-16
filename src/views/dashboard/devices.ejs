@@ -202,8 +202,10 @@
 
                     <label for="alert">Alerta de sonido </label>
                     <div class="option-radio">
-                      <label><input type="radio" name="alertSound" value="si" checked>Sí</label>
-                      <label><input type="radio" name="alertSound" value="no">No</label>
+                      <label class="switch">
+                        <input type="checkbox" id="alertSound">
+                        <span class="slider"></span>
+                      </label>
                     </div>
                   </div>
 
@@ -213,8 +215,10 @@
                         data-target="#tab-config">
                     <label for="geofencing">Zona segura </label>
                     <div class="option-radio">
-                      <label><input type="radio" name="geoEnable" value="si" checked>Sí</label>
-                      <label><input type="radio" name="geoEnable" value="no">No</label>
+                      <label class="switch">
+                        <input type="checkbox" id="geoEnable">
+                        <span class="slider"></span>
+                      </label>
                     </div>
                   </div>
 
@@ -499,6 +503,8 @@
         document.querySelector('#batValue').textContent = JSON.parse('<%= tracker.lowBat %>') + '%';
         document.querySelector('#radio').value = JSON.parse('<%= tracker.geofenceRadius %>');
         document.querySelector('#radioValue').textContent = JSON.parse('<%= tracker.geofenceRadius %>') + 'min';
+        document.querySelector('#alertSound').checked = JSON.parse('<%= tracker.enableSoundAlert %>')
+        document.querySelector('#geoEnable').checked = JSON.parse('<%= tracker.enableGeofence %>')
       }
     });
   });
@@ -537,8 +543,8 @@
     const imgSrc = imgButton.getAttribute("src");
     const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
 
-    const enableGeofence = updateConfig.geoEnable.value === "si";
-    const enableSoundAlert = updateConfig.alertSound.value === "si";
+    const enableGeofence = updateConfig.geoEnable.checked;
+    const enableSoundAlert = updateConfig.alertSound.checked;
 
     const payload = {
       petName: updateConfig.petName.value || tracker.petName,
@@ -550,10 +556,14 @@
       geofenceLat: Number(updateConfig.latitud.value) || tracker.geofenceLat,
       geofenceLon: Number(updateConfig.longitud.value) || tracker.geofenceLon,
       geofenceRadius: Number(updateConfig.geoRadio.value) || tracker.geofenceRadius,
-      enableGeofence: enableGeofence || tracker.enableGeofence,
       emergencyFrequency: Number(updateConfig.frequencyEmergency.value) || tracker.emergencyFrequency,
-      enableSoundAlert: enableSoundAlert || tracker.enableSoundAlert
     };
+
+    if (enableGeofence !== tracker.enableGeofence)
+      payload.enableGeofence = enableGeofence;
+
+    if (enableSoundAlert !== tracker.enableSoundAlert)
+    payload.enableSoundAlert = enableSoundAlert;
 
     for (const key in payload) {
       const value = payload[key];
