@@ -235,18 +235,20 @@
 
   function updateMap(element) {
     const trackerId = element.getAttribute('data-tracker-id');
+    const tracker = trackers.find(t => t.id === parseInt(trackerId));
     const { lat, lon } = getLatestPosition(parseInt(trackerId));
 
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    
     if (pin) {
+      pin.setIcon(petIcon);
       pin.setLatLng([lat, lon]);
     } else {
-      const tracker = trackers.find(t => t.id === parseInt(trackerId));
-      const petIcon = L.icon({
-        iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
-        iconSize: [48, 48],
-        iconAnchor: [24, 24],
-        popupAnchor: [0, -24]
-      });
       pin = L.marker([lat, lon], { icon: petIcon }).addTo(map);
     }
     
