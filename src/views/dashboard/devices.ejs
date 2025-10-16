@@ -250,7 +250,7 @@
 
                       <label for="latitud">Latitud </label>
                       <input class="input-text" type="text" id="latitud" name="latitud"
-                        placeholder="<%= tracker.geofenceLat || Latitud %>">
+                        placeholder="<%= tracker.geofenceLat || 'Latitud' %>">
                     </div>
 
                     <div class="form-group help-box"
@@ -260,7 +260,7 @@
 
                       <label for="latitud">Longitud </label>
                       <input class="input-text" type="text" id="longitud" name="longitud"
-                        placeholder="<%= tracker.geofenceLon || Longitud %>">
+                        placeholder="<%= tracker.geofenceLon || 'Longitud' %>">
                     </div>
 
                     <div class="form-group help-box"
@@ -428,10 +428,18 @@
 
   const markers = [];
   let map = L.map('deviceMap');
-  if (latitude || longitude) {
-    map.setView([latitude, longitude], 17);
-    const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
+  
+  let msgWaitingPosition;
+  if (events.length > 0) {
+    map.setView([events[0].latitude, events[0].longitude], 19);
+    const marker = L.marker([events[0].latitude, events[0].longitude], { icon: petIcon }).addTo(map);
     markers.push(marker);
+  } else {
+    map.setView([latitude || -32.747711, longitude || -60.734190], 19);
+    msgWaitingPosition = L.tooltip({ direction: 'center', permanent: true, className: 'mensaje-esperando' })
+    .setLatLng([-32.747711, -60.734190])
+    .setContent(`<p>Esperando posicion...</p>`)
+    .addTo(map);
   }
   
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
@@ -656,6 +664,11 @@
     for (let i = 0; i < markers.length; i++) {
       map.removeLayer(markers[i]);
       markers.splice(i, 1);
+    }
+
+    if(msgWaitingPosition) {
+      map.removeLayer(msgWaitingPosition);
+      msgWaitingPosition = null;
     }
 
     const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
