@@ -57,10 +57,10 @@
                               data-position="bottom">
                           <label for="frequency">Frecuencia</label>
 
-                          <span id="freqValue">
+                          <span class="slider-container">
                             <input type="range" id="frequency" name="frequency" min="5" max="30" value="10"
                                 oninput="document.getElementById('freqValue').textContent=this.value + 'min'"> 
-                            10min
+                            <span id="freqValue" class="slider-container__value">10min</span>
                           </span>
                         </div>
 
@@ -69,10 +69,10 @@
                               data-position="bottom">
                           <label for="frequencyEmergency">Frecuencia de emergencia</label>
                           
-                          <span id="freqEmergValue">
+                          <span class="slider-container">
                             <input type="range" id="frequencyEmergency" name="frequencyEmergency" min="1" max="10" value="3"
                                 oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
-                            3min
+                            <span id="freqEmergValue" class="slider-container__value">3min</span>
                           </span>
                         </div>
 
@@ -81,10 +81,10 @@
                               data-position="bottom">
                           <label for="batteryThreshold">Umbral de batería</label>
                           
-                          <span id="batValue">
+                          <span class="slider-container">
                             <input type="range" id="batteryThreshold" name="lowBat" min="5" max="80" value="20"
                                 oninput="document.getElementById('batValue').textContent=this.value + '%'">
-                            20%
+                            <span id="batValue" class="slider-container__value">20%</span>
                           </span>
                         </div>
 
@@ -141,9 +141,9 @@
                             data-position="bottom">
                         <label for="geoRadio">Radio</label>
                         
-                        <span id="radioValue">
+                        <span class="slider-container">
                           <input id="geoRadio" class="input-range" type="range" name="geoRadio" min="10" max="150" value="20" oninput="updateRadio(this)">
-                          20m
+                          <span id="radioValue" class="slider-container__value">20m</span>
                         </span>
                       </div>
 

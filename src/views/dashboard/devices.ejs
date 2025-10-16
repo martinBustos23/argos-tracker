@@ -159,11 +159,11 @@
 
                     <label for="frequency">Frecuencia </label>
                     
-                    <span id="freqValue">
+                    <span class="slider-container">
                       <input type="range" id="frequency" name="frequency" min="5" max="30"
                       value="<%= tracker.frequency %>"
                       oninput="document.getElementById('freqValue').textContent=this.value + 'min'">
-                      <%= tracker.frequency %>min
+                      <span id="freqValue" class="slider-container__value"><%= tracker.frequency %>min</span>
                     </span>
                   </div>
 
@@ -174,11 +174,11 @@
                         data-target="#tab-config">
 
                     <label for="frequency-emergency">Frecuencia emergencia </label>
-                    <span id="freqEmergValue">
+                    <span class="slider-container">
                       <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency"
                       min="1" max="10" value="<%= tracker.emergencyFrequency %>"
                       oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
-                      <%= tracker.emergencyFrequency %>min
+                      <span id="freqEmergValue" class="slider-container__value"><%= tracker.emergencyFrequency %>min</span>
                     </span>
                   </div>
 
@@ -189,10 +189,10 @@
 
                     <label for="battery">Umbral de bateria </label>
 
-                    <span id="batValue">
+                    <span class="slider-container">
                       <input type="range" id="battery" name="lowBat" min="5" max="80" value="<%= tracker.lowBat %>"
                       oninput="document.getElementById('batValue').textContent=this.value + '%'">
-                      <%= tracker.lowBat %>%
+                      <span id="batValue" class="slider-container__value"><%= tracker.lowBat %>%</span>
                     </span>
                   </div>
 
@@ -267,10 +267,11 @@
 
                       <label for="radio">Radio </label>
                       
-                      <span id="radioValue">
+                      <span class="slider-container">
                         <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150"
                         value="<%= tracker.geofenceRadius %>" oninput=updateRadio(this)>
-                        <%= tracker.geofenceRadius %>m</span>
+                        <span id="radioValue" class="slider-container__value"><%= tracker.geofenceRadius %>m</span>
+                      </span>
                     </div>
                   <!-- </div> -->
                 </div>

@@ -333,6 +333,8 @@
   transition: all .25s ease-out;
 }
 
+
+
 .config__general {
   display: flex;
   flex-direction: column;
@@ -451,7 +453,7 @@
 
 .devices-dashboard .form-group input {
   width: 100%;
-  max-width: 200px;
+  max-width: 400px;
 }
 
 .devices-dashboard .form-group select {
@@ -461,6 +463,18 @@
   max-width: 200px;
 }
 
+
+.devices-dashboard .slider-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.slider-container .slider-container__value {
+  display:inline-block;
+  width: 3ch;
+  text-align: right;
+}
 
 /* .option-radio { toma los de vincular
   display: flex;

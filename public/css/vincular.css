@@ -81,7 +81,7 @@
 
 .vincular-dashboard .form-group input {
   width: 100%;
-  max-width: 200px;
+  max-width: 400px;
 }
 
 .vincular-dashboard .form-group select {
@@ -89,6 +89,18 @@
   justify-self: center;
   width: 100%;
   max-width: 200px;
+}
+
+.vincular-dashboard .slider-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.slider-container .slider-container__value {
+  display:inline-block;
+  width: 3ch;
+  text-align: right;
 }
 
 .option-radio {
