@@ -45,7 +45,7 @@ export default class TrackerController {
   async getAll() {
     try {
       const trackers = await this.#trackerDAO.getAll();
-      return trackers;
+      return trackers.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1));
     } catch (error) {
       if (error.status) throw error;
       throw new InternalError('Error interno obteniendo trackers');
