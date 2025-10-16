@@ -13,7 +13,7 @@
             data-message="Seleccioná el dispositivo que querés visualizar o configurar"
             data-position="bottom">
         <% trackers.forEach(Tracker => { %>
-          <% if (Tracker.active || (user.admin && systemConfig.devices.seeDisabled)) { %>
+          <% if (Tracker.active || (user.admin && systemConfig.devices.showDisabled)) { %>
             <a href="/dashboard/devices/<%= Tracker.id %>"
               class="tabs__item <%= Tracker.active === true ? '' : 'tabs__item--disabled' %> <%= tracker.id === Tracker.id ? 'tabs__item--selected' : '' %>  help-box"
                 data-message="<%= Tracker.petName %>"
