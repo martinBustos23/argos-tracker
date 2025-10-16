@@ -175,8 +175,7 @@
 
                     <label for="frequency-emergency">Frecuencia emergencia </label>
                     <span class="slider-container">
-                      <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency"
-                      min="1" max="10" value="<%= tracker.emergencyFrequency %>"
+                      <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency" min="1" max="10"
                       oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
                       <span id="freqEmergValue" class="slider-container__value"><%= tracker.emergencyFrequency %>min</span>
                     </span>
@@ -190,7 +189,7 @@
                     <label for="battery">Umbral de bateria </label>
 
                     <span class="slider-container">
-                      <input type="range" id="battery" name="lowBat" min="5" max="80" value="<%= tracker.lowBat %>"
+                      <input type="range" id="battery" name="lowBat" min="5" max="80"
                       oninput="document.getElementById('batValue').textContent=this.value + '%'">
                       <span id="batValue" class="slider-container__value"><%= tracker.lowBat %>%</span>
                     </span>
@@ -269,7 +268,7 @@
                       
                       <span class="slider-container">
                         <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150"
-                        value="<%= tracker.geofenceRadius %>" oninput=updateRadio(this)>
+                        oninput=updateRadio(this)>
                         <span id="radioValue" class="slider-container__value"><%= tracker.geofenceRadius %>m</span>
                       </span>
                     </div>
@@ -492,6 +491,14 @@
       }
       if (targetId === "tab-config") {
         geomap.invalidateSize();
+        document.querySelector('#frequency').value = JSON.parse('<%= tracker.frequency %>');
+        document.querySelector('#freqValue').textContent = JSON.parse('<%= tracker.frequency %>') + 'min';
+        document.querySelector('#frequency-emergency').value = JSON.parse('<%= tracker.emergencyFrequency %>');
+        document.querySelector('#freqEmergValue').textContent = JSON.parse('<%= tracker.emergencyFrequency %>') + 'min';
+        document.querySelector('#battery').value = JSON.parse('<%= tracker.lowBat %>');
+        document.querySelector('#batValue').textContent = JSON.parse('<%= tracker.lowBat %>') + '%';
+        document.querySelector('#radio').value = JSON.parse('<%= tracker.geofenceRadius %>');
+        document.querySelector('#radioValue').textContent = JSON.parse('<%= tracker.geofenceRadius %>') + 'min';
       }
     });
   });
