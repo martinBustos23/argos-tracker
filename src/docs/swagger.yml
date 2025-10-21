@@ -18,8 +18,8 @@ info:
     - [Documentacion del proyecyo](https://github.com/martinBustos23/argos-tracker)
 
     Desarrolladores:
-    - Martin Bustos: bustiger@argos-tracker.com
-    - Maximiliano Ariza: gaspanzer@argos-tracker.com 
+    - Martin Bustos: martin.bustos@argos-tracker.com
+    - Maximiliano Ariza: maxiliano.ariza@argos-tracker.com 
 
     Esta definicion esta basada en el estandar OpenAPI 3.0 y servira como base de documentacion y pruebas en Swagger.
   version: 1.0.0
@@ -29,7 +29,11 @@ info:
 
 servers:
   - url: http://localhost:8080
-    description: Servidor local
+    description: Servidor local puerto 8080 
+  - url: http://localhost:3030
+    description: Servidor local puerto 3030
+  - url: http://10.0.13.182:8080
+    description: URL Beppo
 
 tags:
   - name: Users

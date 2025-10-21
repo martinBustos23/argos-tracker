@@ -357,6 +357,15 @@ body {
 
 /*------------------------------------*/
 
+/*---------------lujo-----------------*/
+
+.leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container {
+  border: 1px solid black;
+  border-radius: 50%;
+}
+
+/*------------------------------------*/
+
 
 
 @media (max-width: 768px) {

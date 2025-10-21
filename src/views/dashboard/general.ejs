@@ -43,7 +43,7 @@
                     <span class="tracker-list__state help-box" 
                             data-message="Estado de conexion del dispositivo" 
                             data-position="bottom">
-                      <%= tracker.state %>
+                      <%= tracker.state === true ? 'Conectado' : 'Desconectado' %>
                     </span>
                   </div>
 
@@ -227,7 +227,8 @@
       popupAnchor: [0, -24]
     });
     const { lat, lon } = getLatestPosition(tracker.id);
-    const marker = L.marker([lat, lon], { icon: petIcon })
+
+    const marker = L.marker([lat || '-32.74595899097869', lon || ' -60.72988214535664'], { icon: petIcon })
       .addTo(map)
       .bindPopup(tracker.petName);
     markers.push({ marker, trackerId: tracker.id });
@@ -306,7 +307,7 @@
     const option = document.createElement('option');
     option.value = tracker.id;
     option.textContent = tracker.petName;
-
+    
     trackerSelection.appendChild(option);
   });
   

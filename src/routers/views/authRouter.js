@@ -13,7 +13,8 @@ export default (UserController) => {
   router.post('/login', async (req, res, next) => {
     try {
       const user = await UserController.login(req.body);
-
+      console.log(user);
+      console.log(req.body);
       if (user.status === 'pwd_change') return res.render('new-password', { user });
       // return res.redirect('new-password?' + new URLSearchParams({ id: user.id }));
       const token = generateToken(user.id);

@@ -490,6 +490,7 @@
 }
 
 .switch {
+  margin: 0 10% 0 auto;
   position: relative;
   display: inline-block;
   width: 50px;
@@ -742,6 +743,10 @@ input:checked + .slider::before {
   .devices-dashboard .form-group {
       padding: .5rem;
       min-width: none;
+  }
+
+  .switch {
+    margin: 0 auto;
   }
 }
 

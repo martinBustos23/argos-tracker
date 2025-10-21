@@ -368,7 +368,7 @@
             <tbody id="table-logs" class="log-content__header">
               <% if (lastEvents && lastEvents.length> 0) { %>
                 <% lastEvents.forEach(event=> { %>
-                  <tr class="log-row">
+                  <tr class="log-row" id="log-row">
                     <td data-label="Evento"><%= event.eventDesc %></td>
                     <td data-label="Bateria"><%= event.batteryLvl ? event.batteryLvl + '%' : '-' %></td>
                     <td data-label="Latitud"><%= event.latitude || '-' %></td>
