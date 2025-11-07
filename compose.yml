@@ -16,6 +16,7 @@ services:
 
   app:
     build: .
+    working_dir: /usr/src/app
     ports:
       - '8080:8080'
     depends_on:
@@ -25,6 +26,8 @@ services:
     hostname: app
     environment:
       - DB_URL=db
+    volumes:
+      - ./src/config/systemConfig.json:/usr/src/app/src/config/systemConfig.json
 
   nginx:
     image: nginx:latest
