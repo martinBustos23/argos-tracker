@@ -22,8 +22,20 @@ services:
       - db
     networks:
       - network
+    hostname: app
     environment:
       - DB_URL=db
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - network    
 
 networks:
   network: {}
