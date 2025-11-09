@@ -3,22 +3,21 @@ services:
   db:
     image: mysql
     ports:
-      - '3306:3306'
+      - '${DB_PORT}:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: argos
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     networks:
       - network
     hostname: db
     volumes:
       - argos-db:/var/lib/mysql
 
-
   app:
     build: .
     working_dir: /usr/src/app
     ports:
-      - '8080:8080'
+      - '${PORT}'
     depends_on:
       - db
     networks:
@@ -34,11 +33,13 @@ services:
     ports:
       - '80:80'
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template
+    environment:
+      - PORT=${PORT}
     depends_on:
       - app
     networks:
-      - network    
+      - network
 
 networks:
   network: {}
