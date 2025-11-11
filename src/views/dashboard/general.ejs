@@ -1,0 +1,450 @@
+<%- include('../layouts/header', {title: 'general-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', { title: 'General' , subtitle: 'Vista general del sistema' }); %>
+
+    <div class="general-dashboard">
+
+      <div class="general-dashboard__content help-box" 
+            data-message="Este es el panel principal con el mapa y tus dispositivos vinculados." 
+            data-position="top">
+
+        <div class="general-dashboard__trackers help-box" 
+              data-message="En esta sección se muestran los dispositivos vinculados a tu Estación Base " 
+              data-position="right">
+
+          <h2>Dispositivos vinculados</h2>
+          <span>Seleccione para filtrar</span>
+
+          <section class="tracker-list help-box" 
+                    data-message="Cada tarjeta representa un dispositivo. Podés hacer clic para centrarlo en el mapa." 
+                    data-position="right">
+
+            <% trackers.forEach( tracker=> { %>
+              <% if (tracker.active) { %>
+                <div class="tracker-list__card help-box" 
+                      data-message="Dispositivo activo." 
+                      data-position="right" 
+                      onclick="updateMap(this)" 
+                      data-tracker-id="<%= tracker.id %>"
+                      data-lon="<%= tracker.geofenceLon %>">
+
+                  <img class="tracker-list__image" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  
+                  <div class="tracker-list__info">
+                    <span class="tracker-list__petName help-box" 
+                            data-message="Nombre de la mascota." 
+                            data-position="top">
+                      <%= tracker.petName %>
+                    </span>
+                    <span class="tracker-list__state help-box" 
+                            data-message="Estado de conexion del dispositivo" 
+                            data-position="bottom">
+                      <%= tracker.state === true ? 'Conectado' : 'Desconectado' %>
+                    </span>
+                  </div>
+
+                </div>
+              <% } else if (user.admin && config.devices.showDisabled) { %>
+                <div class="tracker-list__card tracker-list__card--disabled help-box" 
+                      data-message="Dispositivo desactivado." 
+                      data-position="right" 
+                      onclick="updateMap(this)" 
+                      data-tracker-id="<%= tracker.id %>"
+                      data-lon="<%= tracker.geofenceLon %>">
+
+                  <img class="tracker-list__image" src="/img/petIcons/<%= tracker.image %>.jpg" alt="img">
+                  <div class="tracker-list__info">
+                    <span class="tracker-list__petName">
+                      <%= tracker.petName %>
+                    </span>
+                    <span class="tracker-list__state">
+                      <%= tracker.state %>
+                    </span>
+                  </div>
+                </div>
+              <% } %>
+            <% }) %>
+
+            <a class="add-btn help-box" 
+                data-message="Agregá un nuevo dispositivo desde esta opción." 
+                data-position="right" 
+                href="/dashboard/vincular" 
+                style="text-decoration: none; color:#691c32">+</a>
+
+          </section>
+
+        </div>
+
+        <div class="help-box" id="map" 
+              data-message="Mapa principal donde se muestran las ultimas ubicaciones de tus mascotas." 
+              data-position="left">
+        </div>
+
+      </div>
+
+      <div class="log-container help-box" 
+            data-message="Aquí se muestran los últimos eventos registrados por tus dispositivos." 
+            data-position="top">
+
+        <h2>Últimos datos recibidos</h2>
+
+        <div class="filter-panel " 
+              data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+              data-position="right">
+
+          <div class="filter-buttons">
+            <select class="filter-panel__option help-box" id="disp" 
+                      data-message="Seleccioná un dispositivo específico o mostrálos todos." 
+                      data-position="bottom">
+              <option value="0" disabled selected>Seleccionar dispositivo</option>
+              <option value="0">Todos los dispositivos</option>
+            </select>
+  
+            <select class="filter-panel__option help-box" id="timestampFilter" 
+                      data-message="Filtrá los datos según el periodo de tiempo deseado." 
+                      data-position="bottom">
+              <option value="0" selected>Historial completo</option>
+              <option value="1">Última hora</option>
+              <option value="2">Últimas 24 horas</option>
+              <option value="3">Últimos 7 dias</option>
+              <option value="4">Últimos 30 dias</option>
+            </select>
+  
+            <select class="filter-panel__option help-box" id="eventFilter" 
+                      data-message="Filtrá los eventos según su tipo." 
+                      data-position="bottom">
+              <option value="0" selected>Todos los eventos</option>
+              <option value="1">Posicion</option>
+              <option value="2">Bateria baja</option>
+            </select>
+  
+            <button class="filter-panel__button help-box" id="filtrar" 
+                      data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                      data-position="bottom">
+              Filtrar
+            </button>
+          </div>
+
+          <button class="help-box" id="download-button" 
+                    data-message="Descargá los registros visibles en PDF." 
+                    data-position="left">
+            <i class="bi bi-download"></i>
+          </button>
+        </div>
+
+        <table class="log-container__table">
+          
+          <thead>
+            <tr>
+              <!-- <th>Dispositivo</th> -->
+              <th>Mascota</th>
+              <th>Evento</th>
+              <th>Bateria</th>
+              <th>Latitud</th>
+              <th>Longitud</th>
+              <th>Fecha</th>
+              <!-- <th>Ir al mapa</th> -->
+            </tr>
+          </thead>
+
+          <tbody id="table-logs">
+            <% if (events && events.length > 0) { %>
+              <% events.forEach(event=> { %>
+                <tr class="" id="log-row"
+                      data-message="Cada fila muestra la información completa de un evento recibido." 
+                      data-position="right">
+                  <!-- <td><%= event.trackerId %></td> -->
+                  <td data-label="Mascota"><%= event.petName %></td>
+                  <td data-label="Evento"><%= event.eventDesc %></td>
+                  <td data-label="Batería"><%= event.batteryLvl ? event.batteryLvl + '%' : '-' %></td>
+                  <td data-label="Latitud"><%= event.latitude || '-' %></td>
+                  <td data-label="Longitud"><%= event.longitude || '-' %></td>
+                  <td data-label="Fecha"><%= event.timestamp.toLocaleString('es-AR', {hour12: false}); %></td>
+                  <!-- <td>-</td> -->
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="6" style="text-align:center;">No hay registros recientes.</td>
+              </tr>
+            <% } %>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+</div>
+
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
+
+  const trackers = JSON.parse('<%- JSON.stringify(trackers) %>');
+  const events = JSON.parse('<%- JSON.stringify(events) %>');
+
+  const defaultLat = -32.747711;
+  const defaultLon =  -60.734190;
+
+  const markers = [];
+  let pin = null;
+
+  function getLatestPosition(trackerId) {
+    const event = events
+      .filter(e => e.trackerId === trackerId && e.latitude && e.longitude)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+
+    if (event) return { lat: event.latitude, lon: event.longitude };
+    
+    const tracker = trackers.find(t => t.id === trackerId);
+    if (tracker) return { lat: tracker.geofenceLat, lon: tracker.geofenceLon };
+
+    return { lat: defaultLat, lon: defaultLon };
+  }
+
+  const firstTrackerId = trackers[0]?.id;
+  const { lat: initialLat, lon: initialLon } = firstTrackerId ? getLatestPosition(firstTrackerId) : { lat: defaultLat, lon: defaultLon };
+
+  let map = L.map('map', { scrollWheelZoom: false }).setView([initialLat, initialLon], 16);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  trackers.forEach(tracker => {
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    const { lat, lon } = getLatestPosition(tracker.id);
+
+    const marker = L.marker([lat || '-32.74595899097869', lon || ' -60.72988214535664'], { icon: petIcon })
+      .addTo(map)
+      .bindPopup(tracker.petName);
+    markers.push({ marker, trackerId: tracker.id });
+  });
+
+  function updateMap(element) {
+    const trackerId = element.getAttribute('data-tracker-id');
+    const tracker = trackers.find(t => t.id === parseInt(trackerId));
+    const { lat, lon } = getLatestPosition(parseInt(trackerId));
+
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    
+    if (pin) {
+      pin.setIcon(petIcon);
+      pin.setLatLng([lat, lon]);
+    } else {
+      pin = L.marker([lat, lon], { icon: petIcon }).addTo(map);
+    }
+    
+    map.setView([lat, lon], 16);
+  }
+  
+  const { hostname, port } = new URL(window.location.href);
+  const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+  socket.addEventListener('open', () => {
+    socket.send(JSON.stringify('*'));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const { latitude, longitude, trackerId} = JSON.parse(event.data);
+    const petName = trackers.find(tracker => tracker.id === trackerId).petName;
+
+    if (typeof latitude !== 'number' || typeof longitude !== 'number') return;
+
+    // Eliminar marker antiguo del mismo tracker
+    for (let i = markers.length - 1; i >= 0; i--) {
+      if (markers[i].trackerId === trackerId) {
+        map.removeLayer(markers[i].marker);
+        markers.splice(i, 1);
+      }
+    }
+
+    const petIcon = L.icon({
+      iconUrl: `/img/petIcons/rounded/${trackers.find( tracker => tracker.id == trackerId).image}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+    
+    const marker = L.marker([latitude, longitude], { icon: petIcon})
+      .addTo(map)
+      .bindPopup(petName)
+      .openPopup();
+
+    markers.push({ marker, trackerId });
+
+    map.setView([latitude, longitude], 15);
+
+    events.unshift({ ...JSON.parse(event.data), petName });
+    const filteredEvents = filterEvents(events);
+    console.log(filteredEvents);
+    updateLogs(filteredEvents);
+  });
+
+  // ............
+
+  const trackerSelection = document.getElementById("disp")
+  
+  trackers.forEach(tracker => {
+    const option = document.createElement('option');
+    option.value = tracker.id;
+    option.textContent = tracker.petName;
+    
+    trackerSelection.appendChild(option);
+  });
+  
+  const button = document.querySelector("#filtrar");
+  button.addEventListener("click", (event) => {
+    const filteredEvents = filterEvents(events);
+    updateLogs(filteredEvents);
+  });
+
+  function filterEvents(events) {
+    const timesFilter = Number(document.querySelector("#timestampFilter").value);
+    const dispFilter = Number(document.querySelector("#disp").value);
+    const eventFilter = Number(document.querySelector("#eventFilter").value);
+
+    let newEvents = new Array(...events);
+    switch (timesFilter) {
+      case 1:
+        newEvents = newEvents.filter( 
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (60 * 60 * 1000)));
+        break;
+        
+      case 2:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (24 * 60 * 60 * 1000)));
+        break;
+
+      case 3:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (7 * 24 * 60 * 60 * 1000)));
+        break;
+
+      case 4:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (30 * 24 * 60 * 60 * 1000))
+        );
+        break;
+    }
+
+    if (dispFilter != 0)
+      newEvents = newEvents.filter( event => event.trackerId == dispFilter );
+    
+    switch (eventFilter) {
+      case 1:
+        newEvents = newEvents.filter( event => event.eventDesc == 'POSITION')
+        break;
+    
+      case 2:
+        newEvents = newEvents.filter( event => event.eventDesc == 'BATTERY')
+        break;
+    }
+    return newEvents;
+  }
+  // hacer asyncrona para no bloquear la pagina
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const tableContent = document.querySelectorAll("#log-row");
+      tableContent.forEach(row => row.remove());
+      
+      for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log["petName"];
+        column.setAttribute("data-label", "Mascota");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["eventDesc"];
+        column.setAttribute("data-label", "Evento");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["batteryLvl"] + "%";
+        column.setAttribute("data-label", "Batería");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["latitude"];
+        column.setAttribute("data-label", "Latitud");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["longitude"];
+        column.setAttribute("data-label", "Longitud");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log["timestamp"]).toLocaleString("es-AR", {hour12: false});
+        column.setAttribute("data-label", "Fecha");
+        logElement.appendChild(column);
+
+
+        document.querySelector("#table-logs").appendChild(logElement);
+
+        resolve(true);
+      }
+    });
+  }
+
+  const downloadButton = document.querySelector("#download-button");
+  downloadButton.addEventListener("click", () => {
+    const filteredEvents = filterEvents(events);
+    createEventsDocument(filteredEvents);
+  });
+  
+  function createEventsDocument(events) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    doc.text("Eventos de todos los trackers", 10, 10);
+    
+    doc.setFontSize(11);
+    const columns = ["Timestamp", "Description", "Id de tracker", "Mascota", "Latitud", "Longitud", "Bateria"];
+    const rows = [];
+
+    for (const event of events) {
+      rows.push([
+        new Date(event.timestamp).toLocaleString('es-AR', { hour12: false }),
+        event.eventDesc,
+        event.trackerId,
+        event.petName,
+        event.latitude,
+        event.longitude,
+        event.batteryLvl
+      ]);
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
+
+</script>
+
+<%- include('../layouts/footer'); %>

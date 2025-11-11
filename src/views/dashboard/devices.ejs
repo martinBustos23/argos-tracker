@@ -1,0 +1,851 @@
+<%- include('../layouts/header', {title: 'devices-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', {title: 'Dispositivos' ,
+    subtitle: 'Lista de los dispositivos vinculados' }); %>
+
+    <div class="devices-dashboard">
+      
+      <div class="tabs help-box"
+            data-message="Seleccioná el dispositivo que querés visualizar o configurar"
+            data-position="bottom">
+        <% trackers.forEach(Tracker => { %>
+          <% if (Tracker.active || (user.admin && systemConfig.devices.showDisabled)) { %>
+            <a href="/dashboard/devices/<%= Tracker.id %>"
+              class="tabs__item <%= Tracker.active === true ? '' : 'tabs__item--disabled' %> <%= tracker.id === Tracker.id ? 'tabs__item--selected' : '' %>  help-box"
+                data-message="<%= Tracker.petName %>"
+                data-position="top">
+              <%= Tracker.petName %>
+            </a>
+          <% } %>
+        <% }) %>
+      </div>
+
+      <div class="devices-dashboard__content">
+
+        <div class="tab-nav">
+          <% if (user.admin) { %>
+            <button class="tab-nav__button help-box" data-target="tab-config"
+              data-message="Seccion de configuracion"
+              data-position="bottom">
+              <i class="bi bi-gear"></i>
+            </button>
+          <% } %>
+          <button class="tab-nav__button tab-nav__button--active help-box" data-target="tab-tracker"
+              data-message="Vista de datos generales"
+              data-position="bottom">
+            <i class="bi bi-house"></i>
+          </button>
+          <button class="tab-nav__button help-box" data-target="tab-log"
+              data-message="Historial de registros"
+              data-position="bottom">
+            <i class="bi bi-geo-alt"></i>
+          </button>
+        </div>
+
+
+        <section class="tab tab--tracker tab--active help-box" id="tab-tracker" 
+                  data-message="Vista general del dispositivo seleccionado"
+                  data-position="top"
+                  data-target="#tab-tracker">
+
+          <div class="tracker">
+            <div class="tracker__header help-box"
+                    data-message="Estos son los datos de identificacion de tu dispositivo"
+                    data-position="bottom"
+                    data-target="#tab-tracker">
+              <div class="tracker__pet">
+                <img class="tracker__pet-img" src="/img/petIcons/<%= tracker.image %>.jpg" alt="Imagen">
+                <div class="tracker__pet-info">
+                  <h2 class="tracker__pet-name"><%= tracker.petName %></h2>
+                  <span class="tracker__pet-id">ID: <%= tracker.id %></span>
+                  <span class="tracker__pet-id"><%= tracker.active === true ? '' : 'Tracker [eliminado]' %></span>
+                </div>
+              </div>
+
+              <div class="tracker__data">
+                <p><strong>Estado: </strong><%= tracker.status === true ? 'Conectado' : 'Desconectado' %></p>
+                <p><strong>Modelo: </strong><%= tracker.model %></p>
+                <p><strong>Alertas de sonido: </strong><%= tracker.enableSoundAlert === true ? 'Habilitadas' : 'Deshabilitadas' %></p>
+                <p><strong>Zona segura: </strong><%= tracker.enableGeofence === true ? 'Habilitada' : 'Deshabilitada' %></p>
+              </div>
+            </div>
+
+            <div class="tracker__map help-box" id="deviceMap" 
+                  data-message="Mapa en tiempo real del dispositivo"
+                  data-position="top"
+                  data-target="#tab-tracker">
+            </div>
+          </div>
+
+          <div class="tracker-pos help-box"
+                data-message="Estas son las últimas 5 posiciones registradas"
+                data-position="left"
+                data-target="#tab-tracker">
+
+            <h2 class="tracker-history__title">Últimas posiciones</h2>
+            <div class="tracker-history__list">
+              <% const positionEvents=lastEvents.filter(e=> e.eventDesc === 'POSITION').slice(0, 5); %>
+              <% positionEvents.forEach(event=> { %>
+                <div class="tracker-history__item">
+                  <div class="history-item__header">
+                     <i class="bi bi-map"></i> Ir al mapa
+                  </div>
+                  <div class="history-item__body">
+                    <div class="history-item__time">
+                      <i class="bi bi-clock"> <%= event.timestamp.toLocaleString('es-AR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) %></i> 
+                      <% if (event.batteryLvl) { %>
+                        <div class="history-item__battery">
+                          <i class="bi bi-battery-half"></i> <%= event.batteryLvl %>%
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="history-item__coords" data-lat="<%= event.latitude %>" data-lon="<%= event.longitude %>">
+                      <p><strong>LAT</strong> <%= event.latitude %></p>
+                      <p><strong>LON</strong> <%= event.longitude %></p>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab tab--config help-box" id="tab-config" 
+                  data-message="Configurá los parámetros del dispositivo"
+                  data-position="top"
+                  data-target="#tab-config">
+
+          <form class="tab-config" id="updateConfig">
+
+            <div class="config__general help-box"
+                  data-message="Configuración general del dispositivo"
+                  data-position="top"
+                  data-target="#tab-config">
+
+              <div class="tab-config__configuration">
+
+                <h2 class="config__title">Configuración</h2>
+
+                <div class="config__identity">
+                  <img class="tracker__pet-img help-box" id="img-button" 
+                        src="/img/petIcons/<%= tracker.image %>.jpg" alt="img"
+                        data-message="Acá podes modificar la imagen para identificar a la mascota"
+                        data-position="top"
+                        data-target="#tab-config">
+
+                  <div class="config__identity-fields">
+                    <input type="text" id="petName" name="petName" placeholder="Nombre: <%= tracker.petName %>">
+                    <input type="text" id="trackerId" placeholder="ID: <%= tracker.id %>" disabled>
+                  </div>
+
+                  <button class="config__delete-btn" id="delete-tracker-btn" type="button">
+                    <i class="bi bi-trash help-box" 
+                        data-message="Elimina este dispositivo"
+                        data-position="top"
+                        data-target="#tab-config">
+                    </i>
+                  </button>
+                </div>
+
+                <div class="config__options">
+
+                  <div class="form-group help-box"
+                        data-message="Modificar la frecuencia de comunicación"
+                        data-position="top"
+                        data-target="#tab-config">
+
+                    <label for="frequency">Frecuencia </label>
+                    
+                    <span class="slider-container">
+                      <input type="range" id="frequency" name="frequency" min="5" max="30"
+                      value="<%= tracker.frequency %>"
+                      oninput="document.getElementById('freqValue').textContent=this.value + 'min'">
+                      <span id="freqValue" class="slider-container__value"><%= tracker.frequency %>min</span>
+                    </span>
+                  </div>
+
+                  <!-- <div class="option helper1" -->
+                  <div class="form-group help-box"
+                        data-message="Modificar la frecuencia en modo emergencia"
+                        data-position="top"
+                        data-target="#tab-config">
+
+                    <label for="frequency-emergency">Frecuencia emergencia </label>
+                    <span class="slider-container">
+                      <input class="input-range" type="range" id="frequency-emergency" name="frequencyEmergency" min="1" max="10"
+                      oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
+                      <span id="freqEmergValue" class="slider-container__value"><%= tracker.emergencyFrequency %>min</span>
+                    </span>
+                  </div>
+
+                  <div class="form-group help-box"
+                    data-message="Modificar el nivel mínimo de batería para envio de alertas"
+                    data-position="top"
+                    data-target="#tab-config">
+
+                    <label for="battery">Umbral de bateria </label>
+
+                    <span class="slider-container">
+                      <input type="range" id="battery" name="lowBat" min="5" max="80"
+                      oninput="document.getElementById('batValue').textContent=this.value + '%'">
+                      <span id="batValue" class="slider-container__value"><%= tracker.lowBat %>%</span>
+                    </span>
+                  </div>
+
+                  <div class="form-group help-box"
+                    data-message="Activar o desactivar alertas sonoras"
+                    data-position="top"
+                    data-target="#tab-config">
+
+                    <label for="alert">Alerta de sonido </label>
+                    <div class="option-radio">
+                      <label class="switch">
+                        <input type="checkbox" id="alertSound">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-group help-box"
+                        data-message="Habilitar o deshabilitar el área segura (geo-fence)"
+                        data-position="top"
+                        data-target="#tab-config">
+                    <label for="geofencing">Zona segura </label>
+                    <div class="option-radio">
+                      <label class="switch">
+                        <input type="checkbox" id="geoEnable">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="config__submit help-box"
+                        data-message="Cargar las nuevas modificaciones"
+                        data-position="top"
+                        data-target="#tab-config">
+                    <button class="config__submit-btn" type="submit">Confirmar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="config__geozone help-box"
+                  data-message="Modificar el área segura de movimiento"
+                  data-position="left"
+                  data-target="#tab-config">
+
+              <div class="geozone__config">
+
+                <h2 class="config-geozone__title">Zona segura</h2>
+
+                <div class="config-geozone__options">
+                  <!-- <div class="geo-config"> -->
+                    <div class="form-group help-box"
+                          data-message="Modificiar el centro de la zona (latitud)"
+                          data-position="top"
+                          data-target="#tab-config">    
+
+                      <label for="latitud">Latitud </label>
+                      <input class="input-text" type="text" id="latitud" name="latitud"
+                        placeholder="<%= tracker.geofenceLat %>">
+                    </div>
+
+                    <div class="form-group help-box"
+                          data-message="Modificiar el centro de la zona (longitud)"
+                          data-position="top"
+                          data-target="#tab-config">
+
+                      <label for="latitud">Longitud </label>
+                      <input class="input-text" type="text" id="longitud" name="longitud"
+                        placeholder="<%= tracker.geofenceLon %>">
+                    </div>
+
+                    <div class="form-group help-box"
+                          data-message="Modificar el radio del área segura (en metros)"
+                          data-position="top"
+                          data-target="#tab-config">
+
+                      <label for="radio">Radio </label>
+                      
+                      <span class="slider-container">
+                        <input class="input-range" type="range" id="radio" name="geoRadio" min="10" max="150"
+                        oninput=updateRadio(this)>
+                        <span id="radioValue" class="slider-container__value"><%= tracker.geofenceRadius %>m</span>
+                      </span>
+                    </div>
+                  <!-- </div> -->
+                </div>
+
+                <div class="config-geozone__map help-box" id="geo-map" 
+                      data-message="Mapa interactivo, al hacer clic se asigna la posicion automáticamente"
+                      data-position="left"
+                      data-target="#tab-config">
+                </div>
+              </div>
+
+            </div>
+            <!-- <div id="helper" class="helper">
+              <button class="helper-btn" id="helper-close">X</button>
+              <div id="content-helper">
+
+              </div>
+            </div>
+            <div id="helper-left" class="helper-left">
+              <button class="helper-btn" id="helper-left-close">X</button>
+              <div id="content-helper-left">
+
+              </div>
+            </div> -->
+          </form>
+        </section>
+
+        <section class="tab--log tab help-box" id="tab-log" 
+                  data-message="Registro de eventos del dispositivo"
+                  data-position="top"
+                  data-target="#tab-log">
+
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom"
+                data-target="#tab-log">
+
+            <div class="filter-buttons">
+    
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los datos según el periodo de tiempo deseado." 
+                        data-position="bottom"
+                        data-target="#tab-log">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="eventFilter" 
+                        data-message="Filtrá los eventos según su tipo." 
+                        data-position="bottom"
+                        data-target="#tab-log">
+                <option value="0" selected>Todos los eventos</option>
+                <option value="1">Posicion</option>
+                <option value="2">Bateria baja</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom"
+                        data-target="#tab-log">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato PDF." 
+                      data-position="bottom"
+                      data-target="#tab-log">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+
+
+          <table class="log-container__table">
+
+            <thead class="log-content__header">
+              <tr>
+                <th>Evento</th>
+                <th>Bateria</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            
+            <tbody id="table-logs" class="log-content__header">
+              <% if (lastEvents && lastEvents.length> 0) { %>
+                <% lastEvents.forEach(event=> { %>
+                  <tr class="log-row" id="log-row">
+                    <td data-label="Evento"><%= event.eventDesc %></td>
+                    <td data-label="Bateria"><%= event.batteryLvl ? event.batteryLvl + '%' : '-' %></td>
+                    <td data-label="Latitud"><%= event.latitude || '-' %></td>
+                    <td data-label="Longitud"><%= event.longitude || '-' %></td>
+                    <td data-label="Fecha"><%= event.timestamp.toLocaleString("es-AR", {hour12: false}) %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="5" style="text-align:center;">No hay registros recientes.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+    </div>
+</div>
+
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
+  const tracker = JSON.parse('<%- JSON.stringify(tracker) %>');
+  const events = JSON.parse('<%- JSON.stringify(lastEvents) %>');
+
+  const tracker_info = document.querySelectorAll('.tracker-history__item');
+  const tracker_latlon = document.querySelectorAll('.history-item__coords');
+
+  let latitude = tracker.geofenceLat;
+  let longitude = tracker.geofenceLon;
+
+  if (tracker_latlon.length > 0) {
+    try {
+      const lastLatLon = tracker_latlon[0];
+      const latAttr = lastLatLon.getAttribute('data-lat');
+      const lonAttr = lastLatLon.getAttribute('data-lon');
+
+      const lat = parseFloat(latAttr);
+      const lon = parseFloat(lonAttr);
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        latitude = lat;
+        longitude = lon;
+      }
+    } catch (err) {
+      console.warn("No se pudo obtener la última posición, usando geofence:", err);
+    }
+  }
+
+  const petIcon = L.icon({
+    iconUrl: `/img/petIcons/rounded/${tracker.image}.png`,
+    iconSize: [48, 48],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -24]
+  });
+
+  const markers = [];
+  let map = L.map('deviceMap');
+  let pin = null; 
+  
+  let msgWaitingPosition;
+
+  if (events.length > 0) {
+    map.setView([events[0].latitude, events[0].longitude], 19);
+    const marker = L.marker([events[0].latitude, events[0].longitude], { icon: petIcon }).addTo(map);
+    markers.push(marker);
+  } else {
+    map.setView([latitude || -32.747711, longitude || -60.734190], 19);
+    msgWaitingPosition = L.tooltip({ direction: 'center', permanent: true, className: 'mensaje-esperando' })
+    .setLatLng([-32.747711, -60.734190])
+    .setContent(`<p>Esperando posicion...</p>`)
+    .addTo(map);
+  }
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+  tracker_info.forEach(infoDiv => {
+    infoDiv.addEventListener('click', function () {
+      const lat = parseFloat(this.querySelector('.history-item__coords').getAttribute('data-lat'));
+      const lon = parseFloat(this.querySelector('.history-item__coords').getAttribute('data-lon'));
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        if (pin) {
+          pin.setLatLng([lat, lon]);
+        } else {
+          pin = L.marker([lat, lon], { icon: petIcon }).addTo(map);
+        }
+        map.setView([lat, lon], 17);
+      } else {
+        console.warn('Posición inválida en este div');
+      }
+    });
+  });
+
+  let geomap = L.map('geo-map').setView([tracker.geofenceLat || -32.747711, tracker.geofenceLon || -60.734190], 19);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(geomap);
+
+  let circle
+  if (tracker.geofenceLat &&  tracker.geofenceLon) {
+    circle = L.circle([tracker.geofenceLat, tracker.geofenceLon], {
+      radius: tracker.geofenceRadius, 
+      color: "#691c32",
+      fillColor: "#f03",
+      fillOpacity: 0.15
+    }).addTo(geomap).bindPopup("Zona Segura");
+  }
+  function updateRadio(event) {
+    const radius = event.value;
+    document.getElementById('radioValue').textContent = radius + 'm';
+    circle.setRadius(radius);
+  }
+
+  geomap.on('click', (picker) => {
+    updateConfig.latitud.value = picker.latlng.lat;
+    updateConfig.longitud.value = picker.latlng.lng;
+    geomap.setView(picker.latlng);
+    circle.setLatLng(picker.latlng);
+  });
+
+  const tabBtns = document.querySelectorAll(".tab-nav__button");
+  const tabContents = document.querySelectorAll(".tab");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("tab-nav__button--active"));
+      btn.classList.add("tab-nav__button--active");
+
+      tabContents.forEach(c => c.classList.remove("tab--active"));
+      const targetId = btn.getAttribute("data-target");
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.classList.add("tab--active");
+
+      if (targetId === "tab-tracker") {
+        map.invalidateSize();
+      }
+      if (targetId === "tab-config") {
+        geomap.invalidateSize();
+        document.querySelector('#frequency').value = JSON.parse('<%= tracker.frequency %>');
+        document.querySelector('#freqValue').textContent = JSON.parse('<%= tracker.frequency %>') + 'min';
+        document.querySelector('#frequency-emergency').value = JSON.parse('<%= tracker.emergencyFrequency %>');
+        document.querySelector('#freqEmergValue').textContent = JSON.parse('<%= tracker.emergencyFrequency %>') + 'min';
+        document.querySelector('#battery').value = JSON.parse('<%= tracker.lowBat %>');
+        document.querySelector('#batValue').textContent = JSON.parse('<%= tracker.lowBat %>') + '%';
+        document.querySelector('#radio').value = JSON.parse('<%= tracker.geofenceRadius %>');
+        document.querySelector('#radioValue').textContent = JSON.parse('<%= tracker.geofenceRadius %>') + 'min';
+        document.querySelector('#alertSound').checked = JSON.parse('<%= tracker.enableSoundAlert %>')
+        document.querySelector('#geoEnable').checked = JSON.parse('<%= tracker.enableGeofence %>')
+      }
+    });
+  });
+
+
+  const deleteBtn = document.getElementById('delete-tracker-btn');
+  deleteBtn.addEventListener('click', async () => {
+    event.preventDefault();
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas eliminar el dispositivo?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+      try {
+        const response = await fetch(`/api/trackers/${tracker.id}`, { method: 'DELETE'});
+  
+        if (response.ok) {
+            Swal.fire({
+              title: "Tracker eliminado",
+              text: "Tu dispositivo ha sido eliminado con exito.",
+              confirmButtonColor: "#451321",
+              icon: "success"
+            }).then( () => {
+          location.reload();
+            });   
+        } else {
+            Swal.fire({
+                title: "¡Ocurrio un error!",
+                text: "Error al eliminar el tracker.",
+                confirmButtonColor: "#451321",
+                icon: "error"
+            });
+        }
+      } catch (error) {
+        console.error("Error al eliminar tracker:", error);
+          Swal.fire({
+              title: "¡Ocurrio un error!",
+              text: "Error al intentar eliminar el dispositivo.",
+              confirmButtonColor: "#451321",
+              icon: "error"
+          });
+      }
+    }
+  });
+
+  const updateConfig = document.getElementById("updateConfig");
+  const imgButton = document.getElementById("img-button");
+
+  updateConfig.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const imgSrc = imgButton.getAttribute("src");
+    const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
+
+    const enableGeofence = updateConfig.geoEnable.checked;
+    const enableSoundAlert = updateConfig.alertSound.checked;
+
+    const payload = {
+      petName: updateConfig.petName.value || tracker.petName,
+      model: tracker.model,
+      image: imageName || tracker.image,
+      state: tracker.state,
+      frequency: Number(updateConfig.frequency.value) || tracker.frequency,
+      lowBat: Number(updateConfig.lowBat.value) || tracker.lowBat,
+      geofenceLat: Number(updateConfig.latitud.value) || tracker.geofenceLat,
+      geofenceLon: Number(updateConfig.longitud.value) || tracker.geofenceLon,
+      geofenceRadius: Number(updateConfig.geoRadio.value) || tracker.geofenceRadius,
+      emergencyFrequency: Number(updateConfig.frequencyEmergency.value) || tracker.emergencyFrequency,
+    };
+
+    if (enableGeofence !== tracker.enableGeofence)
+      payload.enableGeofence = enableGeofence;
+
+    if (enableSoundAlert !== tracker.enableSoundAlert)
+    payload.enableSoundAlert = enableSoundAlert;
+
+    for (const key in payload) {
+      const value = payload[key];
+      if (value === "" || value === tracker[key])
+        delete payload[key];
+    }
+
+    if (Object.keys(payload) == false) return;
+
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas modificar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+
+    }
+    try {
+      const response = await fetch(`/api/trackers/${tracker.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "¡Tracker modificado!",
+          text: "Tu dispositivo ha sido modificado con exito.",
+          confirmButtonColor: "#451321",
+          icon: "success"
+        }).then( () => {
+          location.reload();
+        });
+      } else {
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: result.error,
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
+      }
+    } catch (error) {
+      console.error("Error al modificar el dispositivo:", error);
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: "Error al modificar el dispositivo.",
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
+    }
+  });
+
+  //----------
+  const { hostname, port, pathname } = new URL(window.location.href);
+  const socket = new WebSocket(`ws://${hostname}:${port}/ws`);
+
+  socket.addEventListener('open', (event) => {
+    const trackerId = pathname.split('/').pop();
+    console.log(trackerId);
+    socket.send(JSON.stringify(trackerId));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const { latitude, longitude } = JSON.parse(event.data);
+
+    // limpiar todos los markers
+    for (let i = 0; i < markers.length; i++) {
+      map.removeLayer(markers[i]);
+      markers.splice(i, 1);
+    }
+
+    if(msgWaitingPosition) {
+      map.removeLayer(msgWaitingPosition);
+      msgWaitingPosition = null;
+    }
+
+    const marker = L.marker([latitude, longitude], { icon: petIcon }).addTo(map);
+    markers.push(marker);
+
+    map.setView([latitude, longitude], 15);
+
+    events.unshift(JSON.parse(event.data));
+    const filteredEvents = filterEvents(events);
+    console.log(filteredEvents);
+    updateLogs(filteredEvents);
+    updateLastPositions();
+  });
+
+  const button = document.querySelector("#filtrar");
+  button.addEventListener("click", (event) => {
+    const filteredEvents = filterEvents(events);
+    updateLogs(filteredEvents);
+  });
+
+  function updateLastPositions() {
+    const lastPositions = document.querySelector(".tracker-history__list");
+
+    const { latitude, longitude, timestamp } = events.filter(event => event.eventDesc == 'POSITION')[0];
+    const newCard = document.createElement("div");
+    newCard.className = "tracker-history__item"
+    newCard.setAttribute("data-lat", latitude);
+    newCard.setAttribute("data-lon", longitude);
+
+    const timestampElem = document.createElement("div");
+    timestampElem.textContent = new Date(timestamp).toLocaleString('es-AR', {hour12: false});
+    newCard.appendChild(timestampElem);
+
+    const posElem = document.createElement("div");
+    posElem.className = "tracker-history__coords";
+    newCard.setAttribute("data-lat", latitude);
+    newCard.setAttribute("data-lon", longitude);
+
+    const latElem = document.createElement("p");
+    latElem.textContent = "Lat: " + latitude;
+    posElem.appendChild(latElem);
+
+    const lonElem = document.createElement("p");
+    lonElem.textContent = "Lon: " + longitude;
+    posElem.appendChild(lonElem);
+
+    newCard.appendChild(posElem);
+
+    if (lastPositions.childElementCount === 5) {
+      lastPositions.lastElementChild.remove();
+    }
+    lastPositions.insertBefore(newCard, lastPositions.firstElementChild);
+  }
+
+  function filterEvents(events) {
+    const timesFilter = Number(document.querySelector("#timestampFilter").value);
+    const eventFilter = Number(document.querySelector("#eventFilter").value);
+
+    let newEvents = new Array(...events);
+    switch (timesFilter) {
+      case 1:
+        newEvents = newEvents.filter( 
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (60 * 60 * 1000)));
+        break;
+        
+      case 2:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (24 * 60 * 60 * 1000)));
+        break;
+
+      case 3:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (7 * 24 * 60 * 60 * 1000)));
+        break;
+
+      case 4:
+        newEvents = newEvents.filter(
+          event => new Date(event.timestamp).getTime() >= ( Date.now() - (30 * 24 * 60 * 60 * 1000))
+        );
+        break;
+    }
+    
+    switch (eventFilter) {
+      case 1:
+        newEvents = newEvents.filter( event => event.eventDesc == 'POSITION')
+        break;
+    
+      case 2:
+        newEvents = newEvents.filter( event => event.eventDesc == 'BATTERY')
+        break;
+    }
+    return newEvents;
+  }
+  // hacer asyncrona para no bloquear la pagina
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const tableContent = document.querySelectorAll("#log-row");
+      tableContent.forEach(row => row.remove());
+      
+      for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log["eventDesc"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["batteryLvl"] + "%";
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["latitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log["longitude"];
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log["timestamp"]).toLocaleString("es-AR", {hour12: false});
+        logElement.appendChild(column);
+
+        document.querySelector("#table-logs").appendChild(logElement);
+
+        resolve(true);
+      }
+    });
+  }
+
+  const downloadButton = document.querySelector("#download-button");
+  downloadButton.addEventListener("click", () => {
+    const filteredEvents = filterEvents(events);
+    createEventsDocument(filteredEvents);
+  });
+  
+  function createEventsDocument(events) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    doc.text("Eventos del tracker " + tracker.id + " " + tracker.petName, 10, 10);
+    
+    doc.setFontSize(11);
+    const columns = ["Timestamp", "Description", "Latitud", "Longitud", "Bateria"];
+    const rows = [];
+
+    for (const event of events) {
+      rows.push([
+        new Date(event.timestamp).toLocaleString('es-AR', { hour12: false }),
+        event.eventDesc,
+        event.latitude,
+        event.longitude,
+        event.batteryLvl
+      ]);
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
+</script>
+
+<%- include('../layouts/footer'); %>

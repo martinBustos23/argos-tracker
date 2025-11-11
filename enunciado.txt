@@ -18,5 +18,4 @@ poder:
 	- Eliminar mascotas existentes.
 	- Cargar datos de pago.
 	- Cambiar la configuracion del collar de cada moscota.
-
-
+	

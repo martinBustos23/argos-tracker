@@ -1,0 +1,348 @@
+<%- include('../layouts/header', {title: 'vincular-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+    <%- include('../layouts/navbar', { title: 'Vincular' ,
+        subtitle: 'Crear dispositivos en el sistema' }); %>
+
+        <div class="vincular-dashboard">
+
+            <form class="vincular-form help-box" id="vincularForm"
+                    data-message="Formulario para registrar un dispositivo de rastreo." 
+                    data-position="top">
+
+                <h2>
+                  Registrar dispositivo
+                </h2>
+
+                <div class="vincular-form__content">
+
+                    <div class="vincular-form__general help-box" 
+                          data-message="Configura la información básica del dispositivo y su comportamiento." 
+                          data-position="right">
+
+                        <img class="img-tracker help-box" id="img-button" 
+                              data-message="Haz clic para elegir una imagen de stock para identificar a la mascota." 
+                              data-position="right"
+                              src="/img/petIcons/default.jpg" alt="Imagen del dispositivo">
+
+                        <input class="input-petname help-box" id="petName" 
+                                data-message="Ingresa el nombre de la mascota asociada al dispositivo." 
+                                data-position="bottom"
+                                type="text" name="petName" placeholder="Nombre de mascota..." required>
+
+
+                        <!-- <div class="form-group help-box" 
+                              data-message="El ID se asigna automáticamente y no puede modificarse." 
+                              data-position="bottom">
+                          <label for="deviceId">ID:</label>
+                          <input id="deviceId" class="input-text" type="text" name="id" disabled placeholder="Se asigna automáticamente">
+                        </div> -->
+
+                        <div class="form-group help-box" 
+                              data-message="Selecciona el modelo de dispositivo que estás utilizando." 
+                              data-position="bottom">
+                          <label for="model">Modelo</label>
+                          <select id="model" class="input-text">
+                            <option value="1">verLoRa</option>
+                            <option value="2">verGSM</option>
+                            <option value="3">verGSM-LoRa</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group help-box" 
+                              data-message="Ajusta la frecuencia con la que el dispositivo envía datos al sistema." 
+                              data-position="bottom">
+                          <label for="frequency">Frecuencia</label>
+
+                          <span class="slider-container">
+                            <input type="range" id="frequency" name="frequency" min="5" max="30" value="10"
+                                oninput="document.getElementById('freqValue').textContent=this.value + 'min'"> 
+                            <span id="freqValue" class="slider-container__value">10min</span>
+                          </span>
+                        </div>
+
+                        <div class="form-group help-box" 
+                              data-message="Ajusta la frecuencia de emergencia, usada ante detección de anomalías." 
+                              data-position="bottom">
+                          <label for="frequencyEmergency">Frecuencia de emergencia</label>
+                          
+                          <span class="slider-container">
+                            <input type="range" id="frequencyEmergency" name="frequencyEmergency" min="1" max="10" value="3"
+                                oninput="document.getElementById('freqEmergValue').textContent=this.value + 'min'">
+                            <span id="freqEmergValue" class="slider-container__value">3min</span>
+                          </span>
+                        </div>
+
+                        <div class="form-group help-box" 
+                              data-message="Establece el nivel de batería a partir del cual recibirás alertas de batería baja." 
+                              data-position="bottom">
+                          <label for="batteryThreshold">Umbral de batería</label>
+                          
+                          <span class="slider-container">
+                            <input type="range" id="batteryThreshold" name="lowBat" min="5" max="80" value="20"
+                                oninput="document.getElementById('batValue').textContent=this.value + '%'">
+                            <span id="batValue" class="slider-container__value">20%</span>
+                          </span>
+                        </div>
+
+                        <div class="form-group help-box" 
+                              data-message="Activa o desactiva las notificaciones de alerta por sonido." 
+                              data-position="bottom">
+                          <label>Alerta de sonido</label>
+                          <div class="option-radio">
+                            <label><input type="radio" name="alertSound" value="si" checked> Sí</label>
+                            <label><input type="radio" name="alertSound" value="no"> No</label>
+                          </div>
+                        </div>
+
+                        <div class="form-group help-box" 
+                              data-message="Activa la función de zona segura para delimitar un área segura." 
+                              data-position="bottom">
+                          <label>Zona segura</label>
+                          <div class="option-radio">
+                            <label><input type="radio" name="geoEnable" value="si" checked> Sí</label>
+                            <label><input type="radio" name="geoEnable" value="no"> No</label>
+                          </div>
+                        </div>
+
+                        <button class="crear-tracker-btn help-box" type="submit" 
+                                  data-message="Haz clic para crear y registrar el nuevo dispositivo." 
+                                  data-position="top">
+                          Crear
+                        </button>
+
+                    </div>
+
+                    <div class="vincular-form__geofencing help-box" 
+                          data-message="Define la zona segura (geo-fence) para el dispositivo." 
+                          data-position="left">
+
+                      <h3>Zona segura</h3>
+
+                      <div class="form-group help-box" 
+                            data-message="Latitud de la ubicación central del área segura." 
+                            data-position="bottom">
+                        <label for="latitude">Latitud</label>
+                        <input id="latitude" class="input-text" type="text" name="latitud" placeholder="-34.6037">
+                      </div>
+
+                      <div class="form-group help-box" 
+                            data-message="Longitud de la ubicación central del área segura." 
+                            data-position="bottom">
+                        <label for="longitude">Longitud</label>
+                        <input id="longitude" class="input-text" type="text" name="longitud" placeholder="-58.3816">
+                      </div>
+
+                      <div class="form-group help-box" 
+                            data-message="Define el radio del área segura en metros. Cuanto mayor sea, más grande será el perímetro permitido." 
+                            data-position="bottom">
+                        <label for="geoRadio">Radio</label>
+                        
+                        <span class="slider-container">
+                          <input id="geoRadio" class="input-range" type="range" name="geoRadio" min="10" max="150" value="20" oninput="updateRadio(this)">
+                          <span id="radioValue" class="slider-container__value">20m</span>
+                        </span>
+                      </div>
+
+                      <div class="geozone__map help-box" id="geoMap" 
+                            data-message="Mapa interactivo para visualizar y ajustar el área segura (geo-fence). Realizar un clic en un punto del mapa para asignar la latitud y longitud de la ubicación seleccionada" 
+                            data-position="left">
+                      </div>
+
+                    </div>
+
+                </div>
+            </form>
+
+
+            <div id="img-selector" class="img-selector">
+                <div class="img-options">
+                    <img class="img" src="/img/petIcons/perro1.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro2.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro3.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro4.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/perro5.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato1.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato2.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato3.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato4.jpg" alt="img">
+                    <img class="img" src="/img/petIcons/gato5.jpg" alt="img">
+                    <button class="close-btn" id="img-selector-close">X</button>
+                </div>
+            </div>
+        </div>
+
+</div>
+
+<script>
+    let geomap = L.map('geoMap').setView([-32.747711, -60.734190], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(geomap);
+
+    let circle = L.circle([-32.747711, -60.734190], {
+        radius: 0,
+        color: "#691c32",
+        fillColor: "#f03",
+        fillOpacity: 0.15
+    }).addTo(geomap).bindPopup("Zona Segura");
+
+    function updateRadio(event) {
+        const radius = event.value;
+        document.getElementById('radioValue').textContent = radius + 'm';
+        circle.setRadius(radius);
+    }
+
+    geomap.on('click', (picker) => {
+        vincularForm.latitud.value = picker.latlng.lat;
+        vincularForm.longitud.value = picker.latlng.lng;
+        geomap.setView(picker.latlng);
+        circle.setLatLng(picker.latlng); 
+    });
+
+
+    const vincularForm = document.getElementById("vincularForm");
+    const imgButton = document.getElementById("img-button");
+
+    vincularForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const imgSrc = imgButton.getAttribute("src");
+        const imageName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1, imgSrc.lastIndexOf("."));
+
+        const modelSelect = vincularForm.model;
+        const modelName = modelSelect.options[modelSelect.selectedIndex].text;
+
+        const enableGeofence = vincularForm.geoEnable.value === "si" ? 1 : 0;
+        const enableSoundAlert = vincularForm.alertSound.value === "si" ? 1 : 0;
+        
+        const payload = {
+            petName: vincularForm.petName.value,
+            model: modelName,
+            image: imageName,
+            state: "active",
+            frequency: vincularForm.frequency.value,
+            lowBat: vincularForm.lowBat.value,
+            geofenceLat: vincularForm.latitud.value,
+            geofenceLon: vincularForm.longitud.value,
+            geofenceRadius: vincularForm.geoRadio.value,
+            active: 1,
+            enableGeofence: enableGeofence, 
+            emergencyFrequency: vincularForm.frequencyEmergency.value,
+            enableSoundAlert: enableSoundAlert
+        };
+
+        try {
+            const response = await fetch("/api/trackers", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    title: "¡Dispositivo creado!",
+                    text: "Tu dispositivo ha sido vinculado con exito.",
+                    confirmButtonColor: "#451321",
+                    icon: "success"
+                }).then( () => {
+                    window.location.href = "/dashboard";
+                });
+            } else {
+                Swal.fire({
+                    title: "¡Ocurrio un error!",
+                    text: result.error,
+                    confirmButtonColor: "#451321",
+                    icon: "error"
+                });
+            }
+        } catch (error) {
+            console.log("Error al crear dispositivo", error);
+            Swal.fire({
+                title: "¡Ocurrio un error!",
+                text: "Error al crear dispositivo.",
+                confirmButtonColor: "#451321",
+                icon: "error"
+            });
+        }
+    });
+
+    document.querySelectorAll('.helper1').forEach(helper => {
+        helper.addEventListener('mouseenter', function () {
+            const content = JSON.parse(this.getAttribute('data-content'));
+            document.getElementById('content-helper').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+            document.getElementById('helper').style.opacity = '1';
+            document.getElementById('helper').style.visibility = 'visible';
+
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+        });
+
+        helper.addEventListener('mouseleave', function () {
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+        });
+        document.getElementById('helper-close').addEventListener('click', function () {
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+
+        });
+    });
+
+    document.querySelectorAll('.helper2').forEach(helper => {
+        helper.addEventListener('mouseenter', function () {
+            const content = JSON.parse(this.getAttribute('data-content'));
+            document.getElementById('content-helper-left').innerHTML = `<h3>${content.title}</h3><p>${content.data}</p>`;
+            document.getElementById('helper-left').style.opacity = '1';
+            document.getElementById('helper-left').style.visibility = 'visible';
+
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+        });
+
+        helper.addEventListener('mouseleave', function () {
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+        });
+        document.getElementById('helper-left-close').addEventListener('click', function () {
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+
+        });
+    });
+
+    document.getElementById('img-button').addEventListener('click', function () {
+            document.getElementById('img-selector').style.opacity = '1';
+            document.getElementById('img-selector').style.visibility = 'visible';
+
+            document.getElementById('helper').style.opacity = '0';
+            document.getElementById('helper').style.visibility = 'hidden';
+            document.getElementById('helper-left').style.opacity = '0';
+            document.getElementById('helper-left').style.visibility = 'hidden';
+    });
+
+    document.getElementById('img-selector-close').addEventListener('click', function () {
+            document.getElementById('img-selector').style.opacity = '0';
+            document.getElementById('img-selector').style.visibility = 'hidden';
+    });
+
+
+    const imgSelector = document.getElementById("img-selector");
+
+    imgSelector.addEventListener("click", (event) => {
+    if (event.target.classList.contains("img")) {
+        const newSrc = event.target.getAttribute("src");
+        imgButton.setAttribute("src", newSrc);
+        document.getElementById('img-selector').style.opacity = '0';
+        document.getElementById('img-selector').style.visibility = 'hidden';
+    }
+    });
+
+</script>
+
+<%- include('../layouts/footer'); %>

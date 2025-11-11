@@ -12,15 +12,36 @@
   },
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
-  "main": "app.js",
+  "type": "module",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "mkdir -p ./public/js/ && cp ./node_modules/jspdf/dist/jspdf.umd.min.js ./public/js/ && cp ./node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.min.js ./public/js/",
+    "start": "node .",
+    "dev": "nodemon .",
+    "format": "prettier --write .",
+    "test": "mocha --watch-all --recursive --verbose"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.0",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "mysql2": "^3.14.2",
-    "nodemon": "^3.1.10"
+    "sharp": "^0.34.4",
+    "swagger-ui-express": "^5.0.1",
+    "ws": "^8.18.3",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
+    "chai": "^6.0.1",
+    "mocha": "^11.7.2",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "prettier-plugin-ejs": "^1.0.3"
   }
 }

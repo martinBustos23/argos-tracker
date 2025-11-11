@@ -1,0 +1,123 @@
+.body-content .log-container {
+  box-shadow: none;
+  border-left: solid 1px black;
+}
+
+#configForm {
+  width: 80%;
+  max-width: 800px;
+  margin: 1rem auto 2rem;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.body-content fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.body-content legend {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  padding: 0.5rem 0;
+  margin: 0;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+}
+
+.body-content .config-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  gap: 10px;
+}
+
+.body-content label {
+  padding: 0.75rem 0 0;
+  font-weight: 500;
+  color: #374151;
+  display: block;
+}
+
+.input-default {
+  padding: 0.5rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+
+  color: #1f2937;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 150px;
+}
+
+.input-default:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: #f0f9ff;
+}
+
+.input-default:hover {
+  border-color: #9ca3af;
+}
+
+.checkbox{
+    width: 25px;
+    height: 25px;
+    margin: 0 auto;
+}
+
+.input-btn {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sumbit-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  background: #3b82f6;
+  color: #ffffff;
+  margin-top: 10px;
+}
+
+.sumbit-btn:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: scale(1.02);
+}
+
+.sumbit-btn:active {
+  background: #1d4ed8;
+  transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .config-row div {
+    flex-direction: column;
+  }
+
+  .input-default {
+    min-width: 100%;
+  }
+
+  /* apaño por ahora jeeee */
+
+  .body-content{
+    flex-direction: column;
+  }
+}

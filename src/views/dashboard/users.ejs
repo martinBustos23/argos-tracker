@@ -1,0 +1,405 @@
+<%- include('../layouts/header', {title: 'users-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', { title: 'Usuarios' ,
+    subtitle: 'Configuración de los usuarios registrados' }); %>
+
+    <div class="user-management">
+
+      <% if (user.admin) { %>
+        <section class="user-register help-box" id="registerContainer"
+                  data-message="Desde aca podés crear nuevos usuarios."
+                  data-position="top">
+
+          <div class="user-register__toggle help-box" id="registerBtn" 
+                data-message="Hacé clic para desplegar el formulario de registro."
+                data-position="right">
+            <span>Crear nuevo usuario</span><i class="bi bi-arrow-down"></i>
+          </div>
+
+          <h2 class="user-register__title">Registro</h2>
+
+          <form class="user-register__form" id="registerForm">
+            <div class="user-register__content">
+
+              <!-- este ver que onda y reemplazar icono por default...-->
+              <button class="img-placeholder image-btn help-box"
+                        data-message="Podés asignar una imagen de perfil."
+                        data-position="left"
+                        data-target="#registerContainer">
+                <i><i class="bi bi-person-fill "></i></i>
+              </button>
+
+              <div class="form-group help-box"
+                    data-message="Ingresá un nombre de usuario."
+                    data-position="left"
+                    data-target="#registerContainer">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Ingresar usuario" required />
+              </div>
+
+              <div class="form-group help-box"
+                    data-message="Asigná una contraseña (mínimo 8 caracteres, 1 número, 1 minúscula y 1 mayúscula)."
+                    data-position="left"
+                    data-target="#registerContainer">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Ingresar contraseña" required />
+              </div>
+
+              <div class="form-group help-box"
+                    data-message="Definí el rol del usuario."
+                    data-position="left"
+                    data-target="#registerContainer"
+                <label for="role">Rol</label>
+                <select id="role" name="admin" class="input-text">
+                  <option value="false">Usuario</option>
+                  <option value="true">Administrador</option>
+                </select>
+              </div>
+
+              <button class="confirm-btn help-box" type="submit" 
+                        data-message="Presioná para registrar el usuario."
+                        data-position="right"
+                        data-target="#registerContainer">
+                Confirmar
+              </button>
+
+            </div>
+          </form>
+        </section>
+      <% } %>
+
+      <section class="user-list help-box"
+                data-message="Aca se muestran todos los usuarios del sistema. Podés editarlos o eliminarlos."
+                data-position="top">
+
+        <% users.forEach(user => { %>
+          <div class="user-card help-box"
+                data-message="Este bloque representa un usuario."
+                data-position="left">
+
+            <!-- ver que poner en imagen y quitar icono -->
+            <div class="img-placeholder">
+              <i><i class="bi bi-person-fill "></i></i>
+            </div>
+
+            <div class="user-card__info">
+              <p><strong><%= user.username %></strong></p>
+              <!-- agregar lo de profile -->
+              <span><strong>Rol:</strong> <%= user.admin ? "Administrador" : "Usuario" %></span>
+              <span>
+                <strong>Estado:</strong>
+                <%
+                  if (user.status === 'active') {
+                    %> Cuenta activa <%
+                  } else if (user.status === 'disabled') {
+                    %> Cuenta deshabilitada <%
+                  } else if (user.status === 'blocked') {
+                    %> Cuenta bloqueada <%
+                  } else if (user.status === 'pwd_change') {
+                    %> Cambio de contraseña pendiente <%
+                  }
+                %>
+              </span>
+            </div>
+            
+            <span class="user-card__last-login">Última conexión: <%= user.lastLogin %></span>
+            
+            <button class="user-card__edit-btn " 
+                      data-id="<%= user.id %>">
+              <i class="bi bi-pencil-square help-box" 
+                  data-message="Editá los datos de este usuario."
+                  data-position="top">
+              </i>
+            </button>
+
+          </div>
+        <% }) %>
+      </section>
+
+      <div class="modal-edit-user" id="modal-edit-user">
+        <div class="modal-edit-user__content">
+
+          <button class="modal-edit-user__close-btn" id="closeUserModal">
+            <i class="bi bi-x"></i>
+          </button>
+
+          <h2 class="modal-edit-user__title" id="edit-username-title" >Editar usuario </h2>
+
+          <form class="modal-edit-user__form" id="editForm">
+            <div class="modal-edit-user__form-content">
+
+              <!-- ver img y otro div adentro de otro div? raro ver... -->
+              <div class="edit-option-img "
+                    data-message="Imagen del usuario seleccionado."
+                    data-position="top">
+                <div class="img-placeholder">
+                  <i><i class="bi bi-person-fill "></i></i>
+                </div>
+              </div>
+              
+              <div class="edit-option">
+
+                <div class="form-group">
+                  <label for="username">Usuario</label>
+                  <input type="text" id="username_edit" name="username" />
+                </div>
+
+                <div class="form-group">
+                  <label for="password">Contraseña</label>
+                  <input type="password" id="password_edit" name="password" placeholder="Editar contraseña" />
+                </div>
+
+                <div class="form-group">
+                  <label for="rol">Rol</label>
+                  <select id="rol" name="rol">
+                    <option value="" disabled selected>Selecciona un rol</option>
+                    <option value="0">Usuario</option>
+                    <option value="1">Administrador</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="status">Estado de cuenta</label>
+                  <select id="status" name="status">
+                    <option id="message" value="" disabled selected>Habilitar cuenta</option>
+                    <option value="active">Habilitar</option>
+                    <option value="blocked">Bloquear</option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+            
+            <button class="confirm-btn" type="submit" 
+                      data-message="Guardá los cambios realizados."
+                      data-position="bottom">
+              Confirmar cambios
+            </button>
+          </form>
+
+          <form class="modal-delete-user__form" id="deleteUserForm"
+                  data-message="Este botón elimina definitivamente al usuario."
+                  data-position="left">
+            <button class="delete-btn" type="submit">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+  const users = JSON.parse('<%- JSON.stringify(users) %>');
+  const registerBtn = document.getElementById("registerBtn");
+  const registerContainer = document.getElementById("registerContainer");
+
+  registerBtn.addEventListener("click", () => {
+    registerContainer.classList.toggle("active");
+  });
+
+  document.querySelectorAll(".user-card__edit-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+      const user = users.find(user => user.id == id);
+      document.getElementById("modal-edit-user").style.display = "flex";
+      document.getElementById("edit-username-title").textContent = "Editar usuario: " + user.username;
+      document.getElementById("username_edit").placeholder = user.username;
+      document.getElementById("password_edit").placeholder = "Contraseña";
+
+      const rolSelect = document.getElementById("rol");
+      rolSelect.value = user.admin ? "1" : "0"; 
+
+      let statusMessage;
+      switch (user.status) {
+        case 'active':
+          statusMessage = "Usuario habilitado";
+          break;
+        case 'disabled':
+          statusMessage = "Usuario deshabilitado";
+          break;
+        case 'blocked':
+          statusMessage = "Usuario bloqueado";
+          break;
+        case 'pwd_change':
+          statusMessage = "Usuario debe cambiar la contraseña";
+          break;
+        default:
+          statusMessage = "Estado desconocido";
+      }
+      document.getElementById("message").textContent = statusMessage; 
+
+      document.querySelector(".modal-edit-user__form").action = "/api/users/" + id;
+      document.querySelector(".modal-delete-user__form").action = "/api/users/" + id;
+    });
+  });
+
+  document.getElementById("closeUserModal").addEventListener("click", () => {
+    document.getElementById("modal-edit-user").style.display = "none";
+  })
+
+  const registerForm = document.getElementById("registerForm");
+  registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const payload = {
+      username: registerForm.username.value,
+      password: registerForm.password.value
+    };
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "¡Usuario creado!",
+          text: "Tu usuario ha sido creado con exito.",
+          confirmButtonColor: "#451321",
+          icon: "success"
+        }).then( () => {
+        location.reload();
+        });
+      } else {
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: result.error,
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
+      }
+    } catch (error) {
+      console.log("Error al crear usuario", error);
+      Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: "Error al crear usuario.",
+          confirmButtonColor: "#451321",
+          icon: "error"
+      });
+    }
+  });
+
+  const editForm = document.getElementById("editForm");
+  editForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const payload = {};
+    if (editForm.username.value) payload.username = editForm.username.value;
+    if (editForm.password.value) payload.password = editForm.password.value;
+    // add image
+    if (editForm.rol.value) payload.admin = editForm.rol.value;
+    if (editForm.status.value) payload.status = editForm.status.value;
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas modificar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+    try {
+      const response = await fetch(editForm.action, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "¡Usuario modificado!",
+          text: "Tu usuario ha sido modificado con exito.",
+          confirmButtonColor: "#451321",
+          icon: "success"
+        }).then( () => {
+          location.reload();
+        });
+      } else {
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: result.error,
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
+      }
+    } catch (error) {
+      console.error("Error al modificar usuario:", error);
+        Swal.fire({
+          title: "¡Ocurrio un error!",
+          text: "Error al modificar el perfil.",
+          confirmButtonColor: "#451321",
+          icon: "error"
+        });
+    }
+      
+    }
+  });
+
+  const deleteUserForm = document.getElementById("deleteUserForm");
+  deleteUserForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Estás seguro que deseas eliminar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451321",
+      cancelButtonColor: "#ddd",
+      confirmButtonText: "Sí, estoy seguro!"
+    });
+
+    if (isConfirmed) {
+      try {
+        const response = await fetch(deleteUserForm.action, { method: "DELETE" });
+        const result = await response.json();
+
+        if (response.ok) {
+            Swal.fire({
+              title: "Usuario eliminado",
+              text: "Tu usuario ha sido eliminado con exito.",
+              confirmButtonColor: "#451321",
+              icon: "success"
+            }).then( () => {
+          location.reload();
+            });   
+        } else {
+            Swal.fire({
+                title: "¡Ocurrio un error!",
+                text: "Error al eliminar el perfil.",
+                confirmButtonColor: "#451321",
+                icon: "error"
+            });
+        }
+      } catch (error) {
+        console.error("Error al eliminar usuario:", error);
+          Swal.fire({
+              title: "¡Ocurrio un error!",
+              text: "Error intentar eliminar el perfil.",
+              confirmButtonColor: "#451321",
+              icon: "error"
+          });
+      }
+    }
+  });
+
+</script>
+
+<%- include('../layouts/footer'); %>

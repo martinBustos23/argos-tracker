@@ -1,0 +1,727 @@
+<%- include('../layouts/header', {title: 'config-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+
+<div class="main-content">
+
+  <%- include('../layouts/navbar', {title: 'Configuración del sistema' ,
+    subtitle: 'Opciones, registros, restauración...' }); %>
+
+    <div class="body-content">
+
+      <div class="config-sidebar">
+        <div class="config-sidebar__option active" data-target="configuracion">
+          <h2>Configuración</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="system">
+          <h2>Registro del Sistema</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="tracker">
+          <h2>Registro de Dispositivos</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="user">
+          <h2>Registro de Usuarios</h2>
+        </div>
+        <div class="config-sidebar__option" data-target="ayuda">
+          <h2>Ayuda</h2>
+        </div>
+        <div class="config-sidebar__option ultimo">
+          <h2></h2>
+        </div>
+      </div>
+
+      <div class="config-content">
+
+        <div class="log-container" id="configuracion" style="display: block;">
+          <h2>Configuración del sistema</h2>
+
+          <form id="configForm">
+            <fieldset id="general">
+              <legend>General</legend>
+              <div class="config-row">
+                <label for="idioma">Idioma del sistema</label>
+                <select class="input-default name="idioma" id="idioma" value="<%= config.general.language %>">
+                  <option value="es">Español</option>
+                  <option value="en">Inglés</option>
+                </select>
+              </div>
+              <div class="config-row">
+                <label for="zonaHoraria">Zona horaria</label>
+                <input class="input-default" type="text" name="zonaHoraria" id="zonaHoraria" value="<%= config.general.timezone %>">
+              </div>
+              <div class="config-row">
+                <label for="formatoHora">Formato de hora</label>
+                <select class="input-default" name="formatoHora" id="formatoHora" value="<%= config.general['12/24hs'] %>">
+                  <option value="24h">24h</option>
+                  <option value="12h">12h</option>
+                </select>
+              </div>
+            </fieldset>
+            <fieldset id="devices">
+              <legend>Dispositivos</legend>
+              <div class="config-row">
+                <label for="mostrarDeshabilitados">Mostrar dispositivos deshabilitados</label>
+                <input type="checkbox" name="mostrarDeshabilitados" id="mostrarDeshabilitados" class="checkbox">
+              </div>
+            </fieldset>
+            <fieldset id="location">
+              <legend>Ubicación</legend>
+              <div class="config-row">
+                <label for="zona">Localidad</label>
+                <input type="text" class="input-default" name="zona" id="zona" placeholder="San Lorenzo" value="<%= config.location.zone %>">
+              </div>
+              <div class="config-row">
+                <label for="geocerca">Nivel de zoom del mapa</label>
+                <input type="number" class="input-default" name="geocerca" id="geocerca" value="<%= config.location.zoom %>">
+              </div>
+            </fieldset>
+            <fieldset id="network">
+              <legend>Red y Conexión</legend>
+              <div class="config-row">
+                <label for="wifi-ap__ssid">WiFi AP</label>
+                <div>
+                  <input type="text" name="wifi-ap__ssid" id="wifi-ap__ssid" class="input-default" placeholder="Nombre de red" value="<%= config.network['wifi-client__ssid'] %>">
+                  <input type="text" name="wifi-ap__pwd" id="wifi-ap__pwd" class="input-default" placeholder="Contraseña" value="<%= config.network['wifi-client__pwd'] %>">
+                </div>
+              </div>
+              <div class="config-row">
+                <label for="wifi-mode">Modo de red</label>
+                <select name="wifi-mode" id="wifi-mode" class="input-default" value="<%= config.network.mode %>">
+                  <option value="auto">Automatico</option>
+                  <option value="ap">Red local</option>
+                  <option value="client">Red existente</option>
+                </select>
+              </div>
+              <div class="config-row">
+                <label for="wifi-client__ssid">Wifi existente</label>
+                <div>
+                  <input type="text" name="wifi-client__ssid" id="wifi-client__ssid" class="input-default" placeholder="Nombre de red" value="<%= config.network['wifi-ap__ssid'] %>">
+                  <input type="text" name="wifi-client__pwd" id="wifi-client__pwd" class="input-default" placeholder="Contraseña" value="<%= config.network['wifi-ap__pwd'] %>">
+                </div>
+              </div>
+            </fieldset>
+            <button class="input-btn sumbit-btn" type="submit" id="config-btn">Guardar configuración</button>
+          </form>
+        </div>
+
+        <div class="log-container" id="system">
+          <h2>Registro de auditoría del sistema</h2>
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom">
+
+            <div class="filter-buttons"> 
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los registros según el periodo de tiempo deseado." 
+                        data-position="bottom">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="levelFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos los niveles</option>
+                <option value="1">Info</option>
+                <option value="2">Error</option>
+                <option value="3">Warning</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="actionFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos las acciones</option>
+                <option value="1">Create</option>
+                <option value="2">Connect</option>
+                <option value="3">Update config</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato CSV o Excel." 
+                      data-position="bottom">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="log-container" id="tracker">
+          <h2>Registro de auditoría de dispositivos</h2>
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom">
+
+            <div class="filter-buttons"> 
+              <select class="filter-panel__option help-box sourceFilter"
+                        data-message="Seleccioná un dispositivo específico o mostrálos todos." 
+                        data-position="bottom">
+                <option value="0" disabled selected>Dispositivo</option>
+                <option value="0">Todos </option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los registros según el periodo de tiempo deseado." 
+                        data-position="bottom">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="levelFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos los niveles</option>
+                <option value="1">Info</option>
+                <option value="2">Error</option>
+                <option value="3">Warning</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="actionFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos las acciones</option>
+                <option value="1">Link</option>
+                <option value="2">Unlink</option>
+                <option value="3">Disable</option>
+                <option value="4">Update</option>
+                <option value="5">Create</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato CSV o Excel." 
+                      data-position="bottom">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="log-container" id="user">
+          <h2>Registro de auditoría de usuarios</h2>
+
+          <div class="filter-panel help-box" 
+                data-message="Filtrá los datos por dispositivo, fecha o tipo de evento." 
+                data-position="bottom">
+
+            <div class="filter-buttons"> 
+              <select class="filter-panel__option help-box sourceFilter"
+                        data-message="Seleccioná un dispositivo específico o mostrálos todos." 
+                        data-position="bottom">
+                <option value="0" disabled selected>Usuario</option>
+                <option value="0">Todos</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="timestampFilter" 
+                        data-message="Filtrá los registros según el periodo de tiempo deseado." 
+                        data-position="bottom">
+                <option value="0" selected>Historial completo</option>
+                <option value="1">Última hora</option>
+                <option value="2">Últimas 24 horas</option>
+                <option value="3">Últimos 7 dias</option>
+                <option value="4">Últimos 30 dias</option>
+              </select>
+    
+              <select class="filter-panel__option help-box" id="levelFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos los niveles</option>
+                <option value="1">Info</option>
+                <option value="2">Error</option>
+                <option value="3">Warning</option>
+              </select>
+
+              <select class="filter-panel__option help-box" id="actionFilter" 
+                        data-message="Filtrá los registros según su nivel de error" 
+                        data-position="bottom">
+                <option value="0" selected>Todos las acciones</option>
+                <option value="1">Login</option>
+                <option value="2">Logout</option>
+                <option value="3">Create</option>
+                <option value="4">Update</option>
+                <option value="5">Block</option>
+                <option value="6">Disable</option>
+              </select>
+    
+              <button class="filter-panel__button help-box" id="filtrar" 
+                        data-message="Aplicá los filtros seleccionados para actualizar la tabla." 
+                        data-position="bottom">
+                Filtrar
+              </button>
+            </div>
+
+            <button class="help-box" id="download-button" 
+                      data-message="Descargá los registros visibles en formato CSV o Excel." 
+                      data-position="bottom">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+
+          <table class="log-container__table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Action</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="log-container" id="ayuda">
+          <h2>Ayudin</h2>
+          <div style="width:60%; margin:auto; text-align: center;">
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"> Ir a la pagina web de
+              ayuda!!!</a>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+
+<style>
+  .body-content {
+    display: flex;
+    flex-direction: row;
+    max-height: calc(100% - 70px);
+    min-width: 100%;
+  }
+
+  .config-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    min-width: 250px;
+    height: auto;
+  }
+
+  .config-sidebar__option {
+    width: 100%;
+    padding: .8rem 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-right: 5px solid transparent;
+  }
+
+  .config-sidebar__option:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .config-sidebar__option.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #691c32;
+  }
+
+  .config-sidebar__option h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .ultimo {
+    margin-top: auto;
+    display: none;
+  }
+
+  .config-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 100%;
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+
+
+
+
+
+  .input-default{
+    padding: 0rem 1rem;
+
+    min-height: 2rem;
+    outline: none;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 0rem 1rem;
+    transition: all .35s ease-in-out;
+  }
+
+  @media (max-width: 768px) {
+    .config-row div {
+      flex-direction: column;
+    }
+
+    .input-default {
+      min-width: 100%;
+    }
+
+    /* apaño por ahora jeeee */
+
+.config-sidebar {
+    flex-direction: row;
+    min-width: 100%;
+    max-height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: wrap;
+    justify-content: center;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .config-sidebar__option {
+    flex-shrink: 0;
+    width: auto;
+    padding: 1rem 1.2rem;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    text-align: center;
+  }
+
+  .config-sidebar__option:hover {
+    background-color: transparent;
+    border-bottom-color: rgba(105, 28, 50, 0.3);
+  }
+
+  .config-sidebar__option.active {
+    background-color: transparent;
+    border-left: none;
+    border-bottom: 3px solid #691c32;
+  }
+
+  .config-sidebar__option h2 {
+    font-size: 0.9rem;
+  }
+
+  .config-row div {
+    flex-direction: column;
+  }
+
+  .input-default {
+    min-width: 100%;
+  }
+
+  .body-content {
+    flex-direction: column;
+  }
+}
+
+</style>
+
+<script src="/js/jspdf.umd.min.js"></script>
+<script src="/js/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  window.applyPlugin(jsPDF);
+
+  const config = JSON.parse('<%- JSON.stringify(config) %>');
+  const sidebarOptions = document.querySelectorAll(".config-sidebar__option");
+  const sections = document.querySelectorAll(".log-container");
+
+  
+  const configForm = document.querySelector("#configForm");
+
+  configForm.mostrarDeshabilitados.checked = config.devices.showDisabled;
+  configForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const payload = {
+      general: {
+        language: configForm.idioma.value,
+        timezone: configForm.zonaHoraria.value,
+        "12/24hs": configForm.formatoHora.value,
+      },
+
+      devices: {
+        showDisabled: configForm.mostrarDeshabilitados.checked,
+      },
+
+      location: {
+        zone: configForm.zona.value,
+        zoom: configForm.geocerca.value,
+      },
+
+      network: {
+        "wifi-client__ssid": configForm["wifi-client__ssid"].value,
+        "wifi-client__pwd": configForm["wifi-client__pwd"].value,
+        mode: configForm["wifi-mode"].value,
+        "wifi-ap__ssid": configForm["wifi-ap__ssid"].value,
+        "wifi-ap__pwd": configForm["wifi-ap__pwd"].value,
+      }
+    };
+
+    for (const topKey in payload) {
+      const topValue = payload[topKey];
+
+      if (typeof topValue === 'object')
+        for (const bottomKey in topValue) {
+          const bottomValue = topValue[bottomKey];
+          if (bottomValue === "" || bottomValue === config[topKey][bottomKey])
+            delete payload[topKey][bottomKey];
+        }
+
+      if (Object.keys(topValue) == false)
+        delete payload[topKey];
+    }
+
+    if (Object.keys(payload) == false) return;
+
+    const response = await fetch('/api/systemConfig', {
+      method: 'PATCH',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+
+    if (response.ok)
+      window.location.reload();
+  });
+
+  let logs;
+  let filteredLogs;
+  sidebarOptions.forEach(opt => {
+    opt.addEventListener("click", async () => {
+      sidebarOptions.forEach(option => option.classList.remove("active"));
+      sections.forEach(section => section.style.display = "none");
+      const target = document.getElementById(opt.dataset.target);
+      opt.classList.add("active");
+
+      if (target.id == "configuracion" || target.id == "ayuda"){
+        target.style.display = "block";
+        return;
+      }
+
+      const response = await fetch(`/api/${target.id}Logs?` + new URLSearchParams({n: 200}));
+      logs = await response.json();
+      filteredLogs = logs;
+      updateLogs(logs);
+      target.style.display = "block";
+
+      const sourceSelect = target.querySelector(".sourceFilter");
+
+      if (sourceSelect) {
+        sourceSelect.innerHTML = '<option value="">Todos</option>';
+        
+        const uniqueSources = [...new Set(logs.map(log => log.source))];
+        
+        uniqueSources.forEach(source => {
+          const option = document.createElement("option");
+          option.value = source;
+          option.textContent = source;
+          sourceSelect.appendChild(option);
+        });
+      }
+    });
+  });
+
+
+  const buttons = document.querySelectorAll("#filtrar");
+  buttons.forEach(button => 
+    button.addEventListener("click", (event) => {
+      filteredLogs = filterLogs(logs);
+      updateLogs(filteredLogs);
+  }));
+
+  const downloadButtons = document.querySelectorAll("#download-button");
+  downloadButtons.forEach(button => button.addEventListener("click", () => {
+    if (filteredLogs)
+      createLogsDocument(filteredLogs);
+    else
+      alert('No hay logs para imprimir');
+  }));
+
+  function filterLogs(logs) {
+    const activeSection = document.querySelector(".active");
+    const table = document.querySelector(`#${activeSection.dataset.target}`);
+    const timesFilter = Number(table.querySelector("#timestampFilter").value);
+    const actionFilter = Number(table.querySelector("#actionFilter").value);
+    const levelFilter = Number(table.querySelector("#levelFilter").value);
+    const sourceFilter = activeSection.dataset.target != 'system' ? 
+      Number(table.querySelector(".sourceFilter").value) : 0;
+
+    let newLogs = new Array(...logs);
+    
+    const timeFilterOptions = [3600, 86400, 604800, 2592000];
+    if (timesFilter)
+      newLogs = newLogs.filter( 
+        log => new Date(log.timestamp).getTime() >= ( Date.now() - (timeFilterOptions[timesFilter-1] * 1000)));
+    
+    const levelFilterOptions = ['INFO', 'ERROR', 'WARNING'];
+    if (levelFilter)
+      newLogs = newLogs.filter( log => log.level == levelFilterOptions[levelFilter-1]);
+
+    const actionFilterOptions = {
+      system: ['CREATE', 'CONNECT', 'UPDATE_CONFIG'],
+      tracker: ['LINK', 'UNLINK', 'DISABLED', 'UPDATE', 'CREATE'],
+      user: ['LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'BLOCK', 'DISABLED']
+    };
+    if (actionFilter)
+      newLogs = newLogs.filter( log => log.action == actionFilterOptions[activeSection.dataset.target][actionFilter-1]);
+
+    if (sourceFilter)
+      newLogs = newLogs.filter( log => log.source == sourceFilter );
+
+    return newLogs;
+  }
+
+  function updateLogs(logs) {
+    return new Promise((resolve, reject) => {
+      const activeSection = document.querySelector(".active");
+      const activeTable = document.querySelector(`#${activeSection.dataset.target}`);
+      const tableContent = activeTable.querySelectorAll("#log-row");
+
+      if (tableContent)
+        tableContent.forEach(row => row.remove());
+      
+        for (const log of logs) {
+        const logElement = document.createElement("tr");
+        logElement.id = "log-row";
+        
+        let column = document.createElement("td");
+        column.textContent = log.id;
+        column.setAttribute("data-label", "ID");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = new Date(log.timestamp).toLocaleString("es-AR", {hour12: false});
+        column.setAttribute("data-label", "Fecha");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log.level;
+        column.setAttribute("data-label", "Nivel");
+        logElement.appendChild(column);
+
+        if (activeSection != 'sistema') {
+          column = document.createElement("td");
+          column.setAttribute("data-label", "Fuente");
+          column.textContent = log.source;
+          logElement.appendChild(column);
+        }
+
+        column = document.createElement("td");
+        column.textContent = log.action;
+        column.setAttribute("data-label", "Acción");
+        logElement.appendChild(column);
+
+        column = document.createElement("td");
+        column.textContent = log.description;
+        column.setAttribute("data-label", "Descripción");
+        logElement.appendChild(column);
+
+        activeTable.querySelector("tbody").appendChild(logElement);
+      }
+
+      resolve(true);
+    });
+  }
+
+  function createLogsDocument(logs) {
+    var doc = new jsPDF();
+    doc.setFont('courier', 'normal');
+    
+    doc.setFontSize(15);
+    const activeSection = document.querySelector(".active");
+    const registro = {
+      system: "sistema",
+      tracker: "dispositivos",
+      user: "usuarios"
+    }
+    doc.text("Registro de " + registro[activeSection.dataset.target] , 10, 10);
+    
+    doc.setFontSize(11);
+    const rows = [];
+    let columns;
+    if (activeSection.dataset.target != 'system') {
+      columns = ["ID", "Timestamp", "Level", "Source", "Action", "Description"];
+      for (const log of logs) {
+        rows.push([
+          log.id,
+          new Date(log.timestamp).toLocaleString('es-AR', { hour12: false }),
+          log.level,
+          log.source,
+          log.action,
+          log.description
+        ]);
+      }
+    } else {
+      columns = ["ID", "Timestamp", "Level", "Action", "Description"];
+      for (const log of logs) {
+        rows.push([
+          log.id,
+          new Date(log.timestamp).toLocaleString('es-AR', { hour12: false }),
+          log.level,
+          log.action,
+          log.description
+        ]);
+      }
+    }
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("ejemplo.pdf");
+  }
+</script>
+
+<%- include('../layouts/footer'); %>

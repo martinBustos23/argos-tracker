@@ -1,0 +1,48 @@
+services:
+
+  db:
+    image: mysql
+    ports:
+      - '${DB_PORT}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    networks:
+      - network
+    hostname: db
+    volumes:
+      - argos-db:/var/lib/mysql
+
+  app:
+    build: .
+    working_dir: /usr/src/app
+    ports:
+      - '${PORT}'
+    depends_on:
+      - db
+    networks:
+      - network
+    hostname: app
+    environment:
+      - DB_URL=db
+    volumes:
+      - ./src/config/systemConfig.json:/usr/src/app/src/config/systemConfig.json
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template
+    environment:
+      - PORT=${PORT}
+    depends_on:
+      - app
+    networks:
+      - network
+
+networks:
+  network: {}
+
+volumes:
+  argos-db:

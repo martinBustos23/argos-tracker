@@ -1,0 +1,12 @@
+node_modules
+public/tiles
+.vscode
+test
+.dockerignore
+.gitignore
+.prettierignore
+.prettierrc
+compose.yml
+Dockerfile
+enunciado.txt
+README

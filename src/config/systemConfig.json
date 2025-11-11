@@ -1,0 +1,21 @@
+{
+  "general": {
+    "language": "es",
+    "timezone": "GMT-3",
+    "12/24hs": "24h"
+  },
+  "devices": {
+    "showDisabled": true
+  },
+  "location": {
+    "zone": "Beltran",
+    "zoom": "17"
+  },
+  "network": {
+    "wifi-client__ssid": "nombre",
+    "wifi-client__pwd": "password",
+    "mode": "auto",
+    "wifi-ap__ssid": "nombre",
+    "wifi-ap__pwd": "password"
+  }
+}
