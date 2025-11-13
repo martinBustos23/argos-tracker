@@ -1,0 +1,23 @@
+<%- include('../layouts/header', {title: 'devices-title' }); %>
+
+<%- include('../layouts/sidebar', {user: user}); %>
+<div class="main-content">
+  <%- include('../layouts/navbar', {title: 'Dispositivos' ,
+    subtitle: 'Lista de los dispositivos vinculados' }); %>
+    <div class="no-collars">
+      <h2 class="no-devices__title">Todavía no hay dispositivos vinculados</h2>
+      <p class="no-devices__text">
+        Pedi al administrador que vincule el dispositivo.
+      </p>
+    </div>
+  </div>
+</div>
+<style>
+  .no-collars {
+    margin: auto;
+  }
+  .no-devices__text {
+    text-align: center;
+  }
+</style>
+<%- include('../layouts/footer'); %>

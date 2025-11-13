@@ -51,13 +51,16 @@ export default (
   router.get('/devices', async (req, res) => {
     try {
       const token = req.cookies.authorization;
+      const id = getUserIdFromToken(token);
+      const user = await userController.find(id);
 
       const trackers = await trackerController.getAll();
 
       if (trackers.length == 0) {
-        return res.redirect(`/dashboard/vincular`);
+        if (user.admin) return res.redirect(`/dashboard/vincular`);
+        return res.render('./dashboard/devices-empty', { user });
       }
-      const firstTracker = trackers.filter(tracker => tracker.active)[0];
+      const firstTracker = trackers.filter((tracker) => tracker.active)[0];
       return res.redirect(`/dashboard/devices/${firstTracker.id}`);
     } catch (error) {
       res.status(500).send('Error al ingresar a devices: ' + error.message);
