@@ -47,9 +47,11 @@ export function validatePassword(password) {
 export const isAdmin = (UserController) => {
   return async (req, res, next) => {
     try {
-      const user = await UserController.find(req.id);
+      const token = req.cookies.authorization;
+      const id = getUserIdFromToken(token);
+      const user = await UserController.find(id);
       if (!user || !user.admin) throw new Forbidden('Acceso solo para administrador');
-
+      req.user = user;
       next();
     } catch (error) {
       next(error);
