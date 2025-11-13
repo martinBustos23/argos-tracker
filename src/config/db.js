@@ -35,7 +35,7 @@ export async function initDB() {
         description: 'Conexión establecida con la base de datos',
       });
       // configurar timezone en utc
-      await db.execute(`SET @@session.time_zone='+00:00'`);
+      await db.execute(`SET @@session.time_zone='-03:00'`);
       console.log('Conexión establecida con la base de datos');
       // inicializar tablas
       for (const table of tables) {
