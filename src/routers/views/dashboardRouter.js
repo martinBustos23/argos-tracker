@@ -1,5 +1,5 @@
 import express from 'express';
-import { authToken, getUserIdFromToken } from '../../utils.js';
+import { authToken, getUserIdFromToken, isAdmin } from '../../utils.js';
 import systemConfig from '../../config/systemConfig.json' with { type: 'json' };
 
 export default (
@@ -81,7 +81,7 @@ export default (
     }
   });
 
-  router.get('/users', async (req, res, next) => {
+  router.get('/users', isAdmin(userController), async (req, res, next) => {
     try {
       const users = await userController.getAll();
       // convertir timestamp a utc-3
@@ -105,7 +105,7 @@ export default (
     }
   });
 
-  router.get('/config', async (req, res) => {
+  router.get('/config', isAdmin(userController), async (req, res) => {
     try {
       const token = req.cookies.authorization;
       const id = getUserIdFromToken(token);
@@ -159,7 +159,7 @@ export default (
     }
   });
 
-  router.get('/vincular', async (req, res) => {
+  router.get('/vincular', isAdmin(userController), async (req, res) => {
     const token = req.cookies.authorization;
     const id = getUserIdFromToken(token);
     const user = await userController.find(id);
