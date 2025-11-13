@@ -69,12 +69,13 @@
               <% } %>
             <% }) %>
 
+            <% if (user.admin) { %>
             <a class="add-btn help-box" 
                 data-message="Agregá un nuevo dispositivo desde esta opción." 
                 data-position="right" 
                 href="/dashboard/vincular" 
                 style="text-decoration: none; color:#691c32">+</a>
-
+            <% } %>
           </section>
 
         </div>
